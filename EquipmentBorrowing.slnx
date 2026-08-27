@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/EquipmentBorrowing.Application/EquipmentBorrowing.Application.csproj" Id="244ea044-3871-43bf-8b11-d61470b15e7c" />
+    <Project Path="src/EquipmentBorrowing.Domain/EquipmentBorrowing.Domain.csproj" Id="e10e7b03-6522-4ee4-afd4-42f0dc0d3c72" />
+    <Project Path="src/EquipmentBorrowing.Infrastructure/EquipmentBorrowing.Infrastructure.csproj" Id="d32c25c6-4c1a-4fc9-a2a8-1da8d3d157d2" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EquipmentBorrowing.Test/EquipmentBorrowing.Test.csproj" Id="10ad20a5-c021-4ef2-bd2a-0448909e8500" />
+  </Folder>
+</Solution>
