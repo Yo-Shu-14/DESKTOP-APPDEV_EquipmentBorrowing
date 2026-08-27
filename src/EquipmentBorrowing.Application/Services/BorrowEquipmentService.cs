@@ -20,7 +20,7 @@ public class BorrowEquipmentService
         _borrowingRepository = borrowingRepository;
     }
 
-    public async Task BorrowEquipmentAsync(int studentId, Guid equipmentId, int maximumActiveBorrowings)
+    public async Task BorrowEquipmentAsync(int studentId, Guid equipmentId, int maximumActiveBorrowings, DateTime expectedReturnDate)
     {
         var student = await _studentRepository.GetByIdAsync(studentId);
 
@@ -54,5 +54,13 @@ public class BorrowEquipmentService
         {
             throw new InvalidOperationException("Student has reached the maximum number of active borrowings.");
         }
+
+
+
+
+
+        var borrowing = new Borrowing(Guid.NewGuid(), student, equipment, DateTime.Now, expectedReturnDate, BorrowingStatus.Active);
+
+        await _borrowingRepository.AddAsync(borrowing);
     }
 }
