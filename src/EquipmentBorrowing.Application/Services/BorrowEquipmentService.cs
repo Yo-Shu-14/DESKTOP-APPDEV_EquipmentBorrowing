@@ -20,13 +20,39 @@ public class BorrowEquipmentService
         _borrowingRepository = borrowingRepository;
     }
 
-    public async Task BorrowEquipmentAsync(int studentId, Guid equipmentId)
+    public async Task BorrowEquipmentAsync(int studentId, Guid equipmentId, int maximumActiveBorrowings)
     {
         var student = await _studentRepository.GetByIdAsync(studentId);
 
         if (student is null)
         {
             throw new InvalidOperationException("Student does not exist.");
+        }
+
+
+        if (!student.IsAllowedToBorrow)
+        {
+            throw new InvalidOperationException("Student is not allowed to borrow equipment.");
+        }
+
+        var equipment = await _equipmentRepository.GetByIdAsync(equipmentId);
+
+        if (equipment is null)
+        {
+            throw new InvalidOperationException("Equipment does not exist.");
+        }
+
+
+        if (!equipment.IsAvailable)
+        {
+            throw new InvalidOperationException("Equipment is not available.");
+        }
+
+
+        var activeBorrowings = await _borrowingRepository.GetActiveByStudentIdAsync(studentId);
+        if (activeBorrowings.Count >= maximumActiveBorrowings)
+        {
+            throw new InvalidOperationException("Student has reached the maximum number of active borrowings.");
         }
     }
 }
