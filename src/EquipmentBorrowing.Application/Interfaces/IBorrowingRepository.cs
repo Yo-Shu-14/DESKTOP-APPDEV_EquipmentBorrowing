@@ -8,6 +8,6 @@ namespace EquipmentBorrowing.Application.Interfaces;
 
 public interface IBorrowingRepository
 {
-    Task<IReadOnlyList<Borrowing>> getActiveByStudentIdAsync(Guid studentId);
+    Task<IReadOnlyList<Borrowing>> getActiveByStudentIdAsync(int studentId);
     Task Addsync(Borrowing borrowing);
 }

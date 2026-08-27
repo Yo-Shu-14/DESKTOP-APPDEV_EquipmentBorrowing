@@ -7,5 +7,5 @@ namespace EquipmentBorrowing.Application.Interfaces;
 
 public interface IStudentRepository
 {
-    Task<Student?> GetStudentByIdAsync(int studentId);
+    Task<Student?> GetByIdAsync(int id);
 }
