@@ -19,4 +19,13 @@ public class Equipment
         Description = description;
         IsAvailable = isAvailable;
     }
+    public void MarkAsAvailable()
+    {
+        IsAvailable = true;
+    }
+
+    public void MarkAsUnavailable()
+    {
+        IsAvailable = false;
+    }
 }

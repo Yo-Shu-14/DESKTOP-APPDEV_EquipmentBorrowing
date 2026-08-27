@@ -10,5 +10,9 @@ public interface IBorrowingRepository
 {
     Task<IReadOnlyList<Borrowing>> GetActiveByStudentIdAsync(int studentId);
 
+    Task<Borrowing?> GetByIdAsync(Guid borrowingId);
+
     Task AddAsync(Borrowing borrowing);
+
+    Task UpdateAsync(Borrowing borrowing);
 }

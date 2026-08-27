@@ -27,5 +27,9 @@ public class Borrowing
         ExpectedReturnDate = expectedReturnDate;
         Status = status;
     }
+    public void MarkAsReturned()
+    {
+        Status = BorrowingStatus.Returned;
+    }
 }
 
