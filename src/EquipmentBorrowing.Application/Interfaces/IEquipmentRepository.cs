@@ -8,5 +8,6 @@ namespace EquipmentBorrowing.Application.Interfaces;
 public interface IEquipmentRepository
 {
     Task<Equipment?> GetByIdAsync(Guid id);
+    Task<IReadOnlyList<Equipment>> GetAllAsync();
     Task UpdateAsync(Equipment equipment);
 }
