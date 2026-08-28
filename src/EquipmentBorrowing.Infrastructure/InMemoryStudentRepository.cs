@@ -8,7 +8,14 @@ namespace EquipmentBorrowing.Infrastructure;
 
 public class InMemoryStudentRepository : IStudentRepository
 {
-    private readonly List<Student> _students = new();
+    private readonly List<Student> _students;
+
+    public InMemoryStudentRepository(IEnumerable<Student> students)
+    {
+        _students = students.ToList();
+    }
+
+
 
     public Task<Student?> GetByIdAsync(int id)
     {
