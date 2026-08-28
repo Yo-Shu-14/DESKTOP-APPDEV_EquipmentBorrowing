@@ -1,7 +1,9 @@
 # EQUIPMENT BORROWING SYSTEM
 
 ## 1. Solution Structure
+Actor: Student
 
+Expectation: The student expects the system to allow them to request available equipment and validate whether they are allowed to borrow it.
 ### 1. Domain
 
 * The `EquipmentBorrowing.Domain` contains the project's important concepts and rules.
