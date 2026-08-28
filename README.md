@@ -208,6 +208,7 @@ The application service should depend on a repository interface because it separ
 
 ### 2. Which parts of your current solution could remain unchanged if SQLite were added later?
 
+The Domain models, Application services, and repository interfaces could remain unchanged. The Infrastructure project could be updated by adding SQLite-based repository implementations while keeping the existing application logic independent from the database technology.
 
 ### 3. Which project would eventually contain Avalonia Views?
 
