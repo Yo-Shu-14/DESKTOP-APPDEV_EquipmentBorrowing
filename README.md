@@ -212,8 +212,12 @@ The Domain models, Application services, and repository interfaces could remain 
 
 ### 3. Which project would eventually contain Avalonia Views?
 
+The Console project would eventually contain the Avalonia Views. In our current structure, the Console project is used to run and demonstrate the system through the terminal, while Avalonia would be used as the graphical user interface. The Views should stay in the UI project so that the user interface is separated from the application's use cases and business logic.
 
 ### 4. Should an Avalonia button directly execute database queries? Why or why not?
 
+No, an Avalonia button should not directly execute database queries. The button should only handle the user's interaction and call the appropriate use case or service in the Application project. This keeps the user interface separate from the database and makes the system easier to maintain, test, and modify.
 
 ### 5. What part of your implementation represents the actual business operation requested by the actor?
+
+The Application use case or service represents the actual business operation requested by the actor. In the project, for example, BorrowEquipmentService represents the operation of borrowing equipment, while ReturnEquipmentService represents returning equipment. These services contain the rules and steps needed to complete the requested operation.
