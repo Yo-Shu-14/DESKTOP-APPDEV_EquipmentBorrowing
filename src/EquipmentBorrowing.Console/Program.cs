@@ -37,3 +37,16 @@ await borrowEquipmentService.BorrowEquipmentAsync(
 Console.WriteLine("Equipment borrowed successfully.");
 Console.WriteLine($"Equipment: {equipment.Name}");
 Console.WriteLine($"Available: {equipment.IsAvailable}");
+
+try
+{
+    await borrowEquipmentService.BorrowEquipmentAsync(
+        student.Id,
+        equipment.EquipmentId,
+        3,
+        DateTime.Now.AddDays(7));
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Borrowing failed: {ex.Message}");
+}
