@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/EquipmentBorrowing.Application/EquipmentBorrowing.Application.csproj" Id="244ea044-3871-43bf-8b11-d61470b15e7c" />
     <Project Path="src/EquipmentBorrowing.Console/EquipmentBorrowing.Console.csproj" Id="c8791473-032e-46ae-a617-ec4ab9dfd244" />
