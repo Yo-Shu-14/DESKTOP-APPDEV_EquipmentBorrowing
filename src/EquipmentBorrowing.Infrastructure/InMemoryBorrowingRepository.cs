@@ -6,7 +6,7 @@ using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Domain;
 namespace EquipmentBorrowing.Infrastructure;
 
-internal class InMemoryBorrowingRepository : IBorrowingRepository
+public class InMemoryBorrowingRepository : IBorrowingRepository
 {
     private readonly List<Borrowing> _borrowings = new();
 

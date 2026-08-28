@@ -1,10 +1,10 @@
-﻿using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Domain;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 using EquipmentBorrowing.Application.Interfaces;
+using EquipmentBorrowing.Domain;
 namespace EquipmentBorrowing.Application.Services;
 
 public class BorrowEquipmentService
@@ -60,6 +60,8 @@ public class BorrowEquipmentService
 
 
         var borrowing = new Borrowing(Guid.NewGuid(), student, equipment, DateTime.Now, expectedReturnDate, BorrowingStatus.Active);
+
+        equipment.MarkAsUnavailable();
 
         await _borrowingRepository.AddAsync(borrowing);
     }

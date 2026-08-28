@@ -8,7 +8,13 @@ namespace EquipmentBorrowing.Infrastructure;
 
 public class InMemoryEquipmentRepository : IEquipmentRepository
 {
-    private readonly List<Equipment> _equipment = new();
+    private readonly List<Equipment> _equipment;
+
+    public InMemoryEquipmentRepository(IEnumerable<Equipment> equipment)
+    {
+        _equipment = equipment.ToList();
+    }
+
 
     public Task<Equipment?> GetByIdAsync(Guid id)
     {
