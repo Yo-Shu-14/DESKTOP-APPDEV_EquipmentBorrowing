@@ -1,13 +1,14 @@
 EQUIPMENT BORROWING SYSTEM
 
 * Solution Structure
-1. domain 
-	- the EquipmentBorrowing.Domain contains the project's important concepts and rules
-	- It Contains:
-		student - represent student who borrows the equipment
-		equipment - the item that can be borrowed
-		borrowing - a borrowing record containing the student, equipment, dates, and status.
-		borrowingstatus - the status of the borrowing process, such as Active or Returned
+### 1. Domain
+
+- The `EquipmentBorrowing.Domain` contains the project's important concepts and rules.
+- It contains:
+  - `Student` – represents a student who borrows equipment.
+  - `Equipment` – the item that can be borrowed.
+  - `Borrowing` – a borrowing record containing the student, equipment, dates, and status.
+  - `BorrowingStatus` – the status of the borrowing process, such as Active or Returned.
 
 2. Application
 	- the EquipmentBorrowing.Application contains the business logic and use cases of the system
