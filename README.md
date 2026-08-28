@@ -197,3 +197,22 @@ The student is the primary actor who interacts with the Campus Equipment Borrowi
 | **Domain Objects Used**                 | `Student`, `Equipment`, `Borrowing`, `BorrowingStatus`                                    |
 | **Repository Interfaces Used**          | `IStudentRepository`, `IEquipmentRepository`, `IBorrowingRepository`                      |
 | **Infrastructure Implementations Used** | `InMemoryStudentRepository`, `InMemoryEquipmentRepository`, `InMemoryBorrowingRepository` |
+
+---
+
+## 5. Reflection
+
+### 1. Why should the application service depend on a repository interface instead of directly depending on a database implementation?
+
+The application service should depend on a repository interface because it separates the business logic from the specific data storage technology. This allows the application service to work with different repository implementations without changing the business logic.
+
+### 2. Which parts of your current solution could remain unchanged if SQLite were added later?
+
+
+### 3. Which project would eventually contain Avalonia Views?
+
+
+### 4. Should an Avalonia button directly execute database queries? Why or why not?
+
+
+### 5. What part of your implementation represents the actual business operation requested by the actor?
