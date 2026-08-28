@@ -74,3 +74,126 @@ EquipmentBorrowing.Console
 
   * It uses the Application services and Infrastructure repository implementations and provides their dependencies manually.
 * the EquipmentBorrowing.Domain does not depend on any other project, as it contains the core concepts and rules of the system.
+
+---
+
+## 3. Requirements and Use Case Analysis
+
+### A. Actors
+
+**Student**
+
+The student is the primary actor who interacts with the Campus Equipment Borrowing System. The student expects the system to allow them to borrow available equipment if they are authorized and have not reached the maximum number of active borrowings. The student may also return borrowed equipment.
+
+### B. Use Cases
+
+#### Use Case 1: Borrow Equipment
+
+| Item                 | Description                                                                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Use Case**         | Borrow Equipment                                                                                                                                                                      |
+| **Primary Actor**    | Student                                                                                                                                                                               |
+| **Preconditions**    | The student exists, is allowed to borrow equipment, the equipment exists and is available, and the student has not reached the maximum number of active borrowings.                   |
+| **Main Action**      | The student requests to borrow an available piece of equipment. The application validates the student, equipment, and borrowing rules, then creates a borrowing record.               |
+| **Expected Result**  | The borrowing is created successfully, and the equipment becomes unavailable.                                                                                                         |
+| **Possible Failure** | The student does not exist, is not allowed to borrow, the equipment does not exist, the equipment is unavailable, or the student has reached the maximum number of active borrowings. |
+
+#### Use Case 2: Return Equipment
+
+| Item                 | Description                                                                                   |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| **Use Case**         | Return Equipment                                                                              |
+| **Primary Actor**    | Student                                                                                       |
+| **Preconditions**    | An active borrowing record exists for the student and equipment.                              |
+| **Main Action**      | The student returns the borrowed equipment, and the application updates the borrowing status. |
+| **Expected Result**  | The borrowing is marked as returned and the equipment becomes available again.                |
+| **Possible Failure** | The borrowing record does not exist or the borrowing is already returned.                     |
+
+#### Use Case 3: Find Available Equipment
+
+| Item                 | Description                                                           |
+| -------------------- | --------------------------------------------------------------------- |
+| **Use Case**         | Find Available Equipment                                              |
+| **Primary Actor**    | Student                                                               |
+| **Preconditions**    | Equipment records are available in the system.                        |
+| **Main Action**      | The student requests a list of equipment that is currently available. |
+| **Expected Result**  | The system provides the available equipment.                          |
+| **Possible Failure** | No equipment is currently available.                                  |
+
+### C. Domain Concepts
+
+#### Student
+
+**Information:**
+
+* Student ID
+* Student name
+* Whether the student is currently allowed to borrow
+
+**Rules or State:**
+
+* A student must be allowed to borrow equipment.
+* A student must not exceed the maximum number of active borrowings.
+
+**Not the responsibility of Student:**
+
+* Storing equipment records
+* Creating repository connections
+* Coordinating the entire borrowing operation
+
+#### Equipment
+
+**Information:**
+
+* Equipment ID
+* Equipment name
+* Equipment description
+* Availability status
+
+**Rules or State:**
+
+* Equipment can be available or unavailable.
+* Equipment becomes unavailable when successfully borrowed.
+* Equipment becomes available again when returned.
+
+**Not the responsibility of Equipment:**
+
+* Managing students
+* Creating borrowing records
+* Accessing repositories or databases
+
+#### Borrowing
+
+**Information:**
+
+* Student
+* Equipment
+* Date borrowed
+* Expected return date
+* Current borrowing status
+
+**Rules or State:**
+
+* A borrowing has a current status such as Active or Returned.
+* A returned borrowing should no longer represent an active borrowing.
+
+**Not the responsibility of Borrowing:**
+
+* Retrieving students or equipment from repositories
+* Managing database connections
+* Coordinating the complete application use case
+
+---
+
+## 4. Use Case Mapping
+
+### Borrow Equipment
+
+| Item                                    | Implementation                                                                            |
+| --------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Actor**                               | Student                                                                                   |
+| **Use Case**                            | Borrow Equipment                                                                          |
+| **Application Service**                 | `BorrowEquipmentService`                                                                  |
+| **Domain Objects Used**                 | `Student`, `Equipment`, `Borrowing`, `BorrowingStatus`                                    |
+| **Repository Interfaces Used**          | `IStudentRepository`, `IEquipmentRepository`, `IBorrowingRepository`                      |
+| **Infrastructure Implementations Used** | `InMemoryStudentRepository`, `InMemoryEquipmentRepository`, `InMemoryBorrowingRepository` |
