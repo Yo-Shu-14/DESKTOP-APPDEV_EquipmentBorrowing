@@ -1,7 +1,14 @@
-﻿namespace Desktop
-{
-    public class A
-    {
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
 
+namespace EquipmentBorrowing.Desktop
+{
+    public partial class App : UserControl
+    {
+        public App()
+        {
+            InitializeComponent();
+        }
     }
 }
