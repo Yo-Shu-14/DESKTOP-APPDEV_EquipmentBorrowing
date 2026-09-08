@@ -1,14 +1,23 @@
 using Avalonia;
-using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace EquipmentBorrowing.Desktop
+namespace EquipmentBorrowing.Desktop;
+
+public partial class App : Application
 {
-    public partial class App : UserControl
+    public override void Initialize()
     {
-        public App()
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            InitializeComponent();
+            desktop.MainWindow = new MainWindow();
         }
+
+        base.OnFrameworkInitializationCompleted();
     }
 }
