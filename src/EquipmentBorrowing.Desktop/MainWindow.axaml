@@ -1,0 +1,15 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="EquipmentBorrowing.Desktop.MainWindow"
+    Width="800"
+    Height="600"
+    Title="Equipment Borrowing">
+
+    <TextBlock
+        Text="Equipment Borrowing System"
+        FontSize="28"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"/>
+
+</Window>
