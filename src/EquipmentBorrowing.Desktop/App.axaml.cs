@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using EquipmentBorrowing.Application.Interfaces;
@@ -7,7 +6,6 @@ using EquipmentBorrowing.Desktop.ViewModels;
 using EquipmentBorrowing.Domain;
 using EquipmentBorrowing.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.WebSockets;
 
 namespace EquipmentBorrowing.Desktop;
 
@@ -18,7 +16,7 @@ public partial class App : Avalonia.Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -56,6 +54,7 @@ public partial class App : Avalonia.Application
             var serviceProvider = services.BuildServiceProvider();
 
             var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
+            await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
             desktop.MainWindow = new MainWindow(equipmentViewModel);
 
             base.OnFrameworkInitializationCompleted();

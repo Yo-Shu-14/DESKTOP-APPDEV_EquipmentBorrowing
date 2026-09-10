@@ -16,9 +16,11 @@
             Text="Available equipment"
             FontSize="16"/>
 
+
         <ItemsControl ItemsSource="{Binding EquipmentList}">
 
             <ItemsControl.ItemTemplate>
+
                 <DataTemplate>
 
                     <Border
@@ -30,6 +32,10 @@
                         <Grid ColumnDefinitions="*,Auto">
 
                             <StackPanel>
+
+                                <TextBlock
+                                    Text="{Binding EquipmentId}"
+                                    FontSize="12"/>
 
                                 <TextBlock
                                     Text="{Binding Name}"

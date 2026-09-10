@@ -1,10 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EquipmentBorrowing.Application.Services;
-using System.Security.Cryptography;
 using EquipmentBorrowing.Domain;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;

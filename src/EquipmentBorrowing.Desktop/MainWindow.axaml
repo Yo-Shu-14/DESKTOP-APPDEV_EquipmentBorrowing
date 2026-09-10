@@ -1,15 +1,31 @@
 <Window
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:views="using:EquipmentBorrowing.Desktop.Views"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
     x:Class="EquipmentBorrowing.Desktop.MainWindow"
-    Width="800"
+    x:DataType="viewmodels:EquipmentViewModel"
+    Width="900"
     Height="600"
-    Title="Equipment Borrowing">
+    Title="Equipment Borrowing System">
 
-    <TextBlock
-        Text="Equipment Borrowing System"
-        FontSize="28"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"/>
+    <Grid ColumnDefinitions = "200,*">
+    
+    <StackPanel Grid.Column="0" Margin="20" Spacing="15">
+    <TextBlock Text="Equipment" FontSize="20" FontWeight="Bold"/>
+    <Button Content="Equipment"/>
+    <Button Content="Active Borrowings"/>
+    </StackPanel>
+
+    <Border Grid.Column="1" Margin="10">
+    <views:EquipmentView  DataContext="{Binding}"/>
+
+    
+
+    
+    </Border>
+    
+    </Grid>
+
 
 </Window>
