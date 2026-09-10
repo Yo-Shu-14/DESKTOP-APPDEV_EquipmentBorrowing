@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Application.Services;
+using EquipmentBorrowing.Desktop.ViewModels;
 using EquipmentBorrowing.Domain;
 using EquipmentBorrowing.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,11 +51,12 @@ public partial class App : Avalonia.Application
             services.AddTransient<BorrowEquipmentService>();
             services.AddTransient<ReturnEquipmentService>();
             services.AddTransient<CheckAvailableEquipmentService>();
+            services.AddTransient<EquipmentViewModel>();
 
             var serviceProvider = services.BuildServiceProvider();
 
-
-            desktop.MainWindow = new MainWindow();
+            var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
+            desktop.MainWindow = new MainWindow(equipmentViewModel);
 
             base.OnFrameworkInitializationCompleted();
         }
