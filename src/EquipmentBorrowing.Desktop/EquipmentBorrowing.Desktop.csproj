@@ -8,6 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.1.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />	
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EquipmentBorrowing.Application\EquipmentBorrowing.Application.csproj" />
+    <ProjectReference Include="..\EquipmentBorrowing.Infrastructure\EquipmentBorrowing.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

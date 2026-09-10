@@ -1,57 +1,41 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace Desktop.ViewModels;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using EquipmentBorrowing.Application.Services;
+using System.Security.Cryptography;
+using EquipmentBorrowing.Domain;
 
-public class EquipmentViewModel
+namespace EquipmentBorrowing.Desktop.ViewModels;
+
+public partial class EquipmentViewModel : ObservableObject
 {
-    public ObservableCollection<EquipmentItem> EquipmentList { get; }
+    private readonly CheckAvailableEquipmentService _checkAvailableEquipmentService;
 
-    public ICommand BorrowCommand { get; }
+    public ObservableCollection<Equipment> EquipmentList { get; } = new();
 
-    public EquipmentViewModel()
+  
+
+
+
+    public EquipmentViewModel(CheckAvailableEquipmentService checkAvailableEquipmentService)
     {
-        EquipmentList = new ObservableCollection<EquipmentItem>
+        _checkAvailableEquipmentService = checkAvailableEquipmentService;
+    }
+
+    [RelayCommand]
+    private async Task LoadEquipmentAsync() 
+    {
+        var equipment  = await _checkAvailableEquipmentService.CheckAvailableEquipmentAsync();
+
+        EquipmentList.Clear();
+
+        foreach (var item in equipment)
         {
-            new EquipmentItem
-            {
-                Id = 1,
-                Name = "Laptop",
-                IsAvailable = true
-            },
+            EquipmentList.Add(item);
+        }
 
-            new EquipmentItem
-            {
-                Id = 2,
-                Name = "Projector",
-                IsAvailable = true
-            },
-
-            new EquipmentItem
-            {
-                Id = 3,
-                Name = "Camera",
-                IsAvailable = false
-            }
-        };
-
-        BorrowCommand = new RelayCommand(Borrow);
-    }
-
-    private void Borrow(object? parameter)
-    {
-        if (parameter is not EquipmentItem equipment)
-            return;
-
-        equipment.IsAvailable = false;
     }
 }
 
-public class EquipmentItem
-{
-    public int Id { get; set; }
-
-    public string Name { get; set; } = "";
-
-    public bool IsAvailable { get; set; }
-}

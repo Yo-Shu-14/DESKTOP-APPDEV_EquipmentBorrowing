@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using EquipmentBorrowing.Desktop.ViewModels;
 
 namespace EquipmentBorrowing.Desktop;
 

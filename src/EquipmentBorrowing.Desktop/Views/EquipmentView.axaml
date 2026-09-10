@@ -1,7 +1,7 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:viewmodels="using:Desktop.ViewModels"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
     x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
     x:DataType="viewmodels:EquipmentViewModel">
 
@@ -19,7 +19,7 @@
         <ItemsControl ItemsSource="{Binding EquipmentList}">
 
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="viewmodels:EquipmentItem">
+                <DataTemplate>
 
                     <Border
                         BorderBrush="Gray"
@@ -37,22 +37,13 @@
                                     FontWeight="Bold"/>
 
                                 <TextBlock
-                                    Text="Available"
-                                    IsVisible="{Binding IsAvailable}"/>
+                                    Text="{Binding Description}"/>
+                           
 
                                 <TextBlock
-                                    Text="Borrowed"
-                                    IsVisible="{Binding !IsAvailable}"/>
+                                    Text="{Binding IsAvailable}"/>
 
                             </StackPanel>
-
-                            <Button
-                                Grid.Column="1"
-                                Content="Borrow"
-                                Command="{Binding $parent[ItemsControl].DataContext.BorrowCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsAvailable}"
-                                Padding="20,8"/>
 
                         </Grid>
 
