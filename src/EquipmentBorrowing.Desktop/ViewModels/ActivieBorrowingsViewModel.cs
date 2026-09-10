@@ -1,44 +1,46 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using EquipmentBorrowing.Application.Services;
+using EquipmentBorrowing.Application.Interfaces;
+using EquipmentBorrowing.Domain;
 
-namespace Desktop.ViewModels;
 
-public class ActiveBorrowingsViewModel
+namespace EquipmentBorrowing.Desktop.ViewModels;
+
+public partial class ActiveBorrowingsViewModel : ObservableObject
 {
     public ObservableCollection<BorrowingItem> ActiveBorrowings { get; }
 
-    public ICommand ReturnCommand { get; }
 
-    public ActiveBorrowingsViewModel()
+    private readonly IBorrowingRepository _borrowingRepository;
+    private readonly ReturnEquipmentService _returnEquipmentService;
+
+
+
+
+    public ActiveBorrowingsViewModel(IBorrowingRepository borrowingRepository, ReturnEquipmentService returnEquipmentService)
     {
-        ActiveBorrowings = new ObservableCollection<BorrowingItem>
-        {
-            new BorrowingItem
-            {
-                Id = 1,
-                EquipmentName = "Laptop",
-                BorrowerName = "Juan Dela Cruz",
-                BorrowedAt = DateTime.Now
-            },
-
-            new BorrowingItem
-            {
-                Id = 2,
-                EquipmentName = "Projector",
-                BorrowerName = "Maria Santos",
-                BorrowedAt = DateTime.Now
-            }
-        };
-
-        ReturnCommand = new RelayCommand(Return);
+        _borrowingRepository = borrowingRepository;
+        _returnEquipmentService= returnEquipmentService;
     }
 
-    private void Return(object? parameter)
-    {
-        if (parameter is not BorrowingItem borrowing)
-            return;
 
-        ActiveBorrowings.Remove(borrowing);
+
+    [RelayCommand]
+    private async Task LoadBorrowingsAsync() { 
+    
+    }
+
+
+
+    [RelayCommand]
+    private async Task ReturnAsync(Borrowing borrowing)
+    {
+        await _returnEquipmentService.ReturnEquipmentAsync(
+            borrowing.BorrowingId);
+
+        await LoadBorrowingsAsync();
     }
 }
 
