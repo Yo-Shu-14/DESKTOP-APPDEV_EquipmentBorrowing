@@ -10,7 +10,7 @@ namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class ActiveBorrowingsViewModel : ObservableObject
 {
-    public ObservableCollection<BorrowingItem> ActiveBorrowings { get; }
+    public ObservableCollection<Borrowing> ActiveBorrowings { get; } = new();
 
 
     private readonly IBorrowingRepository _borrowingRepository;
@@ -28,8 +28,15 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
 
 
     [RelayCommand]
-    private async Task LoadBorrowingsAsync() { 
-    
+    private async Task LoadBorrowingsAsync() {
+        var borrowings = await _borrowingRepository.GetActiveByStudentIdAsync(1);
+
+        ActiveBorrowings.Clear();
+
+        foreach (var borrowing in borrowings) {
+            ActiveBorrowings.Add(borrowing);
+        }
+        
     }
 
 
@@ -44,13 +51,3 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
     }
 }
 
-public class BorrowingItem
-{
-    public int Id { get; set; }
-
-    public string EquipmentName { get; set; } = "";
-
-    public string BorrowerName { get; set; } = "";
-
-    public DateTime BorrowedAt { get; set; }
-}

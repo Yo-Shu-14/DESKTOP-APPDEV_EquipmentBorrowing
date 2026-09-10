@@ -1,9 +1,10 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:viewmodels="using:Desktop.ViewModels"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
     x:Class="EquipmentBorrowing.Desktop.Views.ActiveBorrowingsView"
     x:DataType="viewmodels:ActiveBorrowingsViewModel"
+    xmlns:domain="using:EquipmentBorrowing.Domain"
     >
 
     <StackPanel Margin="30" Spacing="20">
@@ -20,7 +21,7 @@
         <ItemsControl ItemsSource="{Binding ActiveBorrowings}">
 
             <ItemsControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="domain:Borrowing">
 
                     <Border
                         BorderBrush="Gray"
@@ -32,17 +33,17 @@
 
                             <StackPanel>
                                 <TextBlock
-                                    Text="{Binding EquipmentName}"
+                                    Text="{Binding Equipment.Name}"
                                     FontSize="18"
                                     FontWeight="Bold"/>
 
                                 <TextBlock
-                                    Text="{Binding BorrowerName}"/>
+                                    Text="{Binding Student.Name}"/>
                             </StackPanel>
 
                             <TextBlock
                                 Grid.Column="1"
-                                Text="{Binding BorrowedAt}"
+                                Text="{Binding DateBorrowed}"
                                 VerticalAlignment="Center"/>
 
                             <Button
