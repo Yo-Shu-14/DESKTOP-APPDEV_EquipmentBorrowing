@@ -23,5 +23,10 @@ public class InMemoryStudentRepository : IStudentRepository
 
         return Task.FromResult(student);
     }
+
+    public Task<IReadOnlyList<Student>> GetAllAsync()
+    {
+        return Task.FromResult<IReadOnlyList<Student>>(_students);
+    }
 }
 

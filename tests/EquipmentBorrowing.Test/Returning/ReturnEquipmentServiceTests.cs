@@ -128,6 +128,12 @@ public class ReturnEquipmentServiceTests
                 activeBorrowings);
         }
 
+        public Task<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>> GetAllActiveAsync()
+        {
+            var active = Borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
+            return Task.FromResult<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>>(active);
+        }
+
         public Task<EquipmentBorrowing.Domain.Borrowing?> GetByIdAsync(Guid borrowingId)
         {
             var borrowing = Borrowings

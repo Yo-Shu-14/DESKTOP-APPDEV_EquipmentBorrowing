@@ -12,6 +12,8 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
 {
     public ObservableCollection<Borrowing> ActiveBorrowings { get; } = new();
 
+    [ObservableProperty]
+    private string feedbackMessage = string.Empty;
 
     private readonly IBorrowingRepository _borrowingRepository;
     private readonly ReturnEquipmentService _returnEquipmentService;
@@ -29,7 +31,7 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
 
     [RelayCommand]
     private async Task LoadBorrowingsAsync() {
-        var borrowings = await _borrowingRepository.GetActiveByStudentIdAsync(1);
+        var borrowings = await _borrowingRepository.GetAllActiveAsync();
 
         ActiveBorrowings.Clear();
 
@@ -44,10 +46,19 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ReturnAsync(Borrowing borrowing)
     {
-        await _returnEquipmentService.ReturnEquipmentAsync(
-            borrowing.BorrowingId);
+        try
+        {
+            await _returnEquipmentService.ReturnEquipmentAsync(borrowing.BorrowingId);
+            FeedbackMessage = "Equipment returned successfully.";
+            await LoadBorrowingsAsync();
+        }
+        catch (Exception ex)
+        {
+            FeedbackMessage = ex.Message;
+        }
 
-        await LoadBorrowingsAsync();
+
+
     }
 }
 

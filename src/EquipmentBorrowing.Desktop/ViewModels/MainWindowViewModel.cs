@@ -3,29 +3,55 @@ using System.Collections.Generic;
 using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EquipmentBorrowing.Desktop.Views;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _currentView = "Equipment";
+    private object? currentView;
+  
 
-    public string CurrentView
+    private readonly EquipmentViewModel _equipmentViewModel;
+    private readonly ActiveBorrowingsViewModel _activeBorrowingsViewModel;
+
+
+
+    public MainWindowViewModel(
+        EquipmentViewModel equipmentViewModel,
+        ActiveBorrowingsViewModel activeBorrowingsViewModel)
     {
-        get => _currentView;
-        set => SetProperty(ref _currentView, value);
+        _equipmentViewModel = equipmentViewModel;
+        _activeBorrowingsViewModel = activeBorrowingsViewModel;
+
+        CurrentView = new EquipmentView
+        {
+            DataContext = _equipmentViewModel
+        };
+    }
+
+
+    [RelayCommand]
+    private async Task ShowEquipment()
+    {
+        await _equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
+
+        CurrentView = new EquipmentView
+        {
+            DataContext = _equipmentViewModel
+        };
     }
 
     [RelayCommand]
-    private void ShowEquipment()
+    private async Task ShowActiveBorrowings()
     {
-        CurrentView = "Equipment";
+        await _activeBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
+
+        CurrentView = new ActiveBorrowingsView
+        {
+            DataContext = _activeBorrowingsViewModel
+        };
     }
 
-    [RelayCommand]
-    private void ShowActiveBorrowings()
-    {
-        CurrentView = "ActiveBorrowings";
-    }
 }

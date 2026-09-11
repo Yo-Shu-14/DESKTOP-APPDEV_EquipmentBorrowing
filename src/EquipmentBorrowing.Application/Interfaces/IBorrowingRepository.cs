@@ -15,4 +15,6 @@ public interface IBorrowingRepository
     Task AddAsync(Borrowing borrowing);
 
     Task UpdateAsync(Borrowing borrowing);
+
+    Task<IReadOnlyList<Borrowing>> GetAllActiveAsync();
 }

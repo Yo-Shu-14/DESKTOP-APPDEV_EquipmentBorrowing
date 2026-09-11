@@ -40,4 +40,10 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
     {
         return Task.CompletedTask;
     }
+
+    public Task<IReadOnlyList<Borrowing>> GetAllActiveAsync()
+    {
+        var active = _borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
+        return Task.FromResult<IReadOnlyList<Borrowing>>(active);
+    }
 }

@@ -23,23 +23,49 @@ public partial class App : Avalonia.Application
             var services = new ServiceCollection();
 
 
-            var studenet = new Student(
-                1, "jang kaloy", true
-                );
+            var student1 = new Student(1, "jang kaloy", true);
+            var student2 = new Student(2, "emji jid", true);
 
-            var equipment = new Equipment(
-                Guid.NewGuid(), "Laptop","Lab Laptop" , true
-                );
+
+            var equipment1 = new Equipment(
+                Guid.NewGuid(),"Laptop","Lab Laptop",true);
+
+            var equipment2 = new Equipment(
+                Guid.NewGuid(),
+                "Projector",
+                "Epson Projector",
+                true
+            );
+
+            var equipment3 = new Equipment(
+                Guid.NewGuid(),
+                "Camera",
+                "Digital Camera",
+                true
+            );
+
+            var equipment4 = new Equipment(
+                Guid.NewGuid(),
+                "Microphone",
+                "Wireless Microphone",
+                true
+            );
 
 
             //repo 
             services.AddSingleton<IStudentRepository>(
-                new InMemoryStudentRepository(new[] { studenet })
+                new InMemoryStudentRepository(new[] { student1, student2 })
                 );
 
             services.AddSingleton<IEquipmentRepository>(
-                new InMemoryEquipmentRepository(new[] { equipment })
-                );
+                new InMemoryEquipmentRepository(new[]
+                {
+                    equipment1,
+                    equipment2,
+                    equipment3,
+                    equipment4
+                })
+            );
 
             services.AddSingleton<IBorrowingRepository>(
                 new InMemoryBorrowingRepository());
@@ -50,23 +76,24 @@ public partial class App : Avalonia.Application
             services.AddTransient<ReturnEquipmentService>();
             services.AddTransient<CheckAvailableEquipmentService>();
             services.AddTransient<EquipmentViewModel>();
+            services.AddSingleton<EquipmentViewModel>();
             services.AddTransient<ActiveBorrowingsViewModel>();
             services.AddTransient<MainWindowViewModel>();
 
             var serviceProvider = services.BuildServiceProvider();
 
             var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
-
             await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
+
             var activeBorrowingsViewModel = serviceProvider.GetRequiredService<ActiveBorrowingsViewModel>();
             await activeBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
+
             var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
 
 
 
             desktop.MainWindow = new MainWindow( mainWindowViewModel);
-
-            base.OnFrameworkInitializationCompleted();
+            
         }
 
         base.OnFrameworkInitializationCompleted();

@@ -2,26 +2,47 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
-    x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
     xmlns:domain="using:EquipmentBorrowing.Domain"
+    x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
     x:DataType="viewmodels:EquipmentViewModel">
 
-
-    <StackPanel Margin="30" Spacing="20">
+    <Grid
+        Margin="30"
+        RowDefinitions="Auto,Auto,Auto,*">
 
         <TextBlock
+            Grid.Row="0"
             Text="Equipment"
             FontSize="28"
             FontWeight="Bold"/>
 
         <TextBlock
+            Grid.Row="1"
             Text="Available equipment"
-            FontSize="16"/>
+            FontSize="16"
+            Margin="0,5,0,0"/>
 
+        <StackPanel
+            Grid.Row="2"
+            Spacing="5"
+            Margin="0,10,0,10">
 
-        <StackPanel Spacing="5">
             <TextBlock Text="Expected Return Date"/>
-            <DatePicker SelectedDate="{Binding ExpectedReturnDate}"/>
+
+            <TextBlock Text="Borrowing Student"/>
+
+            <ComboBox
+                 ItemsSource="{Binding StudentList}"
+                 SelectedItem="{Binding SelectedStudent}">
+                     <ComboBox.ItemTemplate>
+                     <DataTemplate x:DataType="domain:Student">
+                          <TextBlock Text="{Binding Name}"/>
+                     </DataTemplate>
+                 </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <DatePicker
+                SelectedDate="{Binding ExpectedReturnDate}"/>
 
             <TextBlock
                 Text="{Binding FeedbackMessage}"
@@ -30,22 +51,23 @@
 
         </StackPanel>
 
+        <!-- This row takes the remaining space -->
+        <ScrollViewer
+            Grid.Row="3"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled">
 
+            <ItemsControl ItemsSource="{Binding EquipmentList}">
 
+                <ItemsControl.ItemTemplate>
 
-        <ItemsControl ItemsSource="{Binding EquipmentList}">
+                    <DataTemplate x:DataType="domain:Equipment">
 
-            <ItemsControl.ItemTemplate>
-
-                 <DataTemplate x:DataType="domain:Equipment">
-
-                    <Border
-                        BorderBrush="Gray"
-                        BorderThickness="1"
-                        Padding="15"
-                        Margin="0,5">
-
-                        
+                        <Border
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Padding="15"
+                            Margin="0,5">
 
                             <StackPanel>
 
@@ -60,7 +82,6 @@
 
                                 <TextBlock
                                     Text="{Binding Description}"/>
-                           
 
                                 <TextBlock
                                     Text="{Binding IsAvailable}"/>
@@ -68,19 +89,20 @@
                                 <Button
                                     Content="Borrow"
                                     Command="{Binding $parent[UserControl].DataContext.BorrowCommand}"
-                                    CommandParameter="{Binding}" />
+                                    CommandParameter="{Binding}"/>
 
                             </StackPanel>
 
-                      
+                        </Border>
 
-                    </Border>
+                    </DataTemplate>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
+                </ItemsControl.ItemTemplate>
 
-        </ItemsControl>
+            </ItemsControl>
 
-    </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
 
 </UserControl>

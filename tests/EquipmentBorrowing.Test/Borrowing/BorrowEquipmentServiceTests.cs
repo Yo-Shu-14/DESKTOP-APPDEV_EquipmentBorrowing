@@ -249,6 +249,15 @@ public class BorrowEquipmentServiceTests
         {
             return Task.FromResult(_student);
         }
+
+        public Task<IReadOnlyList<Student>> GetAllAsync()
+        {
+            var students = _student is null
+                ? new List<Student>()
+                : new List<Student> { _student };
+
+            return Task.FromResult<IReadOnlyList<Student>>(students);
+        }
     }
 
 
@@ -322,6 +331,12 @@ public class BorrowEquipmentServiceTests
         public Task UpdateAsync(DomainBorrowing borrowing)
         {
             return Task.CompletedTask;
+        }
+
+        public Task<IReadOnlyList<DomainBorrowing>> GetAllActiveAsync()
+        {
+            var active = Borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
+            return Task.FromResult<IReadOnlyList<DomainBorrowing>>(active);
         }
     }
 }

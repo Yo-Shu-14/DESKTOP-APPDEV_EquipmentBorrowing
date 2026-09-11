@@ -1,10 +1,10 @@
-﻿using System.Collections.ObjectModel;
-
-using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Controls.Primitives;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
-using Avalonia.Controls.Primitives;
+using System.Collections.ObjectModel;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
@@ -12,8 +12,13 @@ public partial class EquipmentViewModel : ObservableObject
 {
     private readonly CheckAvailableEquipmentService _checkAvailableEquipmentService;
     private readonly BorrowEquipmentService _borrowEquipmentService;
+    private readonly IStudentRepository _studentRepository;
 
     public ObservableCollection<Equipment> EquipmentList { get; } = new();
+    public ObservableCollection<Student> StudentList { get; } = new();
+
+    [ObservableProperty]
+    private Student? selectedStudent;
 
 
 
@@ -26,22 +31,31 @@ public partial class EquipmentViewModel : ObservableObject
     public string feedbackMessage = string.Empty;
 
 
-    public EquipmentViewModel(CheckAvailableEquipmentService checkAvailableEquipmentService, BorrowEquipmentService borrowEquipmentService)
+    public EquipmentViewModel(CheckAvailableEquipmentService checkAvailableEquipmentService, BorrowEquipmentService borrowEquipmentService, IStudentRepository studentRepository)
     {
         _checkAvailableEquipmentService = checkAvailableEquipmentService;
         _borrowEquipmentService = borrowEquipmentService;
+        _studentRepository = studentRepository;
     }
+
+
 
     [RelayCommand]
     private async Task LoadEquipmentAsync() 
     {
         var equipment  = await _checkAvailableEquipmentService.CheckAvailableEquipmentAsync();
-
         EquipmentList.Clear();
-
         foreach (var item in equipment)
         {
             EquipmentList.Add(item);
+        }
+
+        if (StudentList.Count == 0)
+        {
+            var students = await _studentRepository.GetAllAsync();
+            foreach (var s in students)
+                StudentList.Add(s);
+            SelectedStudent = StudentList.FirstOrDefault();
         }
 
     }
@@ -54,9 +68,23 @@ public partial class EquipmentViewModel : ObservableObject
     {
         SelectedEquipment = equipment;
 
-        if (SelectedEquipment == null)
+        if (StudentList.Count == 0)
         {
-            FeedbackMessage = "Please select an expected retuen date!";
+            var students = await _studentRepository.GetAllAsync();
+            foreach (var s in students)
+                StudentList.Add(s);
+            SelectedStudent = StudentList.FirstOrDefault();
+        }
+
+        if (ExpectedReturnDate == null)
+        {
+            FeedbackMessage = "Please select an expected return date!";
+            return;
+        }
+
+        if (ExpectedReturnDate.Value.Date < DateTimeOffset.Now.Date)
+        {
+            FeedbackMessage = "Expected return date cannot be in the past.";
             return;
         }
 
@@ -69,7 +97,7 @@ public partial class EquipmentViewModel : ObservableObject
                 ExpectedReturnDate.Value.DateTime
                 );
 
-            FeedbackMessage = "Successful Boorowing";
+            FeedbackMessage = "Successful Borrowing";
 
             await LoadEquipmentAsync();
 
