@@ -54,9 +54,9 @@ public partial class EquipmentViewModel : ObservableObject
     {
         SelectedEquipment = equipment;
 
-        if (SelectedEquipment == null)
+        if (ExpectedReturnDate == null)
         {
-            FeedbackMessage = "Please select an expected retuen date!";
+            FeedbackMessage = "Please select an expected return date!";
             return;
         }
 
@@ -69,7 +69,7 @@ public partial class EquipmentViewModel : ObservableObject
                 ExpectedReturnDate.Value.DateTime
                 );
 
-            FeedbackMessage = "Successful Boorowing";
+            FeedbackMessage = "Successful Borrowing";
 
             await LoadEquipmentAsync();
 

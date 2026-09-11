@@ -49,11 +49,16 @@ public partial class App : Avalonia.Application
             services.AddTransient<BorrowEquipmentService>();
             services.AddTransient<ReturnEquipmentService>();
             services.AddTransient<CheckAvailableEquipmentService>();
-            services.AddTransient<EquipmentViewModel>();
+            services.AddSingleton<EquipmentViewModel>();
             services.AddTransient<ActiveBorrowingsViewModel>();
             services.AddTransient<MainWindowViewModel>();
 
             var serviceProvider = services.BuildServiceProvider();
+
+            var equipmentViewModel =
+            serviceProvider.GetRequiredService<EquipmentViewModel>();
+
+            await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
 
             var mainWindowViewModel =
                 serviceProvider.GetRequiredService<MainWindowViewModel>();
