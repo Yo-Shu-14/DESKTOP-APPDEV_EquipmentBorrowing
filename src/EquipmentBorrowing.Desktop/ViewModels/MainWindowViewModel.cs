@@ -52,6 +52,8 @@ public partial class MainWindowViewModel : ObservableObject
         {
             DataContext = _activeBorrowingsViewModel
         };
+
+        _ = _equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
     }
 
 }

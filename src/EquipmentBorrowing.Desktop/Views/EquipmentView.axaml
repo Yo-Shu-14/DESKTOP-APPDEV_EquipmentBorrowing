@@ -25,7 +25,7 @@
             Spacing="5"
             Margin="0,10,0,10">
 
-            <TextBlock Classes="formLabel" Text="Expected Return Date"/>
+            
 
             <TextBlock Classes="formLabel" Text="Borrowing Student"/>
 
@@ -39,6 +39,8 @@
                      </DataTemplate>
                  </ComboBox.ItemTemplate>
             </ComboBox>
+
+            <TextBlock Classes="formLabel" Text="Expected Return Date"/>
 
             <DatePicker
                 SelectedDate="{Binding ExpectedReturnDate}"/>

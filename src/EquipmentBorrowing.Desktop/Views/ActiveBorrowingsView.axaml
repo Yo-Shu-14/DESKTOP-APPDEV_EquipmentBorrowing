@@ -55,6 +55,8 @@
                                     Text="{Binding BorrowingId}"
                                     FontSize="12"/>
 
+
+
                                 <TextBlock
                                     Text="{Binding Equipment.Name}"
                                     FontSize="18"
@@ -62,6 +64,10 @@
 
                                 <TextBlock
                                     Text="{Binding Equipment.Description}"/>
+
+                                <TextBlock
+                                    Text="{Binding Student.Name, StringFormat='Borrowed by: {0}'}"
+                                    FontWeight="SemiBold"/>
 
                                 <TextBlock
                                     Text="{Binding DateBorrowed, StringFormat='Borrowed: {0:MMM dd, yyyy}'}"/>
