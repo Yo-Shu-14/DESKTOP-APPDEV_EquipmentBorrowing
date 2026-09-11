@@ -12,7 +12,7 @@
     <Grid ColumnDefinitions = "200,*">
     
     <StackPanel Grid.Column="0" Margin="20" Spacing="15">
-    <TextBlock Text="Equipment" FontSize="20" FontWeight="Bold"/>
+    <TextBlock Classes="sidebarTitle" Text="Equipment"/>
     <Button Content="Equipment" Command="{Binding ShowEquipmentCommand}"/>
     <Button Content="Active Borrowings" Command="{Binding ShowActiveBorrowingsCommand}"/>
 

@@ -11,25 +11,24 @@
         RowDefinitions="Auto,Auto,Auto,*">
 
         <TextBlock
-            Grid.Row="0"
-            Text="Equipment"
-            FontSize="28"
-            FontWeight="Bold"/>
+    Grid.Row="0"
+    Classes="title"
+    Text="Equipment"/>
 
-        <TextBlock
-            Grid.Row="1"
-            Text="Available equipment"
-            FontSize="16"
-            Margin="0,5,0,0"/>
+<TextBlock
+    Grid.Row="1"
+    Classes="subheading"
+    Text="Available equipment"/>
 
         <StackPanel
             Grid.Row="2"
             Spacing="5"
             Margin="0,10,0,10">
 
-            <TextBlock Text="Expected Return Date"/>
+            <TextBlock Classes="formLabel" Text="Expected Return Date"/>
 
-            <TextBlock Text="Borrowing Student"/>
+            <TextBlock Classes="formLabel" Text="Borrowing Student"/>
+
 
             <ComboBox
                  ItemsSource="{Binding StudentList}"
@@ -45,9 +44,8 @@
                 SelectedDate="{Binding ExpectedReturnDate}"/>
 
             <TextBlock
-                Text="{Binding FeedbackMessage}"
-                FontSize="14"
-                Margin="0,5"/>
+    Classes="feedback"
+    Text="{Binding FeedbackMessage}"/>
 
         </StackPanel>
 
@@ -63,11 +61,7 @@
 
                     <DataTemplate x:DataType="domain:Equipment">
 
-                        <Border
-                            BorderBrush="Gray"
-                            BorderThickness="1"
-                            Padding="15"
-                            Margin="0,5">
+                        <Border Classes="card">
 
                             <StackPanel>
 
