@@ -226,6 +226,8 @@ The Application use case or service represents the actual business operation req
 
 ---
 
+## Avalonian UI and MVVM
+
 ## 1. Desktop Project
 
 Explain the responsibility of EquipmentBorrowing.Desktop and how it interacts with the existing projects.
