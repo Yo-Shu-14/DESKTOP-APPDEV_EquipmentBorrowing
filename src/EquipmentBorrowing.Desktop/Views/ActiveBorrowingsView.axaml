@@ -2,10 +2,9 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
-    x:Class="EquipmentBorrowing.Desktop.Views.ActiveBorrowingsView"
-    x:DataType="viewmodels:ActiveBorrowingsViewModel"
     xmlns:domain="using:EquipmentBorrowing.Domain"
-    >
+    x:Class="EquipmentBorrowing.Desktop.Views.ActiveBorrowingsView"
+    x:DataType="viewmodels:ActiveBorrowingsViewModel">
 
     <StackPanel Margin="30" Spacing="20">
 
@@ -15,13 +14,19 @@
             FontWeight="Bold"/>
 
         <TextBlock
-            Text="Currently borrowed equipment"
+            Text="Equipment currently borrowed"
             FontSize="16"/>
+
+        <Button
+            Content="Refresh"
+            Command="{Binding LoadBorrowingsCommand}"
+            HorizontalAlignment="Left"/>
 
         <ItemsControl ItemsSource="{Binding ActiveBorrowings}">
 
             <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="domain:Borrowing">
+
+                <DataTemplate x:DataType="domain:Borrowing">
 
                     <Border
                         BorderBrush="Gray"
@@ -29,35 +34,42 @@
                         Padding="15"
                         Margin="0,5">
 
-                        <Grid ColumnDefinitions="*,*,Auto">
-
-                            <StackPanel>
-                                <TextBlock
-                                    Text="{Binding Equipment.Name}"
-                                    FontSize="18"
-                                    FontWeight="Bold"/>
-
-                                <TextBlock
-                                    Text="{Binding Student.Name}"/>
-                            </StackPanel>
+                        <StackPanel Spacing="5">
 
                             <TextBlock
-                                Grid.Column="1"
-                                Text="{Binding DateBorrowed}"
-                                VerticalAlignment="Center"/>
+                                Text="{Binding BorrowingId}"
+                                FontSize="12"/>
+
+                            <TextBlock
+                                Text="{Binding Equipment.Name}"
+                                FontSize="18"
+                                FontWeight="Bold"/>
+
+                            <TextBlock
+                                Text="{Binding Equipment.Description}"/>
+
+                            <TextBlock
+                                Text="{Binding DateBorrowed, StringFormat='Borrowed: {0:MMM dd, yyyy}'}"/>
+
+                            <TextBlock
+                                Text="{Binding ExpectedReturnDate, StringFormat='Expected Return: {0:MMM dd, yyyy}'}"/>
+
+                            <TextBlock
+                                Text="{Binding Status}"/>
 
                             <Button
-                                Grid.Column="2"
                                 Content="Return"
-                                Command="{Binding $parent[ItemsControl].DataContext.ReturnCommand}"
+                                Command="{Binding $parent[UserControl].DataContext.ReturnCommand}"
                                 CommandParameter="{Binding}"
-                                Padding="20,8"/>
+                                HorizontalAlignment="Left"
+                                Margin="0,10,0,0"/>
 
-                        </Grid>
+                        </StackPanel>
 
                     </Border>
 
                 </DataTemplate>
+
             </ItemsControl.ItemTemplate>
 
         </ItemsControl>

@@ -5,10 +5,10 @@ namespace EquipmentBorrowing.Desktop;
 
 public partial class MainWindow : Window
 {
-    public MainWindow(EquipmentViewModel equipmentViewModel)
+    public MainWindow(MainWindowViewModel viewModel)
     {
         InitializeComponent();
 
-        DataContext = equipmentViewModel;
+        DataContext = viewModel;
     }
 }
