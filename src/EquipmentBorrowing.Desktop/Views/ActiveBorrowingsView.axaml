@@ -20,17 +20,20 @@
     Classes="subheading"
     Text="Equipment currently borrowed"/>
 
-        <Button
-            Grid.Row="2"
-            Content="Refresh"
-            Command="{Binding LoadBorrowingsCommand}"
-            HorizontalAlignment="Left"
-            Margin="0,10"/>
-
-        <TextBlock
+        <StackPanel
     Grid.Row="2"
-    Classes="feedback"
-    Text="{Binding FeedbackMessage}"/>
+    Spacing="4">
+
+    <Button
+        Content="Refresh"
+        Command="{Binding LoadBorrowingsCommand}"
+        HorizontalAlignment="Left"/>
+
+    <TextBlock
+        Classes="feedback"
+        Text="{Binding FeedbackMessage}"/>
+
+</StackPanel>
 
         <!-- Remaining space becomes scrollable -->
         <ScrollViewer
