@@ -23,7 +23,6 @@ public partial class EquipmentViewModel : ObservableObject
 
 
     //
-    public int SelectedId { get; set; } = 1;
     public Equipment? SelectedEquipment { get; set; }
     public DateTimeOffset? ExpectedReturnDate { get; set; } = DateTimeOffset.Now.AddDays(7);
 
@@ -91,7 +90,7 @@ public partial class EquipmentViewModel : ObservableObject
         try
         {
             await _borrowEquipmentService.BorrowEquipmentAsync(
-                SelectedId,
+                SelectedStudent.Id,
                 SelectedEquipment.EquipmentId,
                 3,
                 ExpectedReturnDate.Value.DateTime

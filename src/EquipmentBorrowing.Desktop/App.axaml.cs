@@ -24,7 +24,7 @@ public partial class App : Avalonia.Application
 
 
             var student1 = new Student(1, "jang kaloy", true);
-            var student2 = new Student(2, "emji jid", true);
+            var student2 = new Student(2, "emji jid", false);
 
 
             var equipment1 = new Equipment(
@@ -76,7 +76,6 @@ public partial class App : Avalonia.Application
             services.AddTransient<ReturnEquipmentService>();
             services.AddTransient<CheckAvailableEquipmentService>();
             services.AddTransient<EquipmentViewModel>();
-            services.AddSingleton<EquipmentViewModel>();
             services.AddTransient<ActiveBorrowingsViewModel>();
             services.AddTransient<MainWindowViewModel>();
 
