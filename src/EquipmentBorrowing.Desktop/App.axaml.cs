@@ -27,9 +27,33 @@ public partial class App : Avalonia.Application
                 1, "jang kaloy", true
                 );
 
-            var equipment = new Equipment(
-                Guid.NewGuid(), "Laptop","Lab Laptop" , true
-                );
+            var equipment1 = new Equipment(
+                Guid.NewGuid(),
+                "Laptop",
+                "Lab Laptop",
+                true
+            );
+
+            var equipment2 = new Equipment(
+                Guid.NewGuid(),
+                "Projector",
+                "Epson Projector",
+                true
+            );
+
+            var equipment3 = new Equipment(
+                Guid.NewGuid(),
+                "Camera",
+                "Digital Camera",
+                true
+            );
+
+            var equipment4 = new Equipment(
+                Guid.NewGuid(),
+                "Microphone",
+                "Wireless Microphone",
+                true
+            );
 
 
             //repo 
@@ -38,8 +62,14 @@ public partial class App : Avalonia.Application
                 );
 
             services.AddSingleton<IEquipmentRepository>(
-                new InMemoryEquipmentRepository(new[] { equipment })
-                );
+                new InMemoryEquipmentRepository(new[]
+                {
+                    equipment1,
+                    equipment2,
+                    equipment3,
+                    equipment4
+                })
+            );
 
             services.AddSingleton<IBorrowingRepository>(
                 new InMemoryBorrowingRepository());

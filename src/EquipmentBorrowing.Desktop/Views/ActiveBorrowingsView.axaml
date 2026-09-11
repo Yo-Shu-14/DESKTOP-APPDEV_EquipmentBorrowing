@@ -6,74 +6,89 @@
     x:Class="EquipmentBorrowing.Desktop.Views.ActiveBorrowingsView"
     x:DataType="viewmodels:ActiveBorrowingsViewModel">
 
-    <StackPanel Margin="30" Spacing="20">
+    <Grid
+        Margin="30"
+        RowDefinitions="Auto,Auto,Auto,*">
 
         <TextBlock
+            Grid.Row="0"
             Text="Active Borrowings"
             FontSize="28"
             FontWeight="Bold"/>
 
         <TextBlock
+            Grid.Row="1"
             Text="Equipment currently borrowed"
-            FontSize="16"/>
+            FontSize="16"
+            Margin="0,5,0,0"/>
 
         <Button
+            Grid.Row="2"
             Content="Refresh"
             Command="{Binding LoadBorrowingsCommand}"
-            HorizontalAlignment="Left"/>
+            HorizontalAlignment="Left"
+            Margin="0,10"/>
 
-        <ItemsControl ItemsSource="{Binding ActiveBorrowings}">
+        <!-- Remaining space becomes scrollable -->
+        <ScrollViewer
+            Grid.Row="3"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled">
 
-            <ItemsControl.ItemTemplate>
+            <ItemsControl ItemsSource="{Binding ActiveBorrowings}">
 
-                <DataTemplate x:DataType="domain:Borrowing">
+                <ItemsControl.ItemTemplate>
 
-                    <Border
-                        BorderBrush="Gray"
-                        BorderThickness="1"
-                        Padding="15"
-                        Margin="0,5">
+                    <DataTemplate x:DataType="domain:Borrowing">
 
-                        <StackPanel Spacing="5">
+                        <Border
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Padding="15"
+                            Margin="0,5">
 
-                            <TextBlock
-                                Text="{Binding BorrowingId}"
-                                FontSize="12"/>
+                            <StackPanel Spacing="5">
 
-                            <TextBlock
-                                Text="{Binding Equipment.Name}"
-                                FontSize="18"
-                                FontWeight="Bold"/>
+                                <TextBlock
+                                    Text="{Binding BorrowingId}"
+                                    FontSize="12"/>
 
-                            <TextBlock
-                                Text="{Binding Equipment.Description}"/>
+                                <TextBlock
+                                    Text="{Binding Equipment.Name}"
+                                    FontSize="18"
+                                    FontWeight="Bold"/>
 
-                            <TextBlock
-                                Text="{Binding DateBorrowed, StringFormat='Borrowed: {0:MMM dd, yyyy}'}"/>
+                                <TextBlock
+                                    Text="{Binding Equipment.Description}"/>
 
-                            <TextBlock
-                                Text="{Binding ExpectedReturnDate, StringFormat='Expected Return: {0:MMM dd, yyyy}'}"/>
+                                <TextBlock
+                                    Text="{Binding DateBorrowed, StringFormat='Borrowed: {0:MMM dd, yyyy}'}"/>
 
-                            <TextBlock
-                                Text="{Binding Status}"/>
+                                <TextBlock
+                                    Text="{Binding ExpectedReturnDate, StringFormat='Expected Return: {0:MMM dd, yyyy}'}"/>
 
-                            <Button
-                                Content="Return"
-                                Command="{Binding $parent[UserControl].DataContext.ReturnCommand}"
-                                CommandParameter="{Binding}"
-                                HorizontalAlignment="Left"
-                                Margin="0,10,0,0"/>
+                                <TextBlock
+                                    Text="{Binding Status}"/>
 
-                        </StackPanel>
+                                <Button
+                                    Content="Return"
+                                    Command="{Binding $parent[UserControl].DataContext.ReturnCommand}"
+                                    CommandParameter="{Binding}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,10,0,0"/>
 
-                    </Border>
+                            </StackPanel>
 
-                </DataTemplate>
+                        </Border>
 
-            </ItemsControl.ItemTemplate>
+                    </DataTemplate>
 
-        </ItemsControl>
+                </ItemsControl.ItemTemplate>
 
-    </StackPanel>
+            </ItemsControl>
+
+        </ScrollViewer>
+
+    </Grid>
 
 </UserControl>
