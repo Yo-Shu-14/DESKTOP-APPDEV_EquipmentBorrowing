@@ -26,8 +26,10 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ShowEquipment()
+    private async Task ShowEquipment()
     {
+        await _equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
+
         CurrentView = new EquipmentView
         {
             DataContext = _equipmentViewModel
@@ -44,4 +46,5 @@ public partial class MainWindowViewModel : ObservableObject
             DataContext = _activeBorrowingsViewModel
         };
     }
+
 }
