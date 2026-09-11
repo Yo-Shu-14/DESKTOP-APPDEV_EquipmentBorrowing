@@ -13,13 +13,14 @@
     
     <StackPanel Grid.Column="0" Margin="20" Spacing="15">
     <TextBlock Text="Equipment" FontSize="20" FontWeight="Bold"/>
-    <Button Content="Equipment"/>
-    <Button Content="Active Borrowings"/>
+    <Button Content="Equipment" Click="Equipmentbutton_Click"/>
+    <Button Content="Active Borrowings" Click="ActiveBorrowingsbutton_Click"/>
     </StackPanel>
 
     <Border Grid.Column="1" Margin="10">
+        <ContentControl x:Name="ContentArea">
     <views:EquipmentView  DataContext="{Binding}"/>
-
+        </ContentControl>
     
 
     
