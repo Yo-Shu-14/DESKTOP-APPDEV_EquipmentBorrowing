@@ -81,11 +81,11 @@ public partial class App : Avalonia.Application
 
             var serviceProvider = services.BuildServiceProvider();
 
-           // var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
-            //await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
+            var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
+            await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
 
-//            var activeBorrowingsViewModel = serviceProvider.GetRequiredService<ActiveBorrowingsViewModel>();
- //           await activeBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
+            var activeBorrowingsViewModel = serviceProvider.GetRequiredService<ActiveBorrowingsViewModel>();
+            await activeBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
 
             var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
 
