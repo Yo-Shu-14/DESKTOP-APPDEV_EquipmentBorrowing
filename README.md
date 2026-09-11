@@ -46,16 +46,12 @@ Expectation: The student expects the system to allow them to request available e
 ### 5. Tests
 
 * The `EquipmentBorrowing.Tests` project is used for automated tests of domain or application behavior
-
-### 6. Desktop
-
-* The `EquipmentBorrowing.Desktop` contains the user interface of your system, such as the Avalonia Views and ViewModels, and serves as the executable application that users interact with.
  
 ---
 
-## 2. Dependency Direction
+## 2. Dependency Direction (Architecture Diagram)
 
-The dependency direction of the current solution is:
+The architecture direction of the current solution is:
 
 ```text
 EquipmentBorrowing.Console
@@ -228,7 +224,70 @@ No, an Avalonia button should not directly execute database queries. The button 
 
 The Application use case or service represents the actual business operation requested by the actor. In the project, for example, BorrowEquipmentService represents the operation of borrowing equipment, while ReturnEquipmentService represents returning equipment. These services contain the rules and steps needed to complete the requested operation.
 
+---
 
+## 1. Desktop Project
 
+Explain the responsibility of EquipmentBorrowing.Desktop and how it interacts with the existing projects.
 
+* The `EquipmentBorrowing.Desktop` contains the user interface of your system, such as the Avalonia Views and ViewModels, and serves as the executable application that users interact with.
+
+## 2. Updated Architecture
+
+```text
+Avalonia View
+        |
+        |  Binding / Command
+        |
+ViewModel
+        |
+        |  Application Operation
+        |
+EquipmentBorrowing.Console
+        |
+        +----------> EquipmentBorrowing.Application
+        |                       |
+        |                       v
+        |                EquipmentBorrowing.Domain
+        |
+        +----------> EquipmentBorrowing.Infrastructure
+                                |
+                                +----------> Application
+                                |
+                                +----------> Domain
+```
+
+## 3. Borrow Equipment flow
+
+The user selects a student, an available equipment item, and an expected return date on the Equipment view, then presses Borrow. This triggers EquipmentViewModel.BorrowAsync, a [RelayCommand], which performs presentation-level checks (student selected, date selected, date not in the past) and then calls BorrowEquipmentService.BorrowEquipmentAsync. The service validates the student, equipment availability, and borrowing limit, creates the Borrowing record, and marks the equipment unavailable. The ViewModel reloads the equipment list and shows a success or error message via FeedbackMessage.
+
+## 4. Return Equipment Flow
+
+On the Active Borrowings view, the user presses Return on a borrowing. This triggers ActiveBorrowingsViewModel.ReturnAsync, which calls ReturnEquipmentService.ReturnEquipmentAsync. The service checks that the borrowing exists and hasn't already been returned, marks it Returned, and makes the equipment available again. The ViewModel reloads the active borrowings list and shows a success or error message.
+
+## 5. Architectural Reflection
+
+### 1. Why should the View not call a repository directly?
+
+Because the View is only responsible for displaying data and collecting input. Calling a repository directly would let the UI bypass business rules and tie it to a specific storage technology.
+
+### 2. Why should business rules not be implemented in the ViewModel?
+
+The ViewModel is a presentation-layer component. Business rules belong to the Application/ Domain layers so they can be reused, tested independently, and reasoned about without the UI.
+
+### 3. What is the responsibility of the ViewModel?
+
+To hold presentation state, expose commands, collect user input, and delegate the actual work to Application services.
+
+### 4. Why can the existing Application layer work without knowing that Avalonia is being used?
+
+Because it only depends on repository interfaces and domain models — it has no reference to Avalonia at all, so any UI technology can call it the same way.
+
+### 5. What advantage is gained from registering dependencies in one composition point?
+
+All wiring of interfaces to implementations happens in one place (App.axaml.cs), so the rest of the app depends only on abstractions and doesn't need to know how objects are built.
+
+### 6. If the in-memory repository were replaced by SQLite later, which parts of the current interface should remain largely unchanged?
+
+The Domain models, Application services, repository interfaces, and the entire Desktop project (Views and ViewModels) should remain unchanged — only the Infrastructure implementations would need to change.
 
