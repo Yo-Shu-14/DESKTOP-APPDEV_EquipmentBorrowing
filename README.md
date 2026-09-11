@@ -47,6 +47,10 @@ Expectation: The student expects the system to allow them to request available e
 
 * The `EquipmentBorrowing.Tests` project is used for automated tests of domain or application behavior
 
+### 6. Desktop
+
+* The `EquipmentBorrowing.Desktop` contains the user interface of your system, such as the Avalonia Views and ViewModels, and serves as the executable application that users interact with.
+ 
 ---
 
 ## 2. Dependency Direction
@@ -223,3 +227,8 @@ No, an Avalonia button should not directly execute database queries. The button 
 ### 5. What part of your implementation represents the actual business operation requested by the actor?
 
 The Application use case or service represents the actual business operation requested by the actor. In the project, for example, BorrowEquipmentService represents the operation of borrowing equipment, while ReturnEquipmentService represents returning equipment. These services contain the rules and steps needed to complete the requested operation.
+
+
+
+
+
