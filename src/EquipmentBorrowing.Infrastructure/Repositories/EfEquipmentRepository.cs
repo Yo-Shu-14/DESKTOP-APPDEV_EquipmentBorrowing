@@ -30,9 +30,10 @@ public class EfEquipmentRepository : IEquipmentRepository
     public async Task<IReadOnlyList<Equipment>> GetAvailableAsync()
     {
         return await _db.Equipment
-            .Where(e => e.IsAvailable)
-            .AsNoTracking()
-            .ToListAsync();
+        .Where(e => e.IsAvailable)
+        .AsNoTracking()
+        .ToListAsync();
+
     }
 
     public async Task UpdateAsync(Equipment equipment)
