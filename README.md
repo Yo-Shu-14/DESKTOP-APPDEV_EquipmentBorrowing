@@ -368,3 +368,171 @@ The database relationship diagram is provided in:
 
 The diagram shows the `Students`, `Equipment`, and `Borrowings` tables, including their primary keys, foreign keys, and relationships.
 
+## 7. SQLite and Entity Framework Core Configuration
+
+The system uses SQLite as the persistent database and Entity Framework Core as the Object-Relational Mapper (ORM). Entity Framework Core handles the connection between the application and the SQLite database while keeping the database implementation inside the Infrastructure layer.
+
+### 1. Entity Framework Core Packages
+
+The Infrastructure project uses the following Entity Framework Core packages:
+
+* `Microsoft.EntityFrameworkCore` – provides the main EF Core functionality.
+* `Microsoft.EntityFrameworkCore.Design` – provides tools needed for migrations and database development.
+* `Microsoft.EntityFrameworkCore.Sqlite` – allows EF Core to use SQLite as the database provider.
+
+All three packages use version `10.0.12`.
+
+### 2. SQLite Database Connection
+
+The application uses the following SQLite connection:
+
+```text
+Data Source=equipmentborrow.db
+```
+
+### 3. DbContext
+
+The `EquipmentBorrowingDbContext` is located in:
+
+```text
+EquipmentBorrowing.Infrastructure.Data
+```
+
+It defines the database sets for the three main entities:
+
+* `Students`
+* `Equipment`
+* `Borrowings`
+
+The `DbContext` also applies the entity configurations from the Infrastructure assembly.
+
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.ApplyConfigurationsFromAssembly(
+        typeof(EquipmentBorrowingDbContext).Assembly);
+
+    base.OnModelCreating(modelBuilder);
+}
+```
+
+This keeps the database configuration separate from the domain classes.
+
+### 4. Entity Configurations
+
+Each entity has its own Entity Framework Core configuration.
+
+#### StudentConfiguration
+
+The `Students` table is configured with:
+
+* `Id` as the primary key.
+* `Name` as a required field with a maximum length of 100 characters.
+* `IsAllowedToBorrow` as a required field.
+
+#### EquipmentConfiguration
+
+The `Equipment` table is configured with:
+
+* `EquipmentId` as the primary key.
+* `Name` as a required field with a maximum length of 100 characters.
+* `Description` as a required field with a maximum length of 500 characters.
+* `IsAvailable` as a required field.
+
+#### BorrowingConfiguration
+
+The `Borrowings` table is configured with:
+
+* `BorrowingId` as the primary key.
+* `StudentId` as a foreign key to `Students`.
+* `EquipmentId` as a foreign key to `Equipment`.
+* `DateBorrowed` as a required field.
+* `ExpectedReturnDate` as a required field.
+* `Status` stored as a string.
+* Indexes on `StudentId` and `EquipmentId`.
+
+The relationships ensure that each borrowing record is connected to an existing student and equipment record.
+
+### 5. Database Configuration
+
+The SQLite database is registered through the `AddDatabase()` extension method. This allows the application to configure the `DbContext` through dependency injection.
+
+```csharp
+services.AddDbContext<EquipmentBorrowingDbContext>(options =>
+    options.UseSqlite("Data Source=equipmentborrow.db"));
+```
+
+This keeps the database connection and EF Core configuration outside the Views and ViewModels.
+
+---
+
+## 8. Migrations and Database Initialization
+
+Entity Framework Core migrations are used to create and update the SQLite database schema. This allows the database structure to be reproduced consistently from the application's entity configurations.
+
+### 1. Initial Migration
+
+The project contains an initial EF Core migration:
+
+```text
+20261002130944_InitialCreate
+```
+
+The migration creates the following tables:
+
+* `Students`
+* `Equipment`
+* `Borrowings`
+
+It also creates the primary keys, foreign keys, indexes, and other configured columns required by the database design.
+
+### 2. Applying the Migration
+
+The application applies pending migrations during database initialization through the `DatabaseInitializer`.
+
+```csharp
+await db.Database.MigrateAsync();
+```
+
+This ensures that the SQLite database has the schema defined by the current EF Core migrations.
+
+### 3. Database Initialization
+
+The `DatabaseInitializer` is located in the Infrastructure project.
+
+It first applies any pending migrations. It then checks whether student records already exist before adding the initial seed data.
+
+```csharp
+if (await db.Students.AnyAsync())
+{
+    return;
+}
+```
+
+This prevents the application from recreating the seed data every time it starts.
+
+### 4. Seed Data
+
+The initial database contains:
+
+* Multiple student records.
+* Multiple equipment records.
+* Equipment records that are initially available.
+
+The seed data is used to demonstrate the borrowing and validation workflows of the application.
+
+### 5. Persistence
+
+The database is stored in the SQLite file:
+
+```text
+equipmentborrow.db
+```
+
+Because the data is stored in the SQLite database instead of memory, changes made during the application are preserved after the application is closed and opened again.
+
+For example:
+
+* Borrowed equipment remains unavailable after restarting the application.
+* Active borrowing records remain stored in the database.
+* Returned equipment becomes available again, and the borrowing record remains recorded as returned.
