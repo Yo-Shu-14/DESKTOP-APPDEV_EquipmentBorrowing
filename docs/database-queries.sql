@@ -16,18 +16,18 @@ WHERE IsAvailable = TRUE;
 SELECT
     s.Name AS Student,
     e.Name AS Equipment,
-    b.BorrowedDate AS Borrowed,
-    b.DueDate AS Due
-FROM Borrowing b
-JOIN Student s ON b.StudentId = s.Id
-JOIN Equipment e ON b.EquipmentId = e.Id
+    b.DateBorrowed AS Borrowed,
+    b.ExpectedReturnDate AS Due
+FROM Borrowings b
+JOIN Students s ON b.StudentId = s.Id
+JOIN Equipment e ON b.EquipmentId = e.EquipmentId
 WHERE b.Status = 'Active';
 
 
 -- 4. Aggregate
 -- Count the number of active borrowings
 SELECT COUNT(*) AS ActiveBorrowings
-FROM Borrowing
+FROM Borrowings
 WHERE Status = 'Active';
 
 
@@ -35,4 +35,4 @@ WHERE Status = 'Active';
 -- Change the availability of an equipment record
 UPDATE Equipment
 SET IsAvailable = FALSE
-WHERE Id = 1;
+WHERE EquipmentId = "EA1711C4-AB35-499D-A4EB-3C277866BE52";
