@@ -17,6 +17,8 @@ public class EfBorrowingRepository : IBorrowingRepository
     public async Task<IReadOnlyList<Borrowing>> GetActiveByStudentIdAsync(int studentId)
     {
         return await _db.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
             .Where(b => b.StudentId == studentId && b.Status == BorrowingStatus.Active)
             .AsNoTracking()
             .ToListAsync();
