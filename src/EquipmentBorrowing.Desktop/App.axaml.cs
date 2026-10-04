@@ -4,7 +4,7 @@ using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Desktop.ViewModels;
 using EquipmentBorrowing.Domain;
-using EquipmentBorrowing.Infrastructure;
+using EquipmentBorrowing.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EquipmentBorrowing.Desktop;

@@ -18,24 +18,25 @@ public class BorrowingConfiguration : IEntityTypeConfiguration<Borrowing>
         builder.Property(b => b.ExpectedReturnDate)
             .IsRequired();
 
-        // Store BorrowingStatus as text in SQLite
+        // Store enum as text
         builder.Property(b => b.Status)
             .HasConversion<string>()
             .IsRequired();
 
-        // Relationship with Student
+        // Student relationship
         builder.HasOne(b => b.Student)
             .WithMany()
+            .HasForeignKey(b => b.StudentId)
             .IsRequired();
 
-        // Relationship with Equipment
+        // Equipment relationship
         builder.HasOne(b => b.Equipment)
             .WithMany()
+            .HasForeignKey(b => b.EquipmentId)
             .IsRequired();
 
-        // Indexes for foreign-key lookups
+        // Indexes
         builder.HasIndex(b => b.StudentId);
-
         builder.HasIndex(b => b.EquipmentId);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Infrastructure;
+using EquipmentBorrowing.Infrastructure.Repositories;
 using Xunit;
 using DomainEquipment = EquipmentBorrowing.Domain.Equipment;
 

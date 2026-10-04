@@ -1,6 +1,6 @@
 ﻿using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
-using EquipmentBorrowing.Infrastructure;
+using EquipmentBorrowing.Infrastructure.Repositories;
 
 public class BorrowEquipmentSuccessCase
 {
