@@ -35,13 +35,27 @@ Expectation: The student expects the system to allow them to request available e
 * The `EquipmentBorrowing.Infrastructure` project contains the technical implementations of the repository abstractions.
 * it contains:
 
-  * `InMemoryStudentRepository`
-  * `InMemoryEquipmentRepository`
-  * `InMemoryBorrowingRepository`
+  * `EquipmentBorrowingDbContext` – the EF Core DbContext used to access the SQLite database.
 
-### 4. Console
+  * `EfStudentRepository` – the EF Core implementation of `IStudentRepository`.
 
-* The `EquipmentBorrowing.Console` project is an executable program for demonstrating the application flow
+  * `EfEquipmentRepository` – the EF Core implementation of `IEquipmentRepository`.
+
+  * `EfBorrowingRepository` – the EF Core implementation of `IBorrowingRepository`.
+
+  * Entity configurations for `Student`, `Equipment`, and `Borrowing`.
+
+  * Database initialization and EF Core migration support.
+
+* SQLite is used as the persistent database, while EF Core handles database access and object-relational mapping.
+
+
+### 4. Desktop
+
+* The `EquipmentBorrowing.Desktop` project is an executable Avalonia application that provides the graphical user interface.
+
+* It contains the Avalonia Views and ViewModels used to interact with the Application services and repository abstractions.
+
 
 ### 5. Tests
 
@@ -54,7 +68,7 @@ Expectation: The student expects the system to allow them to request available e
 The architecture direction of the current solution is:
 
 ```text
-EquipmentBorrowing.Console
+EquipmentBorrowing.Desktop
         |
         +----------> EquipmentBorrowing.Application
         |                       |
@@ -71,10 +85,10 @@ EquipmentBorrowing.Console
 * the EquipmentBorrowing.Application project depends on the EquipmentBorrowing.Domain
 * the EquipmentBorrowing.Infrastructure project depends on both the EquipmentBorrowing.Application and EquipmentBorrowing.Domain
 
-  * implements the repository interfaces defined in the Application project and uses the Domain models to store and retrieve information.
-* the EquipmentBorrowing.Console project depends on the EquipmentBorrowing.Application and EquipmentBorrowing.Infrastructure
+  * mplements the repository interfaces defined in the Application project and uses the Domain models to store and retrieve information through Entity Framework Core and SQLite.
+* the EquipmentBorrowing.Desktop project depends on the EquipmentBorrowing.Application and EquipmentBorrowing.Infrastructure
 
-  * It uses the Application services and Infrastructure repository implementations and provides their dependencies manually.
+  * It uses the Application services and repository abstractions to perform the system operations and provides the dependencies through dependency injection.
 * the EquipmentBorrowing.Domain does not depend on any other project, as it contains the core concepts and rules of the system.
 
 ---
@@ -198,7 +212,7 @@ The student is the primary actor who interacts with the Campus Equipment Borrowi
 | **Application Service**                 | `BorrowEquipmentService`                                                                  |
 | **Domain Objects Used**                 | `Student`, `Equipment`, `Borrowing`, `BorrowingStatus`                                    |
 | **Repository Interfaces Used**          | `IStudentRepository`, `IEquipmentRepository`, `IBorrowingRepository`                      |
-| **Infrastructure Implementations Used** | `InMemoryStudentRepository`, `InMemoryEquipmentRepository`, `InMemoryBorrowingRepository` |
+| **Infrastructure Implementations Used** | `EfStudentRepository`, `EfEquipmentRepository`, `EfBorrowingRepository`                   |
 
 ---
 
@@ -210,11 +224,11 @@ The application service should depend on a repository interface because it separ
 
 ### 2. Which parts of your current solution could remain unchanged if SQLite were added later?
 
-The Domain models, Application services, and repository interfaces could remain unchanged. The Infrastructure project could be updated by adding SQLite-based repository implementations while keeping the existing application logic independent from the database technology.
+The Domain models, Application services, and repository interfaces can remain unchanged when using SQLite. The Infrastructure project contains the SQLite configuration, EF Core DbContext, entity configurations, migrations, and EF Core repository implementations, keeping the application logic independent from the database technology.
 
 ### 3. Which project would eventually contain Avalonia Views?
 
-The Console project would eventually contain the Avalonia Views. In our current structure, the Console project is used to run and demonstrate the system through the terminal, while Avalonia would be used as the graphical user interface. The Views should stay in the UI project so that the user interface is separated from the application's use cases and business logic.
+The `EquipmentBorrowing.Desktop` project contains the Avalonia Views. It serves as the graphical user interface of the system, while the Application project contains the use cases and business logic. This keeps the user interface separated from the application's use cases and business rules.
 
 ### 4. Should an Avalonia button directly execute database queries? Why or why not?
 
@@ -245,7 +259,6 @@ ViewModel
         |
         |  Application Operation
         |
-EquipmentBorrowing.Console
         |
         +----------> EquipmentBorrowing.Application
         |                       |
@@ -291,5 +304,67 @@ All wiring of interfaces to implementations happens in one place (App.axaml.cs),
 
 ### 6. If the in-memory repository were replaced by SQLite later, which parts of the current interface should remain largely unchanged?
 
-The Domain models, Application services, repository interfaces, and the entire Desktop project (Views and ViewModels) should remain unchanged — only the Infrastructure implementations would need to change.
+The Domain models, Application services, repository interfaces, and the entire Desktop project (Views and ViewModels) should remain largely unchanged. The Infrastructure project contains the EF Core and SQLite implementation, including the DbContext, entity configurations, migrations, and repository implementations.
+
+## 6. Relational Database Design
+
+The system uses a relational database to permanently store students, equipment, and borrowing records. The database is implemented using SQLite and Entity Framework Core.
+
+### 1. Students Table
+
+The `Students` table stores the information about students who can borrow equipment.
+
+| Column              | Data Type  | Description                                                   |
+|---------------------|------------|---------------------------------------------------------------|
+| `Id`                | Integer    | Primary key that uniquely identifies a student.               |
+| `Name`              | String     | Required name of the student.                                 |
+| `IsAllowedToBorrow` | Boolean    | Indicates whether the student is allowed to borrow equipment. |
+
+### 2. Equipment Table
+
+The `Equipment` table stores the equipment available in the system.
+
+| Column        | Data Type | Description                                             |
+|---------------|-----------|---------------------------------------------------------|
+| `EquipmentId` | GUID      | Primary key that uniquely identifies an equipment item. |
+| `Name`        | String    | Required name of the equipment.                         |
+| `Description` | String    | Required description of the equipment.                  |
+| `IsAvailable` | Boolean   | Indicates whether the equipment is currently available. |
+
+### 3. Borrowings Table
+
+The `Borrowings` table stores the records of equipment borrowed by students.
+
+| Column               | Data Type | Description                                                  |
+|----------------------|-----------|--------------------------------------------------------------|
+| `BorrowingId`        | GUID      | Primary key that uniquely identifies a borrowing record.     |
+| `StudentId`          | Integer   | Foreign key that references the `Students` table.            |
+| `EquipmentId`        | GUID      | Foreign key that references the `Equipment` table.           |
+| `DateBorrowed`       | DateTime  | Date and time when the equipment was borrowed.               |
+| `ExpectedReturnDate` | DateTime  | Expected date when the equipment should be returned.         |
+| `Status`             | String    | Stores the borrowing status, such as `Active` or `Returned`. |
+
+### 4. Relationships
+
+The database contains two main one-to-many relationships:
+
+* One `Student` can have many `Borrowing` records.
+
+* One `Equipment` item can appear in many `Borrowing` records over time.
+
+* Each `Borrowing` record belongs to one `Student` and one `Equipment` item.
+
+The `StudentId` and `EquipmentId` columns in the `Borrowings` table act as foreign keys that connect the borrowing records to their related records.
+
+### 5. Indexes
+
+Indexes are configured for the `StudentId` and `EquipmentId` foreign keys in the `Borrowings` table. These indexes help improve queries that retrieve borrowing records based on a specific student or equipment item.
+
+### 6. Database Diagram
+
+The database relationship diagram is provided in:
+
+`docs/database-diagram.png`
+
+The diagram shows the `Students`, `Equipment`, and `Borrowings` tables, including their primary keys, foreign keys, and relationships.
 
