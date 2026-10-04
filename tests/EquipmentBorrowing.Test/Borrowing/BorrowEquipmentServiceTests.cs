@@ -288,10 +288,21 @@ public class BorrowEquipmentServiceTests
             return Task.FromResult<IReadOnlyList<Equipment>>(equipmentList);
         }
 
+        public Task<IReadOnlyList<Equipment>> GetAvailableAsync()
+        {
+            var equipmentList = _equipment is not null && _equipment.IsAvailable
+                ? new List<Equipment> { _equipment }
+                : new List<Equipment>();
+
+            return Task.FromResult<IReadOnlyList<Equipment>>(equipmentList);
+        }
+
         public Task UpdateAsync(Equipment equipment)
         {
             return Task.CompletedTask;
         }
+
+
     }
 
 

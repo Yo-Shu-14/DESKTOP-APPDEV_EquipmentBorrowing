@@ -17,12 +17,6 @@ public class CheckAvailableEquipmentService
 
     public async Task<IReadOnlyList<Equipment>> CheckAvailableEquipmentAsync()
     {
-        var equipmentList = await _equipmentRepository.GetAllAsync();
-
-        var availableEquipment = equipmentList
-            .Where(equipment => equipment.IsAvailable)
-            .ToList();
-
-        return availableEquipment;
+        return await _equipmentRepository.GetAvailableAsync();
     }
 }

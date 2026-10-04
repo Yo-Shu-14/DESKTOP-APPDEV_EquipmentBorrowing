@@ -46,6 +46,10 @@ public partial class App : Avalonia.Application
 
             var serviceProvider = services.BuildServiceProvider();
 
+            var db = serviceProvider.GetRequiredService<EquipmentBorrowingDbContext>();
+
+            await DatabaseInitializer.InitializeAsync(db);
+
             var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
             await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
 

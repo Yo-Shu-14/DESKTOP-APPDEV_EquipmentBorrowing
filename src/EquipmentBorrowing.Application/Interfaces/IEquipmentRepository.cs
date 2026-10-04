@@ -9,5 +9,6 @@ public interface IEquipmentRepository
 {
     Task<Equipment?> GetByIdAsync(Guid id);
     Task<IReadOnlyList<Equipment>> GetAllAsync();
+    Task<IReadOnlyList<Equipment>> GetAvailableAsync();
     Task UpdateAsync(Equipment equipment);
 }

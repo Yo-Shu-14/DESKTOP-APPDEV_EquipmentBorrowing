@@ -63,6 +63,7 @@ public class BorrowEquipmentService
 
         equipment.MarkAsUnavailable();
 
+        await _equipmentRepository.UpdateAsync(equipment);
         await _borrowingRepository.AddAsync(borrowing);
     }
 }

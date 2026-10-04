@@ -32,5 +32,12 @@ public class InMemoryEquipmentRepository : IEquipmentRepository
     {
         return Task.CompletedTask;
     }
+
+    public async Task<IReadOnlyList<Equipment>> GetAvailableAsync()
+    {
+        return _equipment
+            .Where(e => e.IsAvailable)
+            .ToList();
+    }
 }
 

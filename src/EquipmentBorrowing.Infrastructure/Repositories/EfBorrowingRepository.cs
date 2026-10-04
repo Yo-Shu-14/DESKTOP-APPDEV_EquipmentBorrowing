@@ -25,6 +25,8 @@ public class EfBorrowingRepository : IBorrowingRepository
     public async Task<Borrowing?> GetByIdAsync(Guid borrowingId)
     {
         return await _db.Borrowings
+            .Include(b => b.Equipment)
+            .Include(b => b.Student)
             .FirstOrDefaultAsync(b => b.BorrowingId == borrowingId);
     }
 

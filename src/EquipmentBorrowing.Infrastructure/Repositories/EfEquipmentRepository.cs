@@ -27,6 +27,14 @@ public class EfEquipmentRepository : IEquipmentRepository
             .ToListAsync();
     }
 
+    public async Task<IReadOnlyList<Equipment>> GetAvailableAsync()
+    {
+        return await _db.Equipment
+            .Where(e => e.IsAvailable)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task UpdateAsync(Equipment equipment)
     {
         _db.Equipment.Update(equipment);
