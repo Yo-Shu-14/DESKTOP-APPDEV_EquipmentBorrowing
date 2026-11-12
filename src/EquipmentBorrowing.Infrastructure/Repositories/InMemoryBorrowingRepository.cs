@@ -63,4 +63,21 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
 
         return Task.CompletedTask;
     }
+
+    public Task AddBorrowingsWithEquipmentUpdatesAsync(
+    IReadOnlyList<Borrowing> borrowings,
+    IReadOnlyList<Equipment> equipment)
+    {
+        foreach (var item in equipment)
+        {
+            item.MarkAsUnavailable();
+        }
+
+        foreach (var borrowing in borrowings)
+        {
+            _borrowings.Add(borrowing);
+        }
+
+        return Task.CompletedTask;
+    }
 }

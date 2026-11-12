@@ -48,6 +48,31 @@
             <TextBlock
                 Classes="feedback"
                 Text="{Binding FeedbackMessage}"/>
+            <TextBlock
+                Text="{Binding SelectedEquipmentList.Count,
+                    StringFormat='Selected items: {0}'}"
+                FontWeight="Bold"/>
+
+            <ItemsControl ItemsSource="{Binding SelectedEquipmentList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="domain:Equipment">
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Spacing="10">
+
+                            <TextBlock
+                                Text="{Binding Name}"
+                                VerticalAlignment="Center"/>
+
+                            <Button
+                                Content="Remove"
+                                Command="{Binding $parent[UserControl].DataContext.RemoveFromCheckoutCommand}"
+                                CommandParameter="{Binding}"/>
+
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
 
         <Grid Grid.Row="3"
@@ -73,6 +98,11 @@
                     Content="Retry Loading"
                     Command="{Binding LoadEquipmentCommand}"
                     IsVisible="{Binding IsError}"/>
+
+                <Button
+                    Content="Checkout Selected Items"
+                    Command="{Binding CheckoutCommand}"
+                    HorizontalAlignment="Left"/>  
              
                 <Button 
                     Content="Show Available Equipment"
@@ -85,6 +115,7 @@
                 HorizontalScrollBarVisibility="Disabled">
 
                 <ItemsControl ItemsSource="{Binding EquipmentList}">
+
             
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="domain:Equipment">
@@ -112,14 +143,19 @@
                                         Content="Borrow"
                                         Command="{Binding $parent[UserControl].DataContext.BorrowCommand}"
                                         CommandParameter="{Binding}"/>
+                                    <Button
+                                        Content="Add to Checkout"
+                                        Command="{Binding $parent[UserControl].DataContext.AddToCheckoutCommand}"
+                                        CommandParameter="{Binding}"/>
 
                                 </StackPanel>
                             </Border>
 
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
-
+                      
                 </ItemsControl>
+                
             </ScrollViewer>
         </Grid>
     </Grid>

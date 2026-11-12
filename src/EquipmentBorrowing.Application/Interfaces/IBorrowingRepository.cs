@@ -21,4 +21,8 @@ public interface IBorrowingRepository
     Task ReturnBorrowingWithEquipmentUpdateAsync(
         Borrowing borrowing,
         Equipment equipment);
+
+    Task AddBorrowingsWithEquipmentUpdatesAsync(
+        IReadOnlyList<Borrowing> borrowings,
+        IReadOnlyList<Equipment> equipment);
 }

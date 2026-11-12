@@ -19,6 +19,8 @@ public partial class EquipmentViewModel : ObservableObject
     public ObservableCollection<Equipment> EquipmentList { get; } = new();
     public ObservableCollection<Student> StudentList { get; } = new();
 
+    public ObservableCollection<Equipment> SelectedEquipmentList { get; } = new();
+
     [ObservableProperty]
     private Student? selectedStudent;
 
@@ -201,5 +203,96 @@ public partial class EquipmentViewModel : ObservableObject
 
 
     }
+
+    [RelayCommand]
+    private void AddToCheckout(Equipment equipment)
+    {
+        if (!equipment.IsAvailable)
+        {
+            FeedbackMessage = "This equipment is not available.";
+            return;
+        }
+
+        if (SelectedEquipmentList.Any(
+            e => e.EquipmentId == equipment.EquipmentId))
+        {
+            FeedbackMessage = "Equipment is already in your checkout list.";
+            return;
+        }
+
+        SelectedEquipmentList.Add(equipment);
+
+        FeedbackMessage = $"{equipment.Name} added to checkout.";
+    }
+
+    [RelayCommand]
+    private void RemoveFromCheckout(Equipment equipment)
+    {
+        var selectedItem = SelectedEquipmentList.FirstOrDefault(
+            e => e.EquipmentId == equipment.EquipmentId);
+
+        if (selectedItem != null)
+        {
+            SelectedEquipmentList.Remove(selectedItem);
+            FeedbackMessage = $"{equipment.Name} removed from checkout.";
+        }
+    }
+
+    [RelayCommand]
+    private async Task CheckoutAsync()
+    {
+        if (SelectedStudent == null)
+        {
+            FeedbackMessage = "Please select a student.";
+            return;
+        }
+
+        if (SelectedEquipmentList.Count < 2)
+        {
+            FeedbackMessage = "Please select at least two equipment items.";
+            return;
+        }
+
+        if (ExpectedReturnDate == null)
+        {
+            FeedbackMessage = "Please select an expected return date.";
+            return;
+        }
+
+        if (ExpectedReturnDate.Value.Date <= DateTimeOffset.Now.Date)
+        {
+            FeedbackMessage = "Expected return date must be in the future.";
+            return;
+        }
+
+        try
+        {
+            var equipmentIds = SelectedEquipmentList
+                .Select(e => e.EquipmentId)
+                .ToList();
+
+            await _borrowEquipmentService.BorrowMultipleEquipmentAsync(
+                SelectedStudent.Id,
+                equipmentIds,
+                3,
+                DateTime.SpecifyKind(
+                    ExpectedReturnDate.Value.Date,
+                    DateTimeKind.Local));
+
+            SelectedEquipmentList.Clear();
+
+            await LoadEquipmentAsync();
+
+            if (!IsError)
+            {
+                FeedbackMessage = "All selected equipment borrowed successfully.";
+            }
+        }
+        catch (Exception ex)
+        {
+            FeedbackMessage = ex.Message;
+        }
+    }
+
 }
 

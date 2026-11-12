@@ -123,4 +123,40 @@ public class EfBorrowingRepository : IBorrowingRepository
         }
     }
 
+    public async Task AddBorrowingsWithEquipmentUpdatesAsync(
+    IReadOnlyList<Borrowing> borrowings,
+    IReadOnlyList<Equipment> equipment)
+    {
+        await using var transaction =
+            await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            var equipmentIds = equipment
+                .Select(e => e.EquipmentId)
+                .ToList();
+
+            var updatedRows = await _db.Equipment
+                .Where(e => equipmentIds.Contains(e.EquipmentId)
+                         && e.IsAvailable)
+                .ExecuteUpdateAsync(setters =>
+                    setters.SetProperty(e => e.IsAvailable, false));
+
+            if (updatedRows != equipment.Count)
+            {
+                throw new InvalidOperationException(
+                    "One or more equipment items are no longer available. Please refresh and try again.");
+            }
+
+            await _db.Borrowings.AddRangeAsync(borrowings);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }

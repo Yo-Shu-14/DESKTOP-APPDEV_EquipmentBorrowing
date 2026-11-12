@@ -166,6 +166,22 @@ public class ReturnEquipmentServiceTests
 
                     return Task.CompletedTask;
                 }
+        public Task AddBorrowingsWithEquipmentUpdatesAsync(
+            IReadOnlyList<EquipmentBorrowing.Domain.Borrowing> borrowings,
+            IReadOnlyList<Equipment> equipment)
+        {
+            foreach (var item in equipment)
+            {
+                item.MarkAsUnavailable();
+            }
+
+            foreach (var borrowing in borrowings)
+            {
+                Borrowings.Add(borrowing);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 
 
@@ -211,6 +227,6 @@ public class ReturnEquipmentServiceTests
         {
             return Task.CompletedTask;
         }
-        
+
     }
 }
