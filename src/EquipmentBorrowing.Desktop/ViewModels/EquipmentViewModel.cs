@@ -12,6 +12,7 @@ namespace EquipmentBorrowing.Desktop.ViewModels;
 public partial class EquipmentViewModel : ObservableObject
 {
     private readonly ViewEquipmentCatalogService _viewEquipmentCatalogService;
+    private readonly CheckAvailableEquipmentService _checkAvailableEquipmentService;
     private readonly BorrowEquipmentService _borrowEquipmentService;
     private readonly IStudentRepository _studentRepository;
 
@@ -41,10 +42,12 @@ public partial class EquipmentViewModel : ObservableObject
 
     public EquipmentViewModel(
     ViewEquipmentCatalogService viewEquipmentCatalogService,
+    CheckAvailableEquipmentService checkAvailableEquipmentService,
     BorrowEquipmentService borrowEquipmentService,
     IStudentRepository studentRepository)
     {
         _viewEquipmentCatalogService = viewEquipmentCatalogService;
+        _checkAvailableEquipmentService = checkAvailableEquipmentService;
         _borrowEquipmentService = borrowEquipmentService;
         _studentRepository = studentRepository;
     }
@@ -103,7 +106,44 @@ public partial class EquipmentViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task LoadAvailableEquipmentAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            IsError = false;
+            IsEmpty = false;
+            FeedbackMessage = string.Empty;
 
+            var equipment = await _checkAvailableEquipmentService
+                .CheckAvailableEquipmentAsync();
+
+            EquipmentList.Clear();
+
+            foreach (var item in equipment)
+            {
+                EquipmentList.Add(item);
+            }
+
+            IsEmpty = EquipmentList.Count == 0;
+
+            if (IsEmpty)
+            {
+                FeedbackMessage = "No available equipment found.";
+            }
+        }
+        catch (Exception)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = "Unable to find available equipment. Please try again.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
     // borrow com
     [RelayCommand]

@@ -15,6 +15,7 @@
             Classes="title"
             Text="Equipment Catalog"/>
 
+        
         <TextBlock
             Grid.Row="1"
             Classes="subheading"
@@ -73,6 +74,9 @@
                     Command="{Binding LoadEquipmentCommand}"
                     IsVisible="{Binding IsError}"/>
              
+                <Button 
+                    Content="Show Available Equipment"
+                    Command="{Binding LoadAvailableEquipmentCommand}"/> 
             </StackPanel>
 
             <ScrollViewer
@@ -81,7 +85,7 @@
                 HorizontalScrollBarVisibility="Disabled">
 
                 <ItemsControl ItemsSource="{Binding EquipmentList}">
-
+            
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="domain:Equipment">
 
