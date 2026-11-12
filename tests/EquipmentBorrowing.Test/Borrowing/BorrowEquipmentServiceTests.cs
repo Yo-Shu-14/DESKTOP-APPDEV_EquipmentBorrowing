@@ -483,7 +483,17 @@ public class BorrowEquipmentServiceTests
                         .ToList();
 
                     return Task.FromResult(result);
-                }
+        }
+        public Task<IReadOnlyList<DomainBorrowing>> GetAllByEquipmentIdAsync(
+            Guid equipmentId)
+                {
+                    IReadOnlyList<DomainBorrowing> result = Borrowings
+                        .Where(b => b.Equipment.EquipmentId == equipmentId)
+                        .OrderByDescending(b => b.DateBorrowed)
+                        .ToList();
+
+                    return Task.FromResult(result);
+        }
     }
     
 }

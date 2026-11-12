@@ -16,12 +16,15 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly EquipmentViewModel _equipmentViewModel;
     private readonly ActiveBorrowingsViewModel _activeBorrowingsViewModel;
     private readonly StudentBorrowingHistoryViewModel _studentBorrowingHistoryViewModel;
+    private readonly EquipmentBorrowingHistoryViewModel _equipmentBorrowingHistoryViewModel;
 
     public MainWindowViewModel(
         EquipmentViewModel equipmentViewModel,
         ActiveBorrowingsViewModel activeBorrowingsViewModel,
-        StudentBorrowingHistoryViewModel studentBorrowingHistoryViewModel)
+        StudentBorrowingHistoryViewModel studentBorrowingHistoryViewModel,
+        EquipmentBorrowingHistoryViewModel equipmentBorrowingHistoryViewModel)
         {
+            _equipmentBorrowingHistoryViewModel = equipmentBorrowingHistoryViewModel;
             _equipmentViewModel = equipmentViewModel;
             _activeBorrowingsViewModel = activeBorrowingsViewModel;
             _studentBorrowingHistoryViewModel = studentBorrowingHistoryViewModel;
@@ -63,6 +66,16 @@ public partial class MainWindowViewModel : ObservableObject
         };
 
         await _studentBorrowingHistoryViewModel.LoadHistoryCommand.ExecuteAsync(null);
+    }
+    [RelayCommand]
+    private async Task ShowEquipmentHistory()
+    {
+        CurrentView = new EquipmentBorrowingHistoryView
+        {
+            DataContext = _equipmentBorrowingHistoryViewModel
+        };
+
+        await _equipmentBorrowingHistoryViewModel.LoadHistoryCommand.ExecuteAsync(null);
     }
 
 }

@@ -19,6 +19,10 @@
         Content="Student History"
         Command="{Binding ShowStudentHistoryCommand}"/>
 
+    <Button
+        Content="Equipment History"
+        Command="{Binding ShowEquipmentHistoryCommand}"/>
+
 
    </StackPanel>
 

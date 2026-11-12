@@ -184,14 +184,25 @@ public class ReturnEquipmentServiceTests
         }
         public Task<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>>
             GetAllByStudentIdAsync(int studentId)
-                {
-                    IReadOnlyList<EquipmentBorrowing.Domain.Borrowing> result =
-                        Borrowings
-                            .Where(b => b.Student.Id == studentId)
-                            .ToList();
+            {
+                IReadOnlyList<EquipmentBorrowing.Domain.Borrowing> result =
+                    Borrowings
+                        .Where(b => b.Student.Id == studentId)
+                        .ToList();
 
-                    return Task.FromResult(result);
-                }
+                return Task.FromResult(result);
+            }
+        public Task<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>>
+            GetAllByEquipmentIdAsync(Guid equipmentId)
+            {
+                IReadOnlyList<EquipmentBorrowing.Domain.Borrowing> result =
+                    Borrowings
+                        .Where(b => b.Equipment.EquipmentId == equipmentId)
+                        .OrderByDescending(b => b.DateBorrowed)
+                        .ToList();
+
+                return Task.FromResult(result);
+        }
     }
 
 

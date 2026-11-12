@@ -170,4 +170,15 @@ public class EfBorrowingRepository : IBorrowingRepository
             .AsNoTracking()
             .ToListAsync();
     }
+    public async Task<IReadOnlyList<Borrowing>> GetAllByEquipmentIdAsync(
+    Guid equipmentId)
+    {
+        return await _db.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .Where(b => b.EquipmentId == equipmentId)
+            .OrderByDescending(b => b.DateBorrowed)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }
