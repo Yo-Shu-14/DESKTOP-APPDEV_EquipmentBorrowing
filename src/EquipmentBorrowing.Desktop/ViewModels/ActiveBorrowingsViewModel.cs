@@ -1,9 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Application.Interfaces;
+using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
+using System.Collections.ObjectModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
@@ -14,6 +15,15 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
 
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    [ObservableProperty]
+    private bool isEmpty;
+
+    [ObservableProperty]
+    private bool isError;
 
     private readonly IBorrowingRepository _borrowingRepository;
     private readonly ReturnEquipmentService _returnEquipmentService;
@@ -28,17 +38,42 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
     }
 
 
-
     [RelayCommand]
-    private async Task LoadBorrowingsAsync() {
-        var borrowings = await _borrowingRepository.GetAllActiveAsync();
+    private async Task LoadBorrowingsAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            IsEmpty = false;
+            IsError = false;
+            FeedbackMessage = string.Empty;
 
-        ActiveBorrowings.Clear();
+            var borrowings = await _borrowingRepository.GetAllActiveAsync();
 
-        foreach (var borrowing in borrowings) {
-            ActiveBorrowings.Add(borrowing);
+            ActiveBorrowings.Clear();
+
+            foreach (var borrowing in borrowings)
+            {
+                ActiveBorrowings.Add(borrowing);
+            }
+
+            IsEmpty = ActiveBorrowings.Count == 0;
+
+            if (IsEmpty)
+            {
+                FeedbackMessage = "No active borrowings found.";
+            }
         }
-        
+        catch (Exception)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = "Unable to load active borrowings. Please try again.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
 
@@ -55,6 +90,7 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
         catch (Exception ex)
         {
             FeedbackMessage = ex.Message;
+
         }
 
 

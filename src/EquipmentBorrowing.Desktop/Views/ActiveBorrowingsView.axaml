@@ -1,3 +1,4 @@
+
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,31 +12,56 @@
         RowDefinitions="Auto,Auto,Auto,*">
 
         <TextBlock
-    Grid.Row="0"
-    Classes="title"
-    Text="Active Borrowings"/>
+            Grid.Row="0"
+            Classes="title"
+            Text="Active Borrowings"/>
 
         <TextBlock
-    Grid.Row="1"
-    Classes="subheading"
-    Text="Equipment currently borrowed"/>
+            Grid.Row="1"
+            Classes="subheading"
+            Text="Equipment currently borrowed"/>
 
         <StackPanel
-    Grid.Row="2"
-    Spacing="4">
+            Grid.Row="2"
+            Spacing="6">
 
-    <Button
-        Content="Refresh"
-        Command="{Binding LoadBorrowingsCommand}"
-        HorizontalAlignment="Left"/>
+            <Button
+                Content="Refresh"
+                Command="{Binding LoadBorrowingsCommand}"
+                HorizontalAlignment="Left"/>
 
-    <TextBlock
-        Classes="feedback"
-        Text="{Binding FeedbackMessage}"/>
+            <TextBlock
+                Classes="feedback"
+                Text="Loading active borrowings..."
+                IsVisible="{Binding IsLoading}"/>
 
-</StackPanel>
+            <TextBlock
+                Classes="feedback"
+                Text=""
+                IsVisible="{Binding IsEmpty}"/>
 
-        <!-- Remaining space becomes scrollable -->
+            <StackPanel
+                Spacing="4"
+                IsVisible="{Binding IsError}">
+
+                <TextBlock
+                    Classes="feedback"
+                    Text="{Binding FeedbackMessage}"/>
+
+                <Button
+                    Content="Retry"
+                    Command="{Binding LoadBorrowingsCommand}"
+                    HorizontalAlignment="Left"/>
+
+            </StackPanel>
+
+            <TextBlock
+                Classes="feedback"
+                Text="{Binding FeedbackMessage}"
+                IsVisible="{Binding IsEmpty}"/>
+
+        </StackPanel>
+
         <ScrollViewer
             Grid.Row="3"
             VerticalScrollBarVisibility="Auto"
@@ -44,7 +70,6 @@
             <ItemsControl ItemsSource="{Binding ActiveBorrowings}">
 
                 <ItemsControl.ItemTemplate>
-
                     <DataTemplate x:DataType="domain:Borrowing">
 
                         <Border Classes="card">
@@ -54,8 +79,6 @@
                                 <TextBlock
                                     Text="{Binding BorrowingId}"
                                     FontSize="12"/>
-
-
 
                                 <TextBlock
                                     Text="{Binding Equipment.Name}"
@@ -90,7 +113,6 @@
                         </Border>
 
                     </DataTemplate>
-
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
