@@ -43,6 +43,7 @@ public partial class App : Avalonia.Application
             services.AddSingleton<EquipmentViewModel>();
             services.AddTransient<ActiveBorrowingsViewModel>();
             services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<ViewEquipmentCatalogService>();
 
             var serviceProvider = services.BuildServiceProvider();
 

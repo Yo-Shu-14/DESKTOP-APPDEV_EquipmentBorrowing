@@ -5,12 +5,13 @@ using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
 using System.Collections.ObjectModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class EquipmentViewModel : ObservableObject
 {
-    private readonly CheckAvailableEquipmentService _checkAvailableEquipmentService;
+    private readonly ViewEquipmentCatalogService _viewEquipmentCatalogService;
     private readonly BorrowEquipmentService _borrowEquipmentService;
     private readonly IStudentRepository _studentRepository;
 
@@ -20,6 +21,14 @@ public partial class EquipmentViewModel : ObservableObject
     [ObservableProperty]
     private Student? selectedStudent;
 
+    [ObservableProperty]
+    private bool isLoading;
+
+    [ObservableProperty]
+    private bool isEmpty;
+
+    [ObservableProperty]
+    private bool isError;
 
 
     //
@@ -30,9 +39,12 @@ public partial class EquipmentViewModel : ObservableObject
     public string feedbackMessage = string.Empty;
 
 
-    public EquipmentViewModel(CheckAvailableEquipmentService checkAvailableEquipmentService, BorrowEquipmentService borrowEquipmentService, IStudentRepository studentRepository)
+    public EquipmentViewModel(
+    ViewEquipmentCatalogService viewEquipmentCatalogService,
+    BorrowEquipmentService borrowEquipmentService,
+    IStudentRepository studentRepository)
     {
-        _checkAvailableEquipmentService = checkAvailableEquipmentService;
+        _viewEquipmentCatalogService = viewEquipmentCatalogService;
         _borrowEquipmentService = borrowEquipmentService;
         _studentRepository = studentRepository;
     }
@@ -40,27 +52,59 @@ public partial class EquipmentViewModel : ObservableObject
 
 
     [RelayCommand]
-    private async Task LoadEquipmentAsync() 
+    private async Task LoadEquipmentAsync()
     {
-        var equipment  = await _checkAvailableEquipmentService.CheckAvailableEquipmentAsync();
-        EquipmentList.Clear();
-        foreach (var item in equipment)
+        try
         {
-            EquipmentList.Add(item);
-        }
+            IsError = false;
 
-        if (StudentList.Count == 0)
+            IsLoading = true;
+            IsEmpty = false;
+            FeedbackMessage = string.Empty;
+
+            var equipment = await _viewEquipmentCatalogService
+                .ViewEquipmentCatalogAsync();
+
+            EquipmentList.Clear();
+
+            foreach (var item in equipment)
+            {
+                EquipmentList.Add(item);
+            }
+
+            IsEmpty = EquipmentList.Count == 0;
+
+            if (IsEmpty)
+            {
+                FeedbackMessage = "No equipment registered yet.";
+            }
+
+            if (StudentList.Count == 0)
+            {
+                var students = await _studentRepository.GetAllAsync();
+
+                foreach (var student in students)
+                {
+                    StudentList.Add(student);
+                }
+
+                SelectedStudent = StudentList.FirstOrDefault();
+            }
+        }
+        catch (Exception)
         {
-            var students = await _studentRepository.GetAllAsync();
-            foreach (var s in students)
-                StudentList.Add(s);
-            SelectedStudent = StudentList.FirstOrDefault();
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = "Unable to load equipment. Please check your connection and try again.";
         }
-
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
 
-    
+
     // borrow com
     [RelayCommand]
     private async Task BorrowAsync(Equipment equipment)
