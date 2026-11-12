@@ -25,4 +25,6 @@ public interface IBorrowingRepository
     Task AddBorrowingsWithEquipmentUpdatesAsync(
         IReadOnlyList<Borrowing> borrowings,
         IReadOnlyList<Equipment> equipment);
+
+    Task<IReadOnlyList<Borrowing>> GetAllByStudentIdAsync(int studentId);
 }

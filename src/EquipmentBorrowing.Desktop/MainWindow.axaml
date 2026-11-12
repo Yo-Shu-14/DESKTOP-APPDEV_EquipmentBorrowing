@@ -15,6 +15,9 @@
     <TextBlock Classes="sidebarTitle" Text="EB SYSTEM"/>
     <Button Content="Equipment" Command="{Binding ShowEquipmentCommand}"/>
     <Button Content="Active Borrowings" Command="{Binding ShowActiveBorrowingsCommand}"/>
+    <Button
+        Content="Student History"
+        Command="{Binding ShowStudentHistoryCommand}"/>
 
 
    </StackPanel>

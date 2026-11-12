@@ -159,4 +159,15 @@ public class EfBorrowingRepository : IBorrowingRepository
             throw;
         }
     }
+    public async Task<IReadOnlyList<Borrowing>> GetAllByStudentIdAsync(
+    int studentId)
+    {
+        return await _db.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .Where(b => b.StudentId == studentId)
+            .OrderByDescending(b => b.DateBorrowed)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

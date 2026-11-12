@@ -182,6 +182,16 @@ public class ReturnEquipmentServiceTests
 
             return Task.CompletedTask;
         }
+        public Task<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>>
+            GetAllByStudentIdAsync(int studentId)
+                {
+                    IReadOnlyList<EquipmentBorrowing.Domain.Borrowing> result =
+                        Borrowings
+                            .Where(b => b.Student.Id == studentId)
+                            .ToList();
+
+                    return Task.FromResult(result);
+                }
     }
 
 

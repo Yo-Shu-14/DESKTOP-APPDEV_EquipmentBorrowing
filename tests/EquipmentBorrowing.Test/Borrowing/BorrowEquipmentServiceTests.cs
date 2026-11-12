@@ -475,6 +475,15 @@ public class BorrowEquipmentServiceTests
 
                     return Task.CompletedTask;
         }
+        public Task<IReadOnlyList<DomainBorrowing>> GetAllByStudentIdAsync(
+            int studentId)
+                {
+                    IReadOnlyList<DomainBorrowing> result = Borrowings
+                        .Where(b => b.Student.Id == studentId)
+                        .ToList();
+
+                    return Task.FromResult(result);
+                }
     }
     
 }
