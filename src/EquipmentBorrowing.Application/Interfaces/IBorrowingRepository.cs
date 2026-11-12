@@ -17,4 +17,8 @@ public interface IBorrowingRepository
     Task AddBorrowingWithEquipmentUpdateAsync(
         Borrowing borrowing,
         Equipment equipment);
+
+    Task ReturnBorrowingWithEquipmentUpdateAsync(
+        Borrowing borrowing,
+        Equipment equipment);
 }

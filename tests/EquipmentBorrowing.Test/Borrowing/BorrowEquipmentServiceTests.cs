@@ -450,6 +450,15 @@ public class BorrowEquipmentServiceTests
                     3,
                     DateTime.Today.AddDays(-1)));
         }
+        public Task ReturnBorrowingWithEquipmentUpdateAsync(
+            DomainBorrowing borrowing,
+            Equipment equipment)
+                {
+                    borrowing.MarkAsReturned();
+                    equipment.MarkAsAvailable();
+
+                    return Task.CompletedTask;
+        }
     }
     
 }

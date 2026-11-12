@@ -39,8 +39,7 @@ public class ReturnEquipmentServiceTests
         borrowingRepository.Borrowings.Add(borrowing);
 
         var service = new ReturnEquipmentService(
-            borrowingRepository,
-            equipmentRepository);
+            borrowingRepository);
 
         // Act
         await service.ReturnEquipmentAsync(borrowing.BorrowingId);
@@ -62,8 +61,7 @@ public class ReturnEquipmentServiceTests
         var equipmentRepository = new FakeEquipmentRepository(null);
 
         var service = new ReturnEquipmentService(
-            borrowingRepository,
-            equipmentRepository);
+            borrowingRepository);
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
@@ -100,8 +98,7 @@ public class ReturnEquipmentServiceTests
         borrowingRepository.Borrowings.Add(borrowing);
 
         var service = new ReturnEquipmentService(
-            borrowingRepository,
-            equipmentRepository);
+            borrowingRepository);
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
@@ -160,6 +157,15 @@ public class ReturnEquipmentServiceTests
             Borrowings.Add(borrowing);
             return Task.CompletedTask;
         }
+        public Task ReturnBorrowingWithEquipmentUpdateAsync(
+            EquipmentBorrowing.Domain.Borrowing borrowing,
+            Equipment equipment)
+                {
+                    borrowing.MarkAsReturned();
+                    equipment.MarkAsAvailable();
+
+                    return Task.CompletedTask;
+                }
     }
 
 

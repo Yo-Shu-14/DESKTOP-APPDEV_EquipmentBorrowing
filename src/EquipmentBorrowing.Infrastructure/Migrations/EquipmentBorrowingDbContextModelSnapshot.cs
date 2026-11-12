@@ -28,6 +28,9 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("ActualReturnDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("DateBorrowed")
                         .HasColumnType("timestamp with time zone");
 

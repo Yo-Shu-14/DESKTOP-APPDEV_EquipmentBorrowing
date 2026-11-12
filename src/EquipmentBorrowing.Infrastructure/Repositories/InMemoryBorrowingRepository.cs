@@ -54,5 +54,13 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
 
         return Task.CompletedTask;
     }
+    public Task ReturnBorrowingWithEquipmentUpdateAsync(
+    Borrowing borrowing,
+    Equipment equipment)
+    {
+        borrowing.MarkAsReturned();
+        equipment.MarkAsAvailable();
 
+        return Task.CompletedTask;
+    }
 }

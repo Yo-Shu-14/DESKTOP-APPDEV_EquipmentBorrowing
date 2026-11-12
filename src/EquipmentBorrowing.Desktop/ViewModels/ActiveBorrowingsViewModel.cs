@@ -83,18 +83,20 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
     {
         try
         {
-            await _returnEquipmentService.ReturnEquipmentAsync(borrowing.BorrowingId);
-            FeedbackMessage = "Equipment returned successfully.";
+            await _returnEquipmentService.ReturnEquipmentAsync(
+                borrowing.BorrowingId);
+
             await LoadBorrowingsAsync();
+
+            if (!IsError)
+            {
+                FeedbackMessage = "Equipment returned successfully.";
+            }
         }
         catch (Exception ex)
         {
             FeedbackMessage = ex.Message;
-
         }
-
-
-
     }
 }
 

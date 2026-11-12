@@ -87,5 +87,40 @@ public class EfBorrowingRepository : IBorrowingRepository
         }
     }
 
+    public async Task ReturnBorrowingWithEquipmentUpdateAsync(
+    Borrowing borrowing,
+    Equipment equipment)
+    {
+        await using var transaction =
+            await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            var updatedRows = await _db.Borrowings
+                .Where(b => b.BorrowingId == borrowing.BorrowingId
+                         && b.Status == BorrowingStatus.Active)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(b => b.Status, BorrowingStatus.Returned)
+                    .SetProperty(b => b.ActualReturnDate, borrowing.ActualReturnDate));
+
+            if (updatedRows == 0)
+            {
+                throw new InvalidOperationException(
+                    "Borrowing has already been returned or does not exist.");
+            }
+
+            await _db.Equipment
+                .Where(e => e.EquipmentId == equipment.EquipmentId)
+                .ExecuteUpdateAsync(setters =>
+                    setters.SetProperty(e => e.IsAvailable, true));
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 
 }

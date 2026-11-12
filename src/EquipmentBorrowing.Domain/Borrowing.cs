@@ -14,6 +14,7 @@ public class Borrowing
 
     public DateTime DateBorrowed { get; private set; }
     public DateTime ExpectedReturnDate { get; private set; }
+    public DateTime? ActualReturnDate { get; private set; }
     public BorrowingStatus Status { get; private set; }
 
     public Borrowing(
@@ -42,5 +43,6 @@ public class Borrowing
     public void MarkAsReturned()
     {
         Status = BorrowingStatus.Returned;
+        ActualReturnDate = DateTime.UtcNow;
     }
 }

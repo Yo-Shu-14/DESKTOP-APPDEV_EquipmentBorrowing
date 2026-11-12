@@ -1,22 +1,17 @@
-﻿using EquipmentBorrowing.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using global::EquipmentBorrowing.Domain;
+﻿
+using EquipmentBorrowing.Application.Interfaces;
+using EquipmentBorrowing.Domain;
 
 namespace EquipmentBorrowing.Application.Services;
 
 public class ReturnEquipmentService
 {
     private readonly IBorrowingRepository _borrowingRepository;
-    private readonly IEquipmentRepository _equipmentRepository;
 
     public ReturnEquipmentService(
-        IBorrowingRepository borrowingRepository,
-        IEquipmentRepository equipmentRepository)
+        IBorrowingRepository borrowingRepository)
     {
         _borrowingRepository = borrowingRepository;
-        _equipmentRepository = equipmentRepository;
     }
 
     public async Task ReturnEquipmentAsync(Guid borrowingId)
@@ -25,20 +20,20 @@ public class ReturnEquipmentService
 
         if (borrowing is null)
         {
-            throw new InvalidOperationException("Borrowing does not exist.");
+            throw new InvalidOperationException(
+                "Borrowing does not exist.");
         }
 
         if (borrowing.Status == BorrowingStatus.Returned)
         {
-            throw new InvalidOperationException("Equipment has already been returned.");
+            throw new InvalidOperationException(
+                "Equipment has already been returned.");
         }
 
         borrowing.MarkAsReturned();
 
-        borrowing.Equipment.MarkAsAvailable();
-
-        await _borrowingRepository.UpdateAsync(borrowing);
-
-        await _equipmentRepository.UpdateAsync(borrowing.Equipment);
+        await _borrowingRepository.ReturnBorrowingWithEquipmentUpdateAsync(
+            borrowing,
+            borrowing.Equipment);
     }
 }

@@ -23,18 +23,11 @@ public partial class App : Avalonia.Application
         {
             var services = new ServiceCollection();
 
-
-
-            
-
             services.AddDatabase();
 
             services.AddScoped<IStudentRepository, EfStudentRepository>();
             services.AddScoped<IEquipmentRepository, EfEquipmentRepository>();
             services.AddScoped<IBorrowingRepository, EfBorrowingRepository>();
-
-
-
 
             //services
             services.AddTransient<BorrowEquipmentService>();
