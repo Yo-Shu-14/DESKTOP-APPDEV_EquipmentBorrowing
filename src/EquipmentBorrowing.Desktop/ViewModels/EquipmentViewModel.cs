@@ -183,20 +183,23 @@ public partial class EquipmentViewModel : ObservableObject
                 SelectedStudent.Id,
                 SelectedEquipment.EquipmentId,
                 3,
-                ExpectedReturnDate.Value.DateTime
-                );
+                DateTime.SpecifyKind(
+                    ExpectedReturnDate.Value.Date,
+                    DateTimeKind.Local)
+            );
 
             FeedbackMessage = "Successful Borrowing";
 
             await LoadEquipmentAsync();
 
         }
-        catch (Exception ex) {
-            FeedbackMessage = ex.Message;
+        catch (Exception ex)
+        {
+            FeedbackMessage = ex.ToString();
         }
-           
 
-        
+
+
     }
 }
 

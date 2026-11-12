@@ -64,7 +64,15 @@ public class BorrowEquipmentService
 
 
 
-        var borrowing = new Borrowing(Guid.NewGuid(), student, equipment, DateTime.Now, expectedReturnDate, BorrowingStatus.Active);
+        var borrowing = new Borrowing(
+            Guid.NewGuid(),
+            student,
+            equipment,
+            DateTime.UtcNow,
+            expectedReturnDate.Kind == DateTimeKind.Utc
+                ? expectedReturnDate
+                : expectedReturnDate.ToUniversalTime(),
+            BorrowingStatus.Active);
 
         await _borrowingRepository.AddBorrowingWithEquipmentUpdateAsync(
             borrowing,
