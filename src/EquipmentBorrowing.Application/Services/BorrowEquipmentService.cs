@@ -22,6 +22,11 @@ public class BorrowEquipmentService
 
     public async Task BorrowEquipmentAsync(int studentId, Guid equipmentId, int maximumActiveBorrowings, DateTime expectedReturnDate)
     {
+        if (expectedReturnDate.Date <= DateTime.Today)
+        {
+            throw new InvalidOperationException(
+                "Expected return date must be in the future.");
+        }
         var student = await _studentRepository.GetByIdAsync(studentId);
 
         if (student is null)
@@ -61,9 +66,8 @@ public class BorrowEquipmentService
 
         var borrowing = new Borrowing(Guid.NewGuid(), student, equipment, DateTime.Now, expectedReturnDate, BorrowingStatus.Active);
 
-        equipment.MarkAsUnavailable();
-
-        await _equipmentRepository.UpdateAsync(equipment);
-        await _borrowingRepository.AddAsync(borrowing);
+        await _borrowingRepository.AddBorrowingWithEquipmentUpdateAsync(
+            borrowing,
+            equipment);
     }
 }

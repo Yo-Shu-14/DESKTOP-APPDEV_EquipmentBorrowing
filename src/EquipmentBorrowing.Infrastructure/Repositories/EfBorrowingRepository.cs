@@ -53,4 +53,39 @@ public class EfBorrowingRepository : IBorrowingRepository
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task AddBorrowingWithEquipmentUpdateAsync(
+    Borrowing borrowing,
+    Equipment equipment)
+    {
+        await using var transaction =
+            await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            var updatedRows = await _db.Equipment
+                .Where(e => e.EquipmentId == equipment.EquipmentId
+                         && e.IsAvailable)
+                .ExecuteUpdateAsync(setters =>
+                    setters.SetProperty(e => e.IsAvailable, false));
+
+            if (updatedRows == 0)
+            {
+                throw new InvalidOperationException(
+                    "Equipment is no longer available. Please refresh and try again.");
+            }
+
+            await _db.Borrowings.AddAsync(borrowing);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+
 }

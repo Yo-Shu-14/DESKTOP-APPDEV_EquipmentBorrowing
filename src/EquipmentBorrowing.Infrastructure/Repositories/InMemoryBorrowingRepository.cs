@@ -45,4 +45,14 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
         var active = _borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
         return Task.FromResult<IReadOnlyList<Borrowing>>(active);
     }
+    public Task AddBorrowingWithEquipmentUpdateAsync(
+    Borrowing borrowing,
+    Equipment equipment)
+    {
+        equipment.MarkAsUnavailable();
+        _borrowings.Add(borrowing);
+
+        return Task.CompletedTask;
+    }
+
 }

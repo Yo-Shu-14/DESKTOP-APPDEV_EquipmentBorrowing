@@ -153,6 +153,13 @@ public class ReturnEquipmentServiceTests
         {
             return Task.CompletedTask;
         }
+        public Task AddBorrowingWithEquipmentUpdateAsync(
+            EquipmentBorrowing.Domain.Borrowing borrowing,
+            Equipment equipment)
+        {
+            Borrowings.Add(borrowing);
+            return Task.CompletedTask;
+        }
     }
 
 
@@ -198,5 +205,6 @@ public class ReturnEquipmentServiceTests
         {
             return Task.CompletedTask;
         }
+        
     }
 }

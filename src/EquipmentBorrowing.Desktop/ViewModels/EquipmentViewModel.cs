@@ -159,6 +159,12 @@ public partial class EquipmentViewModel : ObservableObject
             SelectedStudent = StudentList.FirstOrDefault();
         }
 
+        if (SelectedStudent == null)
+        {
+            FeedbackMessage = "Please select a student.";
+            return;
+        }
+
         if (ExpectedReturnDate == null)
         {
             FeedbackMessage = "Please select an expected return date!";

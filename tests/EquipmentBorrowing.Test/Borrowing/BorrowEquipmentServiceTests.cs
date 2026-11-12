@@ -49,6 +49,8 @@ public class BorrowEquipmentServiceTests
         Assert.Equal(
             BorrowingStatus.Active,
             borrowingRepository.Borrowings[0].Status);
+
+        Assert.False(equipment.IsAvailable);
     }
 
 
@@ -112,6 +114,9 @@ public class BorrowEquipmentServiceTests
                 equipment.EquipmentId,
                 3,
                 DateTime.Now.AddDays(7)));
+
+        Assert.Empty(borrowingRepository.Borrowings);
+        Assert.True(equipment.IsAvailable);
     }
 
 
@@ -229,8 +234,71 @@ public class BorrowEquipmentServiceTests
                 equipment.EquipmentId,
                 3,
                 DateTime.Now.AddDays(7)));
+
+        Assert.True(equipment.IsAvailable);
+        Assert.Equal(3, borrowingRepository.Borrowings.Count);
     }
 
+    [Fact]
+    public async Task BorrowEquipmentAsync_ShouldNotCreateBorrowing_WhenExpectedReturnDateIsInThePast()
+    {
+        // Arrange
+        var student = new Student(1, "Jade", true);
+
+        var equipment = new Equipment(
+            Guid.NewGuid(),
+            "Laptop",
+            "Dell Laptop",
+            true);
+
+        var borrowingRepository = new FakeBorrowingRepository();
+
+        var service = new BorrowEquipmentService(
+            new FakeStudentRepository(student),
+            new FakeEquipmentRepository(equipment),
+            borrowingRepository);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.BorrowEquipmentAsync(
+                1,
+                equipment.EquipmentId,
+                3,
+                DateTime.Today.AddDays(-1)));
+
+        Assert.Empty(borrowingRepository.Borrowings);
+        Assert.True(equipment.IsAvailable);
+    }
+    [Fact]
+    public async Task BorrowEquipmentAsync_ShouldNotCreateBorrowing_WhenEquipmentIsUnavailable()
+    {
+        // Arrange
+        var student = new Student(1, "Jade", true);
+
+        var equipment = new Equipment(
+            Guid.NewGuid(),
+            "Laptop",
+            "Dell Laptop",
+            false);
+
+        var borrowingRepository = new FakeBorrowingRepository();
+
+        var service = new BorrowEquipmentService(
+            new FakeStudentRepository(student),
+            new FakeEquipmentRepository(equipment),
+            borrowingRepository);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.BorrowEquipmentAsync(
+                1,
+                equipment.EquipmentId,
+                3,
+                DateTime.Today.AddDays(7)));
+
+        Assert.Empty(borrowingRepository.Borrowings);
+        Assert.False(equipment.IsAvailable);
+    }
 
     // --------------------------------------------------
     // Fake Student Repository
@@ -310,7 +378,7 @@ public class BorrowEquipmentServiceTests
     // Fake Borrowing Repository
     // --------------------------------------------------
 
-    private class FakeBorrowingRepository : IBorrowingRepository
+    public class FakeBorrowingRepository : IBorrowingRepository
     {
         public List<DomainBorrowing> Borrowings { get; } = new();
 
@@ -349,5 +417,39 @@ public class BorrowEquipmentServiceTests
             var active = Borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
             return Task.FromResult<IReadOnlyList<DomainBorrowing>>(active);
         }
+        public Task AddBorrowingWithEquipmentUpdateAsync(
+            EquipmentBorrowing.Domain.Borrowing borrowing,
+            Equipment equipment)
+        {
+            equipment.MarkAsUnavailable();
+            Borrowings.Add(borrowing);
+            return Task.CompletedTask;
+        }
+        [Fact]
+        public async Task BorrowEquipmentAsync_ShouldThrowException_WhenExpectedReturnDateIsInThePast()
+        {
+            // Arrange
+            var student = new Student(1, "Jade", true);
+
+            var equipment = new Equipment(
+                Guid.NewGuid(),
+                "Laptop",
+                "Dell Laptop",
+                true);
+
+            var service = new BorrowEquipmentService(
+                new FakeStudentRepository(student),
+                new FakeEquipmentRepository(equipment),
+                new FakeBorrowingRepository());
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                service.BorrowEquipmentAsync(
+                    1,
+                    equipment.EquipmentId,
+                    3,
+                    DateTime.Today.AddDays(-1)));
+        }
     }
+    
 }

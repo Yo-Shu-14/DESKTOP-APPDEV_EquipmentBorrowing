@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EquipmentBorrowing.Domain;
 
-
-using EquipmentBorrowing.Domain;
 namespace EquipmentBorrowing.Application.Interfaces;
 
 public interface IBorrowingRepository
@@ -17,4 +13,8 @@ public interface IBorrowingRepository
     Task UpdateAsync(Borrowing borrowing);
 
     Task<IReadOnlyList<Borrowing>> GetAllActiveAsync();
+
+    Task AddBorrowingWithEquipmentUpdateAsync(
+        Borrowing borrowing,
+        Equipment equipment);
 }
