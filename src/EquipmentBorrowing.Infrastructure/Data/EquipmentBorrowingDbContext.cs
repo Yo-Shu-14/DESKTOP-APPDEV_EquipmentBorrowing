@@ -25,13 +25,23 @@ public class EquipmentBorrowingDbContext : DbContext
     }
 }
 
+
 public static class DatabaseConfiguration
 {
     public static IServiceCollection AddDatabase(
         this IServiceCollection services)
     {
+        var connectionString =
+            Environment.GetEnvironmentVariable("EQUIPMENT_BORROWING_CONNECTION");
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "PostgreSQL connection string is not configured.");
+        }
+
         services.AddDbContext<EquipmentBorrowingDbContext>(options =>
-            options.UseSqlite("Data Source=equipmentborrow.db"));
+            options.UseNpgsql(connectionString));
 
         return services;
     }

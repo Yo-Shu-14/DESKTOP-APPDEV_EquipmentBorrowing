@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using EquipmentBorrowing.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace EquipmentBorrowing.Infrastructure.Data;
@@ -8,10 +10,19 @@ public class EquipmentBorrowingDbContextFactory
 {
     public EquipmentBorrowingDbContext CreateDbContext(string[] args)
     {
+        var connectionString =
+            Environment.GetEnvironmentVariable("EQUIPMENT_BORROWING_CONNECTION");
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "PostgreSQL connection string is not configured.");
+        }
+
         var optionsBuilder =
             new DbContextOptionsBuilder<EquipmentBorrowingDbContext>();
 
-        optionsBuilder.UseSqlite("Data Source=equipmentborrow.db");
+        optionsBuilder.UseNpgsql(connectionString);
 
         return new EquipmentBorrowingDbContext(optionsBuilder.Options);
     }

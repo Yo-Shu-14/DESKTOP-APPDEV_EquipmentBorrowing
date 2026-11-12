@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace EquipmentBorrowing.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialPostgreSQL : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,10 +16,10 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                 name: "Equipment",
                 columns: table => new
                 {
-                    EquipmentId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false)
+                    EquipmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    IsAvailable = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,10 +30,10 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                 name: "Students",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    IsAllowedToBorrow = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    IsAllowedToBorrow = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,12 +44,12 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                 name: "Borrowings",
                 columns: table => new
                 {
-                    BorrowingId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EquipmentId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    DateBorrowed = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ExpectedReturnDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false)
+                    BorrowingId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<int>(type: "integer", nullable: false),
+                    EquipmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DateBorrowed = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExpectedReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

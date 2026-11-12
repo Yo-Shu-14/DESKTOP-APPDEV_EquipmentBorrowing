@@ -46,6 +46,10 @@ public partial class App : Avalonia.Application
 
             var serviceProvider = services.BuildServiceProvider();
 
+            var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+
+            desktop.MainWindow = new MainWindow(mainWindowViewModel);
+
             var db = serviceProvider.GetRequiredService<EquipmentBorrowingDbContext>();
 
             await DatabaseInitializer.InitializeAsync(db);
@@ -56,12 +60,6 @@ public partial class App : Avalonia.Application
             var activeBorrowingsViewModel = serviceProvider.GetRequiredService<ActiveBorrowingsViewModel>();
             await activeBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
 
-            var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
-
-
-
-            desktop.MainWindow = new MainWindow( mainWindowViewModel);
-            
         }
 
         base.OnFrameworkInitializationCompleted();
