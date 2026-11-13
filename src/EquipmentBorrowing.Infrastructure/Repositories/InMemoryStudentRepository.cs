@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Domain;
+
 namespace EquipmentBorrowing.Infrastructure.Repositories;
 
 public class InMemoryStudentRepository : IStudentRepository
@@ -14,11 +16,10 @@ public class InMemoryStudentRepository : IStudentRepository
         _students = students.ToList();
     }
 
-
-
     public Task<Student?> GetByIdAsync(int id)
     {
-        var student = _students.FirstOrDefault(student => student.Id == id);
+        var student = _students.FirstOrDefault(
+            student => student.Id == id);
 
         return Task.FromResult(student);
     }
@@ -27,5 +28,22 @@ public class InMemoryStudentRepository : IStudentRepository
     {
         return Task.FromResult<IReadOnlyList<Student>>(_students);
     }
-}
 
+    public Task<Student?> GetByInstitutionalNumberAsync(
+        string institutionalNumber)
+    {
+        string normalizedNumber = institutionalNumber.Trim().ToUpper();
+
+        var student = _students.FirstOrDefault(
+            student => student.InstitutionalNumber.ToUpper() == normalizedNumber);
+
+        return Task.FromResult(student);
+    }
+
+    public Task AddAsync(Student student)
+    {
+        _students.Add(student);
+
+        return Task.CompletedTask;
+    }
+}

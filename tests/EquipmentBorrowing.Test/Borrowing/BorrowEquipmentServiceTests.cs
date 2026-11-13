@@ -326,6 +326,26 @@ public class BorrowEquipmentServiceTests
 
             return Task.FromResult<IReadOnlyList<Student>>(students);
         }
+
+        public Task<Student?> GetByInstitutionalNumberAsync(
+            string institutionalNumber)
+        {
+            if (_student is null)
+                return Task.FromResult<Student?>(null);
+
+            string normalizedNumber = institutionalNumber.Trim().ToUpper();
+
+            return Task.FromResult(
+                _student.InstitutionalNumber.ToUpper() == normalizedNumber
+                    ? _student
+                    : null);
+        }
+
+        public Task AddAsync(Student student)
+        {
+            throw new NotImplementedException(
+                "Adding students is not supported by this test fake.");
+        }
     }
 
 

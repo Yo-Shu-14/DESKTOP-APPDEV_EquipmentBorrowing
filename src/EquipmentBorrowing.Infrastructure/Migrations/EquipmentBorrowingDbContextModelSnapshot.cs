@@ -88,6 +88,15 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ContactInformation")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("InstitutionalNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<bool>("IsAllowedToBorrow")
                         .HasColumnType("boolean");
 
@@ -97,6 +106,9 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InstitutionalNumber")
+                        .IsUnique();
 
                     b.ToTable("Students");
                 });
