@@ -43,7 +43,17 @@ public class Equipment
     {
         IsAvailable = true;
     }
-
+    public void UpdateInformation(
+    string equipmentIdentifier,
+    string name,
+    string? description)
+    {
+        EquipmentIdentifier = equipmentIdentifier.Trim().ToUpperInvariant();
+        Name = name.Trim();
+        Description = string.IsNullOrWhiteSpace(description)
+            ? null
+            : description.Trim();
+    }
     public void MarkAsUnavailable()
     {
         IsAvailable = false;

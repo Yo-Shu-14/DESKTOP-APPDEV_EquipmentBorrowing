@@ -44,6 +44,14 @@ public class InMemoryEquipmentRepository : IEquipmentRepository
     }
     public Task UpdateAsync(Equipment equipment)
     {
+        var index = _equipment.FindIndex(
+            e => e.EquipmentId == equipment.EquipmentId);
+
+        if (index >= 0)
+        {
+            _equipment[index] = equipment;
+        }
+
         return Task.CompletedTask;
     }
 

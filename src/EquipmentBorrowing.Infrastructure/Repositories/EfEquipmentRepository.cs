@@ -63,7 +63,18 @@ public class EfEquipmentRepository : IEquipmentRepository
     }
     public async Task UpdateAsync(Equipment equipment)
     {
-        _db.Equipment.Update(equipment);
-        await _db.SaveChangesAsync();
+        try
+        {
+            _db.Equipment.Update(equipment);
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+            when (ex.InnerException is PostgresException postgresException
+                  && postgresException.SqlState == "23505"
+                  && postgresException.ConstraintName == "IX_Equipment_EquipmentIdentifier")
+        {
+            throw new InvalidOperationException(
+                "Equipment with this identifier already exists.");
+        }
     }
 }

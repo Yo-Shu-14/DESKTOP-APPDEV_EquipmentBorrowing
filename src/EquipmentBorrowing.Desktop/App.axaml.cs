@@ -51,6 +51,9 @@ public partial class App : Avalonia.Application
             services.AddTransient<ChangeStudentEligibilityViewModel>();
             services.AddTransient<RegisterEquipmentService>();
             services.AddTransient<RegisterEquipmentViewModel>();
+            services.AddTransient<UpdateEquipmentInformationService>();
+            services.AddTransient<UpdateEquipmentInformationViewModel>();
+
 
             var serviceProvider = services.BuildServiceProvider();
 

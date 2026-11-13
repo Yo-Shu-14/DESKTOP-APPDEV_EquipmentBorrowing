@@ -10,7 +10,7 @@ public interface IEquipmentRepository
     Task<Equipment?> GetByIdAsync(Guid id);
     Task<IReadOnlyList<Equipment>> GetAllAsync();
     Task<IReadOnlyList<Equipment>> GetAvailableAsync();
-    Task UpdateAsync(Equipment equipment);
     Task<Equipment?> GetByIdentifierAsync(string identifier);
     Task AddAsync(Equipment equipment);
+    Task UpdateAsync(Equipment equipment);
 }

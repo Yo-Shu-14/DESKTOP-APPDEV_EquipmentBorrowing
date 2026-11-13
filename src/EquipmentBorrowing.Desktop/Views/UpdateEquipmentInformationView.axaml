@@ -1,0 +1,67 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
+    x:Class="EquipmentBorrowing.Desktop.Views.UpdateEquipmentInformationView"
+    x:DataType="viewmodels:UpdateEquipmentInformationViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="30" Spacing="15">
+
+            <TextBlock
+                Text="Update Equipment Information"
+                FontSize="26"
+                FontWeight="Bold"/>
+
+            <TextBlock Text="Select Equipment"/>
+
+            <ComboBox
+                ItemsSource="{Binding EquipmentList}"
+                SelectedItem="{Binding SelectedEquipment}"
+                PlaceholderText="Select equipment">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding EquipmentIdentifier}"/>
+                            <TextBlock
+                                Text="{Binding Name}"
+                                FontSize="12"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Text="Equipment Identifier"/>
+            <TextBox
+                Text="{Binding EquipmentIdentifier}"
+                Watermark="Enter equipment identifier"/>
+
+            <TextBlock Text="Equipment Name"/>
+            <TextBox
+                Text="{Binding EquipmentName}"
+                Watermark="Enter equipment name"/>
+
+            <TextBlock Text="Description (Optional)"/>
+            <TextBox
+                Text="{Binding Description}"
+                Watermark="Enter equipment description"
+                AcceptsReturn="True"
+                Height="100"
+                TextWrapping="Wrap"/>
+
+            <Button
+                Content="Update Equipment"
+                Command="{Binding UpdateEquipmentCommand}"
+                IsEnabled="{Binding !IsLoading}"/>
+
+            <TextBlock
+                Text="{Binding FeedbackMessage}"
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Text="Loading equipment..."
+                IsVisible="{Binding IsLoading}"/>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

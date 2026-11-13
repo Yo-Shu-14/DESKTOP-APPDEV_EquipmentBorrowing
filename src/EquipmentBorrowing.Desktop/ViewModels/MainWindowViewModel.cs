@@ -18,6 +18,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly UpdateStudentInformationViewModel _updateStudentInformationViewModel;
     private readonly ChangeStudentEligibilityViewModel _changeStudentEligibilityViewModel;
     private readonly RegisterEquipmentViewModel _registerEquipmentViewModel;
+    private readonly UpdateEquipmentInformationViewModel _updateEquipmentInformationViewModel;
 
     public MainWindowViewModel(
         EquipmentViewModel equipmentViewModel,
@@ -28,7 +29,8 @@ public partial class MainWindowViewModel : ObservableObject
         RegisterStudentViewModel registerStudentViewModel,
         UpdateStudentInformationViewModel updateStudentInformationViewModel,
         ChangeStudentEligibilityViewModel changeStudentEligibilityViewModel,
-        RegisterEquipmentViewModel registerEquipmentViewModel)
+        RegisterEquipmentViewModel registerEquipmentViewModel,
+        UpdateEquipmentInformationViewModel updateEquipmentInformationViewModel)
     {
         _equipmentViewModel = equipmentViewModel;
         _activeBorrowingsViewModel = activeBorrowingsViewModel;
@@ -39,6 +41,7 @@ public partial class MainWindowViewModel : ObservableObject
         _updateStudentInformationViewModel = updateStudentInformationViewModel;
         _changeStudentEligibilityViewModel = changeStudentEligibilityViewModel;
         _registerEquipmentViewModel = registerEquipmentViewModel;
+        _updateEquipmentInformationViewModel = updateEquipmentInformationViewModel;
 
         CurrentView = new EquipmentView
         {
@@ -137,6 +140,16 @@ public partial class MainWindowViewModel : ObservableObject
         CurrentView = new RegisterEquipmentView
         {
             DataContext = _registerEquipmentViewModel
+        };
+    }
+    [RelayCommand]
+    private async Task ShowUpdateEquipment()
+    {
+        await _updateEquipmentInformationViewModel.LoadEquipmentCommand.ExecuteAsync(null);
+
+        CurrentView = new UpdateEquipmentInformationView
+        {
+            DataContext = _updateEquipmentInformationViewModel
         };
     }
 }

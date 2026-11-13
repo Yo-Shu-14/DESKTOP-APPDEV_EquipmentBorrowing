@@ -41,7 +41,9 @@
     <Button
         Content="Register Equipment"
         Command="{Binding ShowRegisterEquipmentCommand}"/>
-
+    <Button
+        Content="Update Equipment"
+        Command="{Binding ShowUpdateEquipmentCommand}"/>
 
    </StackPanel>
 
