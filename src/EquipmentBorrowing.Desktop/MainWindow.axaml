@@ -6,6 +6,7 @@
     x:DataType="viewmodels:MainWindowViewModel"
     Width="900"
     Height="600"
+    WindowState="Maximized"
     Title="Equipment Borrowing System">
 
 

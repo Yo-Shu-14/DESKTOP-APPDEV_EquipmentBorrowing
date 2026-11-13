@@ -189,10 +189,8 @@ public partial class EquipmentViewModel : ObservableObject
                     ExpectedReturnDate.Value.Date,
                     DateTimeKind.Local)
             );
-
-            FeedbackMessage = "Successful Borrowing";
-
             await LoadEquipmentAsync();
+            FeedbackMessage = "Equipment borrowed successfully.";
 
         }
         catch (Exception ex)

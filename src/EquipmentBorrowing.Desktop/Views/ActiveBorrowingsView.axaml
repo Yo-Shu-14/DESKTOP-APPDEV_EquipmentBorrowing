@@ -35,11 +35,6 @@
                 Text="Loading active borrowings..."
                 IsVisible="{Binding IsLoading}"/>
 
-            <TextBlock
-                Classes="feedback"
-                Text=""
-                IsVisible="{Binding IsEmpty}"/>
-
             <StackPanel
                 Spacing="4"
                 IsVisible="{Binding IsError}">
@@ -58,7 +53,13 @@
             <TextBlock
                 Classes="feedback"
                 Text="{Binding FeedbackMessage}"
-                IsVisible="{Binding IsEmpty}"/>
+                IsVisible="{Binding !IsLoading}"/>
+
+            <TextBlock
+                Text="No active borrowings found."
+                IsVisible="{Binding IsEmpty}"
+                HorizontalAlignment="Center"
+                Margin="10"/>
 
         </StackPanel>
 
@@ -109,14 +110,15 @@
                                     Margin="0,10,0,0"/>
 
                             </StackPanel>
+                            
 
                         </Border>
+
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
-
         </ScrollViewer>
 
     </Grid>

@@ -59,10 +59,6 @@ public partial class ActiveBorrowingsViewModel : ObservableObject
 
             IsEmpty = ActiveBorrowings.Count == 0;
 
-            if (IsEmpty)
-            {
-                FeedbackMessage = "No active borrowings found.";
-            }
         }
         catch (Exception)
         {
