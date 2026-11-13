@@ -1,0 +1,46 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
+    x:Class="EquipmentBorrowing.Desktop.Views.RegisterStudentView"
+    x:DataType="viewmodels:RegisterStudentViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="30" Spacing="15">
+
+            <TextBlock
+                Text="Register Student"
+                FontSize="26"
+                FontWeight="Bold"/>
+
+            <TextBlock Text="Institutional Number"/>
+            <TextBox
+                Text="{Binding InstitutionalNumber}"
+                Watermark="Enter institutional number"/>
+
+            <TextBlock Text="Full Name"/>
+            <TextBox
+                Text="{Binding StudentName}"
+                Watermark="Enter student's full name"/>
+
+            <TextBlock Text="Contact Information (Optional)"/>
+            <TextBox
+                Text="{Binding ContactInformation}"
+                Watermark="Enter contact number or email"/>
+
+            <Button
+                Content="Register Student"
+                Command="{Binding RegisterStudentCommand}"
+                IsEnabled="{Binding !IsLoading}"/>
+
+            <TextBlock
+                Text="{Binding FeedbackMessage}"
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Text="Registering student..."
+                IsVisible="{Binding IsLoading}"/>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

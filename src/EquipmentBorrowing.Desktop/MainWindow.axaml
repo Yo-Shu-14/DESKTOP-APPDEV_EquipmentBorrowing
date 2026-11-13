@@ -27,6 +27,9 @@
         Content="Search Borrowings"
         Command="{Binding ShowSearchBorrowingsCommand}"/>
 
+    <Button
+        Content="Register Student"
+        Command="{Binding ShowRegisterStudentCommand}"/>
 
    </StackPanel>
 

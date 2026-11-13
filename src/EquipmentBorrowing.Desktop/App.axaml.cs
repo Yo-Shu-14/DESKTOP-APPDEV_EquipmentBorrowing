@@ -44,6 +44,7 @@ public partial class App : Avalonia.Application
             services.AddTransient<SearchBorrowingsService>();
             services.AddTransient<SearchBorrowingsViewModel>();
             services.AddTransient<RegisterStudentService>();
+            services.AddTransient<RegisterStudentViewModel>();
 
             var serviceProvider = services.BuildServiceProvider();
 

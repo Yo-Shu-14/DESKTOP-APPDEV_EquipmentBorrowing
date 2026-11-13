@@ -45,7 +45,8 @@ public class EfStudentRepository : IStudentRepository
         }
         catch (DbUpdateException ex)
             when (ex.InnerException is PostgresException postgresException
-                  && postgresException.SqlState == "23505")
+                  && postgresException.SqlState == "23505"
+                  && postgresException.ConstraintName == "IX_Students_InstitutionalNumber")
         {
             throw new InvalidOperationException(
                 "A student with this institutional number already exists.");

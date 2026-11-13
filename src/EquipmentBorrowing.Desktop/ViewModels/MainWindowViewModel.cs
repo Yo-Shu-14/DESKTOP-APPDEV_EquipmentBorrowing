@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EquipmentBorrowing.Desktop.Views;
 
@@ -11,33 +8,34 @@ public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
     private object? currentView;
-  
 
     private readonly EquipmentViewModel _equipmentViewModel;
     private readonly ActiveBorrowingsViewModel _activeBorrowingsViewModel;
     private readonly StudentBorrowingHistoryViewModel _studentBorrowingHistoryViewModel;
     private readonly EquipmentBorrowingHistoryViewModel _equipmentBorrowingHistoryViewModel;
     private readonly SearchBorrowingsViewModel _searchBorrowingsViewModel;
+    private readonly RegisterStudentViewModel _registerStudentViewModel;
 
     public MainWindowViewModel(
         EquipmentViewModel equipmentViewModel,
         ActiveBorrowingsViewModel activeBorrowingsViewModel,
         StudentBorrowingHistoryViewModel studentBorrowingHistoryViewModel,
         EquipmentBorrowingHistoryViewModel equipmentBorrowingHistoryViewModel,
-        SearchBorrowingsViewModel searchBorrowingsViewModel)
+        SearchBorrowingsViewModel searchBorrowingsViewModel,
+        RegisterStudentViewModel registerStudentViewModel)
+    {
+        _equipmentViewModel = equipmentViewModel;
+        _activeBorrowingsViewModel = activeBorrowingsViewModel;
+        _studentBorrowingHistoryViewModel = studentBorrowingHistoryViewModel;
+        _equipmentBorrowingHistoryViewModel = equipmentBorrowingHistoryViewModel;
+        _searchBorrowingsViewModel = searchBorrowingsViewModel;
+        _registerStudentViewModel = registerStudentViewModel;
+
+        CurrentView = new EquipmentView
         {
-            _equipmentBorrowingHistoryViewModel = equipmentBorrowingHistoryViewModel;
-            _equipmentViewModel = equipmentViewModel;
-            _activeBorrowingsViewModel = activeBorrowingsViewModel;
-            _studentBorrowingHistoryViewModel = studentBorrowingHistoryViewModel;
-            _searchBorrowingsViewModel = searchBorrowingsViewModel;
-
-            CurrentView = new EquipmentView
-            {
-                DataContext = _equipmentViewModel
-            };
+            DataContext = _equipmentViewModel
+        };
     }
-
 
     [RelayCommand]
     private async Task ShowEquipment()
@@ -60,6 +58,7 @@ public partial class MainWindowViewModel : ObservableObject
             DataContext = _activeBorrowingsViewModel
         };
     }
+
     [RelayCommand]
     private async Task ShowStudentHistory()
     {
@@ -70,6 +69,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         await _studentBorrowingHistoryViewModel.LoadHistoryCommand.ExecuteAsync(null);
     }
+
     [RelayCommand]
     private async Task ShowEquipmentHistory()
     {
@@ -80,6 +80,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         await _equipmentBorrowingHistoryViewModel.LoadHistoryCommand.ExecuteAsync(null);
     }
+
     [RelayCommand]
     private async Task ShowSearchBorrowings()
     {
@@ -91,4 +92,14 @@ public partial class MainWindowViewModel : ObservableObject
         await _searchBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
     }
 
+    [RelayCommand]
+    private Task ShowRegisterStudent()
+    {
+        CurrentView = new RegisterStudentView
+        {
+            DataContext = _registerStudentViewModel
+        };
+
+        return Task.CompletedTask;
+    }
 }
