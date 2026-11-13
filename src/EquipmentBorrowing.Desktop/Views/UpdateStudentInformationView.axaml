@@ -1,0 +1,65 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
+    x:Class="EquipmentBorrowing.Desktop.Views.UpdateStudentInformationView"
+    x:DataType="viewmodels:UpdateStudentInformationViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="30" Spacing="15">
+
+            <TextBlock
+                Text="Update Student Information"
+                FontSize="24"
+                FontWeight="Bold"/>
+
+            <TextBlock Text="Select Student"/>
+
+            <ComboBox
+                ItemsSource="{Binding Students}"
+                SelectedItem="{Binding SelectedStudent}"
+                PlaceholderText="Select a student">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Text="Institutional Number"/>
+
+            <TextBox
+                Text="{Binding InstitutionalNumber}"
+                Watermark="Enter institutional number"/>
+
+            <TextBlock Text="Full Name"/>
+
+            <TextBox
+                Text="{Binding StudentName}"
+                Watermark="Enter full name"/>
+
+            <TextBlock Text="Contact Information (Optional)"/>
+
+            <TextBox
+                Text="{Binding ContactInformation}"
+                Watermark="Enter contact information"/>
+
+            <Button
+                Content="Update Student Information"
+                Command="{Binding UpdateStudentCommand}"/>
+
+            <Button
+                Content="Refresh Student List"
+                Command="{Binding LoadStudentsCommand}"/>
+
+            <TextBlock
+                Text="{Binding FeedbackMessage}"
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Text="Loading students..."
+                IsVisible="{Binding IsLoading}"/>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

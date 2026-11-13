@@ -340,7 +340,18 @@ public class BorrowEquipmentServiceTests
                     ? _student
                     : null);
         }
+        public Task UpdateAsync(Student student)
+        {
+            if (_student is null || _student.Id != student.Id)
+                throw new InvalidOperationException("Student not found.");
 
+            _student.UpdateInformation(
+                student.InstitutionalNumber,
+                student.Name,
+                student.ContactInformation);
+
+            return Task.CompletedTask;
+        }
         public Task AddAsync(Student student)
         {
             throw new NotImplementedException(

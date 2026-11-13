@@ -96,11 +96,26 @@ public class RegisterStudentServiceTests
                 Students.FirstOrDefault(
                     s => s.InstitutionalNumber.ToUpperInvariant() == normalized));
         }
+        public Task UpdateAsync(EquipmentBorrowing.Domain.Student student)
+        {
+            var existingStudent = Students.FirstOrDefault(
+                s => s.Id == student.Id);
 
+            if (existingStudent is null)
+                throw new InvalidOperationException("Student not found.");
+
+            existingStudent.UpdateInformation(
+                student.InstitutionalNumber,
+                student.Name,
+                student.ContactInformation);
+
+            return Task.CompletedTask;
+        }
         public Task AddAsync(EquipmentBorrowing.Domain.Student student)
         {
             Students.Add(student);
             return Task.CompletedTask;
         }
+        
     }
 }

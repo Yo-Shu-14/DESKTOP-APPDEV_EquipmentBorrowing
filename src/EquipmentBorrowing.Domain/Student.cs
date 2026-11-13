@@ -37,4 +37,15 @@ public class Student
             : contactInformation.Trim();
         IsAllowedToBorrow = true;
     }
+    public void UpdateInformation(
+    string institutionalNumber,
+    string name,
+    string? contactInformation)
+    {
+        InstitutionalNumber = institutionalNumber.Trim().ToUpperInvariant();
+        Name = name.Trim();
+        ContactInformation = string.IsNullOrWhiteSpace(contactInformation)
+            ? null
+            : contactInformation.Trim();
+    }
 }

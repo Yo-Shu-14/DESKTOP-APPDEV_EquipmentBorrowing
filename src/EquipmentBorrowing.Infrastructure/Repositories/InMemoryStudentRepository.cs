@@ -46,4 +46,19 @@ public class InMemoryStudentRepository : IStudentRepository
 
         return Task.CompletedTask;
     }
+    public Task UpdateAsync(Student student)
+    {
+        var existingStudent = _students
+            .FirstOrDefault(s => s.Id == student.Id);
+
+        if (existingStudent is null)
+            throw new InvalidOperationException("Student not found.");
+
+        existingStudent.UpdateInformation(
+            student.InstitutionalNumber,
+            student.Name,
+            student.ContactInformation);
+
+        return Task.CompletedTask;
+    }
 }

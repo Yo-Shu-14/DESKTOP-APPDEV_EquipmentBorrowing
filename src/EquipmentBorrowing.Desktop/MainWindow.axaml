@@ -31,6 +31,9 @@
         Content="Register Student"
         Command="{Binding ShowRegisterStudentCommand}"/>
 
+    <Button
+        Content="Update Student Information"
+        Command="{Binding ShowUpdateStudentInformationCommand}"/>
    </StackPanel>
 
 

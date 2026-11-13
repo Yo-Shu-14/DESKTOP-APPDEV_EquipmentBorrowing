@@ -52,4 +52,20 @@ public class EfStudentRepository : IStudentRepository
                 "A student with this institutional number already exists.");
         }
     }
+    public async Task UpdateAsync(Student student)
+    {
+        try
+        {
+            _db.Students.Update(student);
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+            when (ex.InnerException is PostgresException postgresException
+                  && postgresException.SqlState == "23505"
+                  && postgresException.ConstraintName == "IX_Students_InstitutionalNumber")
+        {
+            throw new InvalidOperationException(
+                "A student with this institutional number already exists.");
+        }
+    }
 }

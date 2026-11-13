@@ -11,4 +11,5 @@ public interface IStudentRepository
     Task<IReadOnlyList<Student>> GetAllAsync();
     Task<Student?> GetByInstitutionalNumberAsync(string institutionalNumber);
     Task AddAsync(Student student);
+    Task UpdateAsync(Student student);
 }
