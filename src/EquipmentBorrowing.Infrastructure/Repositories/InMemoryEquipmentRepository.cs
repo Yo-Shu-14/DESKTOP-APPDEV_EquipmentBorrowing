@@ -27,7 +27,21 @@ public class InMemoryEquipmentRepository : IEquipmentRepository
     {
         return Task.FromResult<IReadOnlyList<Equipment>>(_equipment);
     }
+    public Task<Equipment?> GetByIdentifierAsync(string identifier)
+    {
+        string normalizedIdentifier = identifier.Trim().ToUpperInvariant();
 
+        var equipment = _equipment.FirstOrDefault(e =>
+            e.EquipmentIdentifier == normalizedIdentifier);
+
+        return Task.FromResult(equipment);
+    }
+
+    public Task AddAsync(Equipment equipment)
+    {
+        _equipment.Add(equipment);
+        return Task.CompletedTask;
+    }
     public Task UpdateAsync(Equipment equipment)
     {
         return Task.CompletedTask;

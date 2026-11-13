@@ -11,4 +11,6 @@ public interface IEquipmentRepository
     Task<IReadOnlyList<Equipment>> GetAllAsync();
     Task<IReadOnlyList<Equipment>> GetAvailableAsync();
     Task UpdateAsync(Equipment equipment);
+    Task<Equipment?> GetByIdentifierAsync(string identifier);
+    Task AddAsync(Equipment equipment);
 }

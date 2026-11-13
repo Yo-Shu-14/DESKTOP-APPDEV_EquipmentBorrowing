@@ -38,6 +38,11 @@
     <Button
         Content="Change Student Eligibility"
         Command="{Binding ShowChangeStudentEligibilityCommand}"/>
+    <Button
+        Content="Register Equipment"
+        Command="{Binding ShowRegisterEquipmentCommand}"/>
+
+
    </StackPanel>
 
 

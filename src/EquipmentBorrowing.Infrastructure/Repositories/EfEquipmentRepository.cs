@@ -2,6 +2,7 @@
 using EquipmentBorrowing.Domain;
 using EquipmentBorrowing.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace EquipmentBorrowing.Infrastructure.Repositories;
 
@@ -35,7 +36,31 @@ public class EfEquipmentRepository : IEquipmentRepository
         .ToListAsync();
 
     }
+    public async Task<Equipment?> GetByIdentifierAsync(string identifier)
+    {
+        string normalizedIdentifier = identifier.Trim().ToUpperInvariant();
 
+        return await _db.Equipment
+            .FirstOrDefaultAsync(e =>
+                e.EquipmentIdentifier == normalizedIdentifier);
+    }
+
+    public async Task AddAsync(Equipment equipment)
+    {
+        try
+        {
+            await _db.Equipment.AddAsync(equipment);
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+            when (ex.InnerException is PostgresException postgresException
+                  && postgresException.SqlState == "23505"
+                  && postgresException.ConstraintName == "IX_Equipment_EquipmentIdentifier")
+        {
+            throw new InvalidOperationException(
+                "Equipment with this identifier already exists.");
+        }
+    }
     public async Task UpdateAsync(Equipment equipment)
     {
         _db.Equipment.Update(equipment);

@@ -1,0 +1,49 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
+    x:Class="EquipmentBorrowing.Desktop.Views.RegisterEquipmentView"
+    x:DataType="viewmodels:RegisterEquipmentViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="30" Spacing="15">
+
+            <TextBlock
+                Text="Register Equipment"
+                FontSize="26"
+                FontWeight="Bold"/>
+
+            <TextBlock Text="Equipment Identifier"/>
+            <TextBox
+                Text="{Binding EquipmentIdentifier}"
+                Watermark="Enter equipment identifier"/>
+
+            <TextBlock Text="Equipment Name"/>
+            <TextBox
+                Text="{Binding EquipmentName}"
+                Watermark="Enter equipment name"/>
+
+            <TextBlock Text="Description (Optional)"/>
+            <TextBox
+                Text="{Binding Description}"
+                Watermark="Enter equipment description"
+                AcceptsReturn="True"
+                Height="100"
+                TextWrapping="Wrap"/>
+
+            <Button
+                Content="Register Equipment"
+                Command="{Binding RegisterEquipmentCommand}"
+                IsEnabled="{Binding !IsLoading}"/>
+
+            <TextBlock
+                Text="{Binding FeedbackMessage}"
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Text="Registering equipment..."
+                IsVisible="{Binding IsLoading}"/>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

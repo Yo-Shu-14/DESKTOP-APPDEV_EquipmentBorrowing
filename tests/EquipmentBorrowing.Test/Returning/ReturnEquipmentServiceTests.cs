@@ -256,6 +256,22 @@ public class ReturnEquipmentServiceTests
         {
             return Task.CompletedTask;
         }
+        public Task<Equipment?> GetByIdentifierAsync(string identifier)
+        {
+            var equipment = _equipment is not null &&
+                            _equipment.EquipmentIdentifier.Equals(
+                                identifier.Trim(),
+                                StringComparison.OrdinalIgnoreCase)
+                ? _equipment
+                : null;
+
+            return Task.FromResult(equipment);
+        }
+
+        public Task AddAsync(Equipment equipment)
+        {
+            return Task.CompletedTask;
+        }
 
     }
 }

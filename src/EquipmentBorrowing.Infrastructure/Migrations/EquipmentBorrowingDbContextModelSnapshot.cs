@@ -63,9 +63,13 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<string>("EquipmentIdentifier")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
@@ -76,6 +80,9 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("EquipmentId");
+
+                    b.HasIndex("EquipmentIdentifier")
+                        .IsUnique();
 
                     b.ToTable("Equipment");
                 });

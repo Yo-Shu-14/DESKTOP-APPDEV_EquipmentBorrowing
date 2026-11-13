@@ -18,7 +18,7 @@ public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
 
         // Required description
         builder.Property(e => e.Description)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(500);
 
         // Required availability status
@@ -26,5 +26,13 @@ public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
             .IsRequired();
 
         // Equipment names are not required to be unique
+        // Required equipment identifier
+        builder.Property(e => e.EquipmentIdentifier)
+            .IsRequired()
+            .HasMaxLength(50);
+
+        // Unique equipment identifier
+        builder.HasIndex(e => e.EquipmentIdentifier)
+            .IsUnique();
     }
 }
