@@ -181,4 +181,13 @@ public class EfBorrowingRepository : IBorrowingRepository
             .AsNoTracking()
             .ToListAsync();
     }
+    public async Task<IReadOnlyList<Borrowing>> GetAllAsync()
+    {
+        return await _db.Borrowings
+            .Include(b => b.Student)
+            .Include(b => b.Equipment)
+            .OrderByDescending(b => b.DateBorrowed)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

@@ -17,17 +17,20 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly ActiveBorrowingsViewModel _activeBorrowingsViewModel;
     private readonly StudentBorrowingHistoryViewModel _studentBorrowingHistoryViewModel;
     private readonly EquipmentBorrowingHistoryViewModel _equipmentBorrowingHistoryViewModel;
+    private readonly SearchBorrowingsViewModel _searchBorrowingsViewModel;
 
     public MainWindowViewModel(
         EquipmentViewModel equipmentViewModel,
         ActiveBorrowingsViewModel activeBorrowingsViewModel,
         StudentBorrowingHistoryViewModel studentBorrowingHistoryViewModel,
-        EquipmentBorrowingHistoryViewModel equipmentBorrowingHistoryViewModel)
+        EquipmentBorrowingHistoryViewModel equipmentBorrowingHistoryViewModel,
+        SearchBorrowingsViewModel searchBorrowingsViewModel)
         {
             _equipmentBorrowingHistoryViewModel = equipmentBorrowingHistoryViewModel;
             _equipmentViewModel = equipmentViewModel;
             _activeBorrowingsViewModel = activeBorrowingsViewModel;
             _studentBorrowingHistoryViewModel = studentBorrowingHistoryViewModel;
+            _searchBorrowingsViewModel = searchBorrowingsViewModel;
 
             CurrentView = new EquipmentView
             {
@@ -76,6 +79,16 @@ public partial class MainWindowViewModel : ObservableObject
         };
 
         await _equipmentBorrowingHistoryViewModel.LoadHistoryCommand.ExecuteAsync(null);
+    }
+    [RelayCommand]
+    private async Task ShowSearchBorrowings()
+    {
+        CurrentView = new SearchBorrowingsView
+        {
+            DataContext = _searchBorrowingsViewModel
+        };
+
+        await _searchBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
     }
 
 }

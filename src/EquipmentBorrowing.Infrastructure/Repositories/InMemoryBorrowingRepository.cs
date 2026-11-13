@@ -100,4 +100,12 @@ public class InMemoryBorrowingRepository : IBorrowingRepository
 
         return Task.FromResult(result);
     }
+    public Task<IReadOnlyList<Borrowing>> GetAllAsync()
+    {
+        IReadOnlyList<Borrowing> result = _borrowings
+            .OrderByDescending(b => b.DateBorrowed)
+            .ToList();
+
+        return Task.FromResult(result);
+    }
 }

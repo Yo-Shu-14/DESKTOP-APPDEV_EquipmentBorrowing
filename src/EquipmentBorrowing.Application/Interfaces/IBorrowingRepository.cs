@@ -28,4 +28,5 @@ public interface IBorrowingRepository
 
     Task<IReadOnlyList<Borrowing>> GetAllByStudentIdAsync(int studentId);
     Task<IReadOnlyList<Borrowing>> GetAllByEquipmentIdAsync(Guid equipmentId);
+    Task<IReadOnlyList<Borrowing>> GetAllAsync();
 }

@@ -1,0 +1,148 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
+    xmlns:domain="using:EquipmentBorrowing.Domain"
+    x:Class="EquipmentBorrowing.Desktop.Views.SearchBorrowingsView"
+    x:DataType="viewmodels:SearchBorrowingsViewModel">
+
+    <Grid Margin="30" RowDefinitions="Auto,Auto,Auto,Auto,*">
+
+        <TextBlock
+            Text="Search and Manage Borrowings"
+            FontSize="26"
+            FontWeight="Bold"
+            Margin="0,0,0,20"/>
+
+        <StackPanel Grid.Row="1" Spacing="12">
+
+            <TextBox
+                Watermark="Search student, equipment, or borrowing ID..."
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Grid ColumnDefinitions="*,*,*,Auto" ColumnSpacing="10">
+
+                <ComboBox
+                    Grid.Column="0"
+                    ItemsSource="{Binding StatusOptions}"
+                    SelectedItem="{Binding SelectedStatus}"/>
+
+                <ComboBox
+                    Grid.Column="1"
+                    ItemsSource="{Binding SortFieldOptions}"
+                    SelectedItem="{Binding SelectedSortField}"/>
+
+                <ComboBox
+                    Grid.Column="2"
+                    ItemsSource="{Binding SortDirectionOptions}"
+                    SelectedItem="{Binding SelectedSortDirection}"/>
+
+                <Button
+                    Grid.Column="3"
+                    Content="Reset"
+                    Command="{Binding ResetFiltersCommand}"/>
+
+            </Grid>
+
+            <Button
+                Content="Refresh Records"
+                HorizontalAlignment="Left"
+                Command="{Binding LoadBorrowingsCommand}"/>
+
+        </StackPanel>
+
+        <TextBlock
+            Grid.Row="2"
+            Text="{Binding FeedbackMessage}"
+            Margin="0,15,0,10"
+            TextWrapping="Wrap"/>
+
+        <TextBlock
+            Grid.Row="3"
+            Text="{Binding Borrowings.Count, StringFormat='Total Records: {0}'}"
+            FontWeight="Bold"
+            Margin="0,0,0,10"/>
+
+        <Grid Grid.Row="4">
+
+            <TextBlock
+                Text="Loading borrowing records..."
+                IsVisible="{Binding IsLoading}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+
+            <StackPanel
+                IsVisible="{Binding IsError}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="10">
+
+                <TextBlock
+                    Text="{Binding FeedbackMessage}"
+                    TextWrapping="Wrap"/>
+
+                <Button
+                    Content="Retry"
+                    Command="{Binding LoadBorrowingsCommand}"/>
+
+            </StackPanel>
+
+            <TextBlock
+                Text="No borrowing records found."
+                IsVisible="{Binding IsEmpty}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+
+            <ScrollViewer IsVisible="{Binding !IsLoading}">
+                <ItemsControl ItemsSource="{Binding Borrowings}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="domain:Borrowing">
+
+                            <Border
+                                BorderBrush="LightGray"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="15"
+                                Margin="0,0,0,10">
+
+                                <StackPanel Spacing="6">
+
+                                    <TextBlock
+                                        Text="{Binding Equipment.Name}"
+                                        FontSize="18"
+                                        FontWeight="Bold"/>
+
+                                    <TextBlock
+                                        Text="{Binding Student.Name}"/>
+
+                                    <TextBlock
+                                        Text="{Binding DateBorrowed,
+                                            StringFormat='Borrowed: {0:MMM dd, yyyy}'}"/>
+
+                                    <TextBlock
+                                        Text="{Binding ExpectedReturnDate,
+                                            StringFormat='Expected Return: {0:MMM dd, yyyy}'}"/>
+
+                                    <TextBlock
+                                        Text="{Binding ActualReturnDate,
+                                            StringFormat='Actual Return: {0:MMM dd, yyyy}'}"/>
+
+                                    <TextBlock
+                                        Text="{Binding Status,
+                                            StringFormat='Status: {0}'}"
+                                        FontWeight="Bold"/>
+
+                                </StackPanel>
+
+                            </Border>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

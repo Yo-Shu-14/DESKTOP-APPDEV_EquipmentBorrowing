@@ -130,7 +130,15 @@ public class ReturnEquipmentServiceTests
             var active = Borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
             return Task.FromResult<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>>(active);
         }
+        public Task<IReadOnlyList<EquipmentBorrowing.Domain.Borrowing>> GetAllAsync()
+        {
+            IReadOnlyList<EquipmentBorrowing.Domain.Borrowing> result =
+                Borrowings
+                    .OrderByDescending(b => b.DateBorrowed)
+                    .ToList();
 
+            return Task.FromResult(result);
+        }
         public Task<EquipmentBorrowing.Domain.Borrowing?> GetByIdAsync(Guid borrowingId)
         {
             var borrowing = Borrowings

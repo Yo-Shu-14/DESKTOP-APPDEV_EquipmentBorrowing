@@ -417,6 +417,14 @@ public class BorrowEquipmentServiceTests
             var active = Borrowings.Where(b => b.Status == BorrowingStatus.Active).ToList();
             return Task.FromResult<IReadOnlyList<DomainBorrowing>>(active);
         }
+        public Task<IReadOnlyList<DomainBorrowing>> GetAllAsync()
+        {
+            IReadOnlyList<DomainBorrowing> result = Borrowings
+                .OrderByDescending(b => b.DateBorrowed)
+                .ToList();
+
+            return Task.FromResult(result);
+        }
         public Task AddBorrowingWithEquipmentUpdateAsync(
             EquipmentBorrowing.Domain.Borrowing borrowing,
             Equipment equipment)
