@@ -48,4 +48,8 @@ public class Student
             ? null
             : contactInformation.Trim();
     }
+    public void ChangeBorrowingEligibility(bool isAllowed)
+    {
+        IsAllowedToBorrow = isAllowed;
+    }
 }

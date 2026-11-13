@@ -16,6 +16,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly SearchBorrowingsViewModel _searchBorrowingsViewModel;
     private readonly RegisterStudentViewModel _registerStudentViewModel;
     private readonly UpdateStudentInformationViewModel _updateStudentInformationViewModel;
+    private readonly ChangeStudentEligibilityViewModel _changeStudentEligibilityViewModel;
 
     public MainWindowViewModel(
         EquipmentViewModel equipmentViewModel,
@@ -24,7 +25,8 @@ public partial class MainWindowViewModel : ObservableObject
         EquipmentBorrowingHistoryViewModel equipmentBorrowingHistoryViewModel,
         SearchBorrowingsViewModel searchBorrowingsViewModel,
         RegisterStudentViewModel registerStudentViewModel,
-        UpdateStudentInformationViewModel updateStudentInformationViewModel)
+        UpdateStudentInformationViewModel updateStudentInformationViewModel,
+        ChangeStudentEligibilityViewModel changeStudentEligibilityViewModel)
     {
         _equipmentViewModel = equipmentViewModel;
         _activeBorrowingsViewModel = activeBorrowingsViewModel;
@@ -33,6 +35,7 @@ public partial class MainWindowViewModel : ObservableObject
         _searchBorrowingsViewModel = searchBorrowingsViewModel;
         _registerStudentViewModel = registerStudentViewModel;
         _updateStudentInformationViewModel = updateStudentInformationViewModel;
+        _changeStudentEligibilityViewModel = changeStudentEligibilityViewModel;
 
         CurrentView = new EquipmentView
         {
@@ -114,5 +117,15 @@ public partial class MainWindowViewModel : ObservableObject
         };
 
         await _updateStudentInformationViewModel.LoadStudentsCommand.ExecuteAsync(null);
+    }
+    [RelayCommand]
+    private async Task ShowChangeStudentEligibility()
+    {
+        CurrentView = new ChangeStudentEligibilityView
+        {
+            DataContext = _changeStudentEligibilityViewModel
+        };
+
+        await _changeStudentEligibilityViewModel.LoadStudentsCommand.ExecuteAsync(null);
     }
 }

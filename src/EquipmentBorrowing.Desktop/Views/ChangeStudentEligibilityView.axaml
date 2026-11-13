@@ -1,0 +1,57 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
+    x:Class="EquipmentBorrowing.Desktop.Views.ChangeStudentEligibilityView"
+    x:DataType="viewmodels:ChangeStudentEligibilityViewModel">
+
+    <StackPanel Margin="30" Spacing="15">
+
+        <TextBlock
+            Text="Change Student Borrowing Eligibility"
+            FontSize="24"
+            FontWeight="Bold"/>
+
+        <TextBlock Text="Select Student"/>
+
+        <ComboBox
+            ItemsSource="{Binding Students}"
+            SelectedItem="{Binding SelectedStudent}"
+            PlaceholderText="Select a student">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock
+            Text="{Binding SelectedStudent.IsAllowedToBorrow,
+                           StringFormat='Current Eligibility: {0}'}"/>
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+
+            <Button
+                Content="Permit Borrowing"
+                Command="{Binding PermitStudentCommand}"/>
+
+            <Button
+                Content="Restrict Borrowing"
+                Command="{Binding RestrictStudentCommand}"/>
+
+        </StackPanel>
+
+        <Button
+            Content="Refresh Student List"
+            Command="{Binding LoadStudentsCommand}"/>
+
+        <TextBlock
+            Text="{Binding FeedbackMessage}"
+            TextWrapping="Wrap"/>
+
+        <TextBlock
+            Text="Loading students..."
+            IsVisible="{Binding IsLoading}"/>
+
+    </StackPanel>
+</UserControl>

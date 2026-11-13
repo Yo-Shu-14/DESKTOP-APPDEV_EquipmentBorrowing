@@ -34,6 +34,10 @@
     <Button
         Content="Update Student Information"
         Command="{Binding ShowUpdateStudentInformationCommand}"/>
+
+    <Button
+        Content="Change Student Eligibility"
+        Command="{Binding ShowChangeStudentEligibilityCommand}"/>
    </StackPanel>
 
 
