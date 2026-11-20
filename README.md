@@ -1,71 +1,158 @@
-# EQUIPMENT BORROWING SYSTEM
+# Campus Equipment Borrowing System
 
-## 1. Solution Structure
-Actor: Student
+## 1. Project Overview
 
-Expectation: The student expects the system to allow them to request available equipment and validate whether they are allowed to borrow it.
-### 1. Domain
+The **Campus Equipment Borrowing System** is a desktop application developed to help a campus custodian manage students, equipment records, and equipment borrowing transactions.
 
-* The `EquipmentBorrowing.Domain` contains the project's important concepts and rules.
-* It Contains:
+The system allows the custodian to view and manage the equipment catalog, check equipment availability, process individual and multiple-item borrowings, record returns, review borrowing histories, and manage student and equipment information.
 
-  * `Student` – represent a student who borrows the equipment
-  * `Equipment` – the item that can be borrowed
-  * `Borrowing` – a borrowing record containing the student, equipment, dates, and status.
-  * `BorrowingStatus` – the status of the borrowing process, such as Active or Returned
+The application is developed using **C# and .NET**, with **Avalonia UI** for the desktop interface, **CommunityToolkit.Mvvm** for the MVVM pattern, **Entity Framework Core** for data access, and **PostgreSQL** as the relational database using the Npgsql provider.
 
-### 2. Application
+### Primary Actor
 
-* the `EquipmentBorrowing.Application` contains the business logic and use cases of the system
-* it contains:
+**Custodian**
 
-  **Services**
+The custodian is the primary actor who operates the system. The custodian is responsible for managing student and equipment records and processing borrowing and return transactions.
 
-  * the services that handle the borrowing process, such as BorrowEquipmentService and ReturnEquipmentService
-  * `BorrowEquipmentService` - performs the Borrow Equipment use case and validates the required conditions.
-  * `ReturnEquipmentService` - performs the Return Equipment use case.
-  * `CheckAvailableEquipmentService` - retrieves equipment that is currently available.
+### Main System Responsibilities
 
-  **Interfaces**
+- View the equipment catalog.
+- Find equipment that is currently available.
+- Process equipment borrowing transactions.
+- View active borrowing records.
+- Process equipment returns.
+- Check out multiple equipment items in one transaction.
+- View student borrowing history.
+- View equipment borrowing history.
+- Search, filter, and sort borrowing records.
+- Register and update student information.
+- Change a student's borrowing eligibility.
+- Register and update equipment information.
+- Preserve borrowing records for historical reference.
 
-  * the interfaces that define the contracts for the services, such as IStudentRepository, IEquipmentRepository, and IBorrowingRepository.
-
-### 3. Infrastructure
-
-* The `EquipmentBorrowing.Infrastructure` project contains the technical implementations of the repository abstractions.
-* it contains:
-
-  * `EquipmentBorrowingDbContext` – the EF Core DbContext used to access the SQLite database.
-
-  * `EfStudentRepository` – the EF Core implementation of `IStudentRepository`.
-
-  * `EfEquipmentRepository` – the EF Core implementation of `IEquipmentRepository`.
-
-  * `EfBorrowingRepository` – the EF Core implementation of `IBorrowingRepository`.
-
-  * Entity configurations for `Student`, `Equipment`, and `Borrowing`.
-
-  * Database initialization and EF Core migration support.
-
-* SQLite is used as the persistent database, while EF Core handles database access and object-relational mapping.
-
-
-### 4. Desktop
-
-* The `EquipmentBorrowing.Desktop` project is an executable Avalonia application that provides the graphical user interface.
-
-* It contains the Avalonia Views and ViewModels used to interact with the Application services and repository abstractions.
-
-
-### 5. Tests
-
-* The `EquipmentBorrowing.Tests` project is used for automated tests of domain or application behavior
- 
 ---
 
-## 2. Dependency Direction (Architecture Diagram)
+## 2. Prerequisites
 
-The architecture direction of the current solution is:
+Before building and running the application, make sure the following software is installed:
+
+- **.NET SDK** compatible with the solution's target framework.
+- **PostgreSQL** database server.
+- **Git** for source control.
+- An IDE or code editor that supports C# and .NET development, such as Visual Studio, Visual Studio Code, or JetBrains Rider.
+- Entity Framework Core command-line tools for managing migrations.
+
+Verify that .NET is installed:
+
+```bash
+dotnet --version
+```
+
+Verify that Git is installed:
+
+```bash
+git --version
+```
+
+Make sure the PostgreSQL server is running before starting the application.
+
+---
+
+## 3. Solution Structure
+
+The solution is organized into separate projects to keep the user interface, application operations, domain models, and database implementation independent.
+
+### 3.1 Domain
+
+The `EquipmentBorrowing.Domain` project contains the core concepts and business rules of the system.
+
+It contains the main domain entities and related types, including:
+
+- `Student` – represents a student who may borrow campus equipment.
+- `Equipment` – represents an equipment item that can be borrowed.
+- `Borrowing` – represents a borrowing transaction between a student and an equipment item.
+- `BorrowingStatus` – represents the current status of a borrowing record, such as Active or Returned.
+
+The Domain project does not depend on the user interface, database provider, or Infrastructure project.
+
+### 3.2 Application
+
+The `EquipmentBorrowing.Application` project contains the application's use cases and business operations.
+
+It is responsible for coordinating operations and enforcing the applicable borrowing rules.
+
+Examples of application operations include:
+
+- Viewing the equipment catalog.
+- Checking equipment availability.
+- Borrowing equipment.
+- Returning equipment.
+- Checking out multiple equipment items.
+- Viewing borrowing histories.
+- Searching, filtering, and sorting borrowing records.
+- Registering and updating students.
+- Changing student borrowing eligibility.
+- Registering and updating equipment.
+
+The Application project also contains repository interfaces, such as:
+
+- `IStudentRepository`
+- `IEquipmentRepository`
+- `IBorrowingRepository`
+
+These interfaces define the data-access contracts required by the application without depending on a specific database implementation.
+
+### 3.3 Infrastructure
+
+The `EquipmentBorrowing.Infrastructure` project contains the technical implementations of the repository abstractions and database access.
+
+It contains:
+
+- `EquipmentBorrowingDbContext` – the Entity Framework Core DbContext used to access PostgreSQL.
+- `EfStudentRepository` – the EF Core implementation of `IStudentRepository`.
+- `EfEquipmentRepository` – the EF Core implementation of `IEquipmentRepository`.
+- `EfBorrowingRepository` – the EF Core implementation of `IBorrowingRepository`.
+- Entity configurations for `Student`, `Equipment`, and `Borrowing`.
+- Database initialization and EF Core migration support.
+
+The Infrastructure project uses **PostgreSQL** as the persistent database and **Npgsql** as the Entity Framework Core database provider.
+
+### 3.4 Desktop
+
+The `EquipmentBorrowing.Desktop` project is the executable Avalonia desktop application.
+
+It contains:
+
+- Avalonia Views that display the application's interface.
+- ViewModels that manage presentation state and user interactions.
+- Commands that respond to user actions.
+- Dependency injection configuration.
+- Application startup and navigation-related components.
+
+The Desktop project communicates with the Application layer to perform system operations.
+
+### 3.5 Tests
+
+The `EquipmentBorrowing.Tests` project contains automated tests for the system.
+
+Tests should verify important domain and application behavior, including:
+
+- Student eligibility validation.
+- Equipment availability validation.
+- Borrowing limits.
+- Borrowing and return operations.
+- Multi-item checkout behavior.
+- Search, filtering, and sorting behavior.
+- Student and equipment management operations.
+- Transaction success and failure behavior, where covered by the test setup.
+
+---
+
+## 4. System Architecture and Dependency Direction
+
+The system follows a layered architecture that separates business rules from the user interface and database implementation.
+
+### 4.1 Architecture Diagram
 
 ```text
 EquipmentBorrowing.Desktop
@@ -82,329 +169,397 @@ EquipmentBorrowing.Desktop
                                 +----------> Domain
 ```
 
-* the EquipmentBorrowing.Application project depends on the EquipmentBorrowing.Domain
-* the EquipmentBorrowing.Infrastructure project depends on both the EquipmentBorrowing.Application and EquipmentBorrowing.Domain
+### 4.2 Dependency Responsibilities
 
-  * mplements the repository interfaces defined in the Application project and uses the Domain models to store and retrieve information through Entity Framework Core and SQLite.
-* the EquipmentBorrowing.Desktop project depends on the EquipmentBorrowing.Application and EquipmentBorrowing.Infrastructure
+- The `EquipmentBorrowing.Domain` project contains the core entities and business concepts. It does not depend on the other projects.
+- The `EquipmentBorrowing.Application` project depends on the Domain project and defines the application's operations and repository interfaces.
+- The `EquipmentBorrowing.Infrastructure` project depends on the Application and Domain projects. It implements repository interfaces and handles database access through Entity Framework Core and PostgreSQL.
+- The `EquipmentBorrowing.Desktop` project depends on the Application and Infrastructure projects. It provides the graphical interface and configures the required dependencies.
 
-  * It uses the Application services and repository abstractions to perform the system operations and provides the dependencies through dependency injection.
-* the EquipmentBorrowing.Domain does not depend on any other project, as it contains the core concepts and rules of the system.
+This structure keeps the core business logic independent of the database provider and desktop UI technology.
 
----
+### 4.3 Dependency Direction Principles
 
-## 3. Requirements and Use Case Analysis
+The application services depend on repository interfaces rather than directly accessing database implementations.
 
-### A. Actors
+This allows the database implementation to change without requiring the application use cases to be rewritten.
 
-**Student**
-
-The student is the primary actor who interacts with the Campus Equipment Borrowing System. The student expects the system to allow them to borrow available equipment if they are authorized and have not reached the maximum number of active borrowings. The student may also return borrowed equipment.
-
-### B. Use Cases
-
-#### Use Case 1: Borrow Equipment
-
-| Item                 | Description                                                                                                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Use Case**         | Borrow Equipment                                                                                                                                                                      |
-| **Primary Actor**    | Student                                                                                                                                                                               |
-| **Preconditions**    | The student exists, is allowed to borrow equipment, the equipment exists and is available, and the student has not reached the maximum number of active borrowings.                   |
-| **Main Action**      | The student requests to borrow an available piece of equipment. The application validates the student, equipment, and borrowing rules, then creates a borrowing record.               |
-| **Expected Result**  | The borrowing is created successfully, and the equipment becomes unavailable.                                                                                                         |
-| **Possible Failure** | The student does not exist, is not allowed to borrow, the equipment does not exist, the equipment is unavailable, or the student has reached the maximum number of active borrowings. |
-
-#### Use Case 2: Return Equipment
-
-| Item                 | Description                                                                                   |
-| -------------------- | --------------------------------------------------------------------------------------------- |
-| **Use Case**         | Return Equipment                                                                              |
-| **Primary Actor**    | Student                                                                                       |
-| **Preconditions**    | An active borrowing record exists for the student and equipment.                              |
-| **Main Action**      | The student returns the borrowed equipment, and the application updates the borrowing status. |
-| **Expected Result**  | The borrowing is marked as returned and the equipment becomes available again.                |
-| **Possible Failure** | The borrowing record does not exist or the borrowing is already returned.                     |
-
-#### Use Case 3: Find Available Equipment
-
-| Item                 | Description                                                           |
-| -------------------- | --------------------------------------------------------------------- |
-| **Use Case**         | Find Available Equipment                                              |
-| **Primary Actor**    | Student                                                               |
-| **Preconditions**    | Equipment records are available in the system.                        |
-| **Main Action**      | The student requests a list of equipment that is currently available. |
-| **Expected Result**  | The system provides the available equipment.                          |
-| **Possible Failure** | No equipment is currently available.                                  |
-
-### C. Domain Concepts
-
-#### Student
-
-**Information:**
-
-* Student ID
-* Student name
-* Whether the student is currently allowed to borrow
-
-**Rules or State:**
-
-* A student must be allowed to borrow equipment.
-* A student must not exceed the maximum number of active borrowings.
-
-**Not the responsibility of Student:**
-
-* Storing equipment records
-* Creating repository connections
-* Coordinating the entire borrowing operation
-
-#### Equipment
-
-**Information:**
-
-* Equipment ID
-* Equipment name
-* Equipment description
-* Availability status
-
-**Rules or State:**
-
-* Equipment can be available or unavailable.
-* Equipment becomes unavailable when successfully borrowed.
-* Equipment becomes available again when returned.
-
-**Not the responsibility of Equipment:**
-
-* Managing students
-* Creating borrowing records
-* Accessing repositories or databases
-
-#### Borrowing
-
-**Information:**
-
-* Student
-* Equipment
-* Date borrowed
-* Expected return date
-* Current borrowing status
-
-**Rules or State:**
-
-* A borrowing has a current status such as Active or Returned.
-* A returned borrowing should no longer represent an active borrowing.
-
-**Not the responsibility of Borrowing:**
-
-* Retrieving students or equipment from repositories
-* Managing database connections
-* Coordinating the complete application use case
+The Views and ViewModels also avoid directly executing database queries. Instead, they delegate operations to the Application layer.
 
 ---
 
-## 4. Use Case Mapping
+## 5. Avalonia UI and MVVM
 
-### Borrow Equipment
+The desktop application uses **Avalonia UI** and the **Model-View-ViewModel (MVVM)** pattern.
 
-| Item                                    | Implementation                                                                            |
-| --------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Actor**                               | Student                                                                                   |
-| **Use Case**                            | Borrow Equipment                                                                          |
-| **Application Service**                 | `BorrowEquipmentService`                                                                  |
-| **Domain Objects Used**                 | `Student`, `Equipment`, `Borrowing`, `BorrowingStatus`                                    |
-| **Repository Interfaces Used**          | `IStudentRepository`, `IEquipmentRepository`, `IBorrowingRepository`                      |
-| **Infrastructure Implementations Used** | `EfStudentRepository`, `EfEquipmentRepository`, `EfBorrowingRepository`                   |
+### 5.1 Desktop Project Responsibility
 
----
+The `EquipmentBorrowing.Desktop` project provides the graphical interface used by the custodian.
 
-## 5. Reflection
+It contains the Views and ViewModels that allow the custodian to:
 
-### 1. Why should the application service depend on a repository interface instead of directly depending on a database implementation?
+- Navigate through the system.
+- View equipment and student information.
+- Select equipment for borrowing.
+- Process returns.
+- Review active borrowings and borrowing histories.
+- Search, filter, and sort records.
+- Register and update records.
 
-The application service should depend on a repository interface because it separates the business logic from the specific data storage technology. This allows the application service to work with different repository implementations without changing the business logic.
-
-### 2. Which parts of your current solution could remain unchanged if SQLite were added later?
-
-The Domain models, Application services, and repository interfaces can remain unchanged when using SQLite. The Infrastructure project contains the SQLite configuration, EF Core DbContext, entity configurations, migrations, and EF Core repository implementations, keeping the application logic independent from the database technology.
-
-### 3. Which project would eventually contain Avalonia Views?
-
-The `EquipmentBorrowing.Desktop` project contains the Avalonia Views. It serves as the graphical user interface of the system, while the Application project contains the use cases and business logic. This keeps the user interface separated from the application's use cases and business rules.
-
-### 4. Should an Avalonia button directly execute database queries? Why or why not?
-
-No, an Avalonia button should not directly execute database queries. The button should only handle the user's interaction and call the appropriate use case or service in the Application project. This keeps the user interface separate from the database and makes the system easier to maintain, test, and modify.
-
-### 5. What part of your implementation represents the actual business operation requested by the actor?
-
-The Application use case or service represents the actual business operation requested by the actor. In the project, for example, BorrowEquipmentService represents the operation of borrowing equipment, while ReturnEquipmentService represents returning equipment. These services contain the rules and steps needed to complete the requested operation.
-
----
-
-## Avalonian UI and MVVM
-
-## 1. Desktop Project
-
-Explain the responsibility of EquipmentBorrowing.Desktop and how it interacts with the existing projects.
-
-* The `EquipmentBorrowing.Desktop` contains the user interface of your system, such as the Avalonia Views and ViewModels, and serves as the executable application that users interact with.
-
-## 2. Updated Architecture
+### 5.2 MVVM Architecture
 
 ```text
 Avalonia View
-        |
-        |  Binding / Command
-        |
-ViewModel
-        |
-        |  Application Operation
-        |
-        |
-        +----------> EquipmentBorrowing.Application
-        |                       |
-        |                       v
-        |                EquipmentBorrowing.Domain
-        |
-        +----------> EquipmentBorrowing.Infrastructure
-                                |
-                                +----------> Application
-                                |
-                                +----------> Domain
+      |
+      | Data Binding / Command
+      |
+   ViewModel
+      |
+      | Calls Application Operation
+      |
+      v
+Application Service
+      |
+      v
+Domain Models
+      |
+      ^
+      |
+Infrastructure
+      |
+      v
+PostgreSQL Database
 ```
 
-## 3. Borrow Equipment flow
+### 5.3 View Responsibilities
 
-The user selects a student, an available equipment item, and an expected return date on the Equipment view, then presses Borrow. This triggers EquipmentViewModel.BorrowAsync, a [RelayCommand], which performs presentation-level checks (student selected, date selected, date not in the past) and then calls BorrowEquipmentService.BorrowEquipmentAsync. The service validates the student, equipment availability, and borrowing limit, creates the Borrowing record, and marks the equipment unavailable. The ViewModel reloads the equipment list and shows a success or error message via FeedbackMessage.
+The View is responsible for displaying information and collecting user input.
 
-## 4. Return Equipment Flow
+Examples include:
 
-On the Active Borrowings view, the user presses Return on a borrowing. This triggers ActiveBorrowingsViewModel.ReturnAsync, which calls ReturnEquipmentService.ReturnEquipmentAsync. The service checks that the borrowing exists and hasn't already been returned, marks it Returned, and makes the equipment available again. The ViewModel reloads the active borrowings list and shows a success or error message.
+- Displaying the equipment catalog.
+- Showing student and equipment details.
+- Providing borrowing and return controls.
+- Displaying borrowing history.
+- Providing search, filter, and sort controls.
+- Displaying validation messages and operation feedback.
 
-## 5. Architectural Reflection
+A View should not directly execute database queries or contain the application's main business rules.
 
-### 1. Why should the View not call a repository directly?
+### 5.4 ViewModel Responsibilities
 
-Because the View is only responsible for displaying data and collecting input. Calling a repository directly would let the UI bypass business rules and tie it to a specific storage technology.
+The ViewModel manages the presentation state and responds to user interactions.
 
-### 2. Why should business rules not be implemented in the ViewModel?
+It is responsible for:
 
-The ViewModel is a presentation-layer component. Business rules belong to the Application/ Domain layers so they can be reused, tested independently, and reasoned about without the UI.
+- Exposing properties for data binding.
+- Providing commands for user actions.
+- Collecting and validating presentation-level input.
+- Calling the appropriate Application operation.
+- Updating displayed data after an operation.
+- Displaying success and error feedback.
 
-### 3. What is the responsibility of the ViewModel?
+Business rules that must apply regardless of the interface belong in the Application or Domain layers, not exclusively in a ViewModel.
 
-To hold presentation state, expose commands, collect user input, and delegate the actual work to Application services.
+### 5.5 Example: Borrow Equipment Flow
 
-### 4. Why can the existing Application layer work without knowing that Avalonia is being used?
+1. The custodian selects a student.
+2. The custodian selects an available equipment item.
+3. The custodian provides the expected return date.
+4. The custodian presses the Borrow command.
+5. The ViewModel calls the borrowing operation in the Application layer.
+6. The Application layer validates the student, equipment availability, borrowing eligibility, and borrowing limit.
+7. If validation succeeds, the borrowing record is created.
+8. The ViewModel refreshes the displayed information and presents the operation result.
 
-Because it only depends on repository interfaces and domain models — it has no reference to Avalonia at all, so any UI technology can call it the same way.
+The exact service and method names depend on the implementation in the source code.
 
-### 5. What advantage is gained from registering dependencies in one composition point?
+### 5.6 Example: Return Equipment Flow
 
-All wiring of interfaces to implementations happens in one place (App.axaml.cs), so the rest of the app depends only on abstractions and doesn't need to know how objects are built.
+1. The custodian opens the active borrowing records.
+2. The custodian selects the borrowing to be returned.
+3. The custodian activates the Return command.
+4. The ViewModel calls the return operation in the Application layer.
+5. The Application layer checks that the borrowing exists and is still active.
+6. The borrowing status is updated to Returned.
+7. The ViewModel refreshes the active borrowing list and displays the result.
 
-### 6. If the in-memory repository were replaced by SQLite later, which parts of the current interface should remain largely unchanged?
+---
 
-The Domain models, Application services, repository interfaces, and the entire Desktop project (Views and ViewModels) should remain largely unchanged. The Infrastructure project contains the EF Core and SQLite implementation, including the DbContext, entity configurations, migrations, and repository implementations.
+## 6. Requirements and Use Case Analysis
 
-## 6. Relational Database Design
+The system is designed around the custodian's responsibilities in managing equipment and borrowing transactions.
 
-The system uses a relational database to permanently store students, equipment, and borrowing records. The database is implemented using SQLite and Entity Framework Core.
+### 6.1 Primary Actor
 
-### 1. Students Table
+**Custodian**
 
-The `Students` table stores the information about students who can borrow equipment.
+The custodian interacts with the system to manage the equipment catalog, student records, borrowing eligibility, borrowing transactions, returns, and borrowing histories.
 
-| Column              | Data Type  | Description                                                   |
-|---------------------|------------|---------------------------------------------------------------|
-| `Id`                | Integer    | Primary key that uniquely identifies a student.               |
-| `Name`              | String     | Required name of the student.                                 |
-| `IsAllowedToBorrow` | Boolean    | Indicates whether the student is allowed to borrow equipment. |
+### 6.2 Required Use Cases
 
-### 2. Equipment Table
+The following use cases describe the main functions of the Campus Equipment Borrowing System.
 
-The `Equipment` table stores the equipment available in the system.
+| Use Case ID | Use Case Name | Description |
+|---|---|---|
+| UC-01 | View Equipment Catalog | Displays the equipment records maintained by the system. |
+| UC-02 | Find Available Equipment | Displays equipment that is currently available for borrowing. |
+| UC-03 | Borrow Equipment | Processes a borrowing transaction for an equipment item. |
+| UC-04 | View Active Borrowings | Displays borrowing records that are currently active. |
+| UC-05 | Return Equipment | Records the return of borrowed equipment. |
+| UC-06 | Check Out Multiple Equipment Items | Processes a borrowing transaction involving multiple equipment items. |
+| UC-07 | View Student Borrowing History | Displays borrowing records associated with a selected student. |
+| UC-08 | View Equipment Borrowing History | Displays borrowing records associated with a selected equipment item. |
+| UC-09 | Search, Filter, and Sort Borrowings | Allows borrowing records to be searched, filtered, and sorted. |
+| UC-12 | Register Student | Adds a new student record to the system. |
+| UC-13 | Update Student Information | Updates the information stored for an existing student. |
+| UC-14 | Change Student Borrowing Eligibility | Changes whether a student is allowed to borrow equipment. |
+| UC-15 | Register Equipment | Adds a new equipment record to the system. |
+| UC-16 | Update Equipment Information | Updates the information stored for an existing equipment item. |
 
-| Column        | Data Type | Description                                             |
-|---------------|-----------|---------------------------------------------------------|
-| `EquipmentId` | GUID      | Primary key that uniquely identifies an equipment item. |
-| `Name`        | String    | Required name of the equipment.                         |
-| `Description` | String    | Required description of the equipment.                  |
-| `IsAvailable` | Boolean   | Indicates whether the equipment is currently available. |
+**Note:** The use-case IDs above follow the required Lab Activity 4 numbering. The complete use-case descriptions, preconditions, main flows, alternative flows, and postconditions are documented separately in the Use-Case Specifications.
 
-### 3. Borrowings Table
+### 6.3 Important Business Rules
 
-The `Borrowings` table stores the records of equipment borrowed by students.
+The system must enforce the applicable rules when processing borrowing operations.
 
-| Column               | Data Type | Description                                                  |
-|----------------------|-----------|--------------------------------------------------------------|
-| `BorrowingId`        | GUID      | Primary key that uniquely identifies a borrowing record.     |
-| `StudentId`          | Integer   | Foreign key that references the `Students` table.            |
-| `EquipmentId`        | GUID      | Foreign key that references the `Equipment` table.           |
-| `DateBorrowed`       | DateTime  | Date and time when the equipment was borrowed.               |
-| `ExpectedReturnDate` | DateTime  | Expected date when the equipment should be returned.         |
-| `Status`             | String    | Stores the borrowing status, such as `Active` or `Returned`. |
+These include:
 
-### 4. Relationships
+- A student must exist in the system before borrowing equipment.
+- A student must be eligible to borrow equipment.
+- A student must not exceed the maximum permitted number of active borrowings.
+- Equipment must exist in the system before it can be borrowed.
+- Equipment must be available before a borrowing transaction can be completed.
+- A borrowing record must be maintained for each successful borrowing.
+- Returned equipment must no longer be treated as actively borrowed.
+- A borrowing record must not be returned more than once.
+- Multi-item checkout must handle the selected items as one transaction when required by the use-case rules.
+- Borrowing history must remain available for reference after an item is returned.
 
-The database contains two main one-to-many relationships:
+The actual validation rules and limits should match the values and conditions implemented in the application and specified in the activity requirements.
 
-* One `Student` can have many `Borrowing` records.
+---
 
-* One `Equipment` item can appear in many `Borrowing` records over time.
+## 7. Domain Concepts
 
-* Each `Borrowing` record belongs to one `Student` and one `Equipment` item.
+The Domain project contains the main concepts used by the Campus Equipment Borrowing System.
 
-The `StudentId` and `EquipmentId` columns in the `Borrowings` table act as foreign keys that connect the borrowing records to their related records.
+### 7.1 Student
 
-### 5. Indexes
+The `Student` entity represents a student who may borrow equipment.
 
-Indexes are configured for the `StudentId` and `EquipmentId` foreign keys in the `Borrowings` table. These indexes help improve queries that retrieve borrowing records based on a specific student or equipment item.
+**Information:**
 
-### 6. Database Diagram
+- Student ID
+- Student name
+- Institutional student number, if included in the implementation
+- Borrowing eligibility
+
+**Rules or State:**
+
+- A student must be registered in the system before borrowing.
+- A student must be eligible to borrow equipment.
+- A student must not exceed the permitted active borrowing limit.
+
+**Not the responsibility of Student:**
+
+- Storing equipment records.
+- Creating repository connections.
+- Managing database connections.
+- Coordinating the complete borrowing operation.
+
+### 7.2 Equipment
+
+The `Equipment` entity represents an item that can be borrowed.
+
+**Information:**
+
+- Equipment ID
+- Equipment name
+- Equipment description
+- Availability information
+
+**Rules or State:**
+
+- Equipment must be registered before it can be borrowed.
+- Equipment may be available or unavailable.
+- Equipment becomes unavailable when successfully borrowed.
+- Equipment becomes available again after a successful return.
+
+**Not the responsibility of Equipment:**
+
+- Managing student records.
+- Creating borrowing records.
+- Accessing repositories or databases.
+- Coordinating the complete borrowing operation.
+
+### 7.3 Borrowing
+
+The `Borrowing` entity represents a borrowing transaction involving a student and an equipment item.
+
+**Information:**
+
+- Borrowing ID
+- Student
+- Equipment
+- Date borrowed
+- Expected return date
+- Current borrowing status
+
+**Rules or State:**
+
+- A borrowing record belongs to a student and an equipment item.
+- A borrowing record has a status, such as Active or Returned.
+- An active borrowing represents equipment that has not yet been returned.
+- A returned borrowing remains part of the borrowing history.
+
+**Not the responsibility of Borrowing:**
+
+- Retrieving students or equipment from repositories.
+- Managing database connections.
+- Coordinating the entire application use case.
+
+---
+
+## 8. Relational Database Design
+
+The system uses **PostgreSQL** as its relational database and **Entity Framework Core** as its Object-Relational Mapper (ORM).
+
+The database stores student information, equipment records, and borrowing transactions so that information remains available after the application is closed.
+
+### 8.1 Students Table
+
+The `Students` table stores information about registered students.
+
+| Column | Description |
+|---|---|
+| `Id` | Primary key that uniquely identifies a student. |
+| `Name` | Student's name. |
+| `IsAllowedToBorrow` | Indicates whether the student is allowed to borrow equipment. |
+| `StudentNumber` | Institutional student number, if included in the implementation. |
+
+The actual column names and data types must match the EF Core entity configuration and migrations.
+
+### 8.2 Equipment Table
+
+The `Equipment` table stores information about equipment maintained by the system.
+
+| Column | Description |
+|---|---|
+| `EquipmentId` | Primary key that uniquely identifies an equipment item. |
+| `Name` | Name of the equipment. |
+| `Description` | Description of the equipment. |
+| `IsAvailable` | Indicates whether the equipment is currently available. |
+
+### 8.3 Borrowings Table
+
+The `Borrowings` table stores borrowing transaction records.
+
+| Column | Description |
+|---|---|
+| `BorrowingId` | Primary key that uniquely identifies a borrowing record. |
+| `StudentId` | Foreign key referencing the student who borrowed the equipment. |
+| `EquipmentId` | Foreign key referencing the borrowed equipment. |
+| `DateBorrowed` | Date and time when the equipment was borrowed. |
+| `ExpectedReturnDate` | Expected return date of the equipment. |
+| `Status` | Current borrowing status, such as Active or Returned. |
+
+The actual schema should be verified against the migrations in the project.
+
+### 8.4 Relationships
+
+The database contains the following relationships:
+
+- One student can have many borrowing records over time.
+- One equipment item can appear in many borrowing records over time.
+- Each borrowing record belongs to one student.
+- Each borrowing record refers to one equipment item.
+
+The `StudentId` and `EquipmentId` columns in the `Borrowings` table serve as foreign keys.
+
+### 8.5 Database Constraints and Indexes
+
+Database constraints help protect the consistency of stored information.
+
+The database design should enforce the appropriate:
+
+- Primary key constraints.
+- Foreign key constraints.
+- Required-field constraints.
+- Unique constraints for fields that must not be duplicated.
+- Appropriate indexes for frequently queried fields.
+
+For borrowing records, the database should also prevent conflicting active borrowing records for the same equipment item when required by the activity's business rules.
+
+The actual constraints and indexes must be confirmed in the EF Core configurations and PostgreSQL migrations.
+
+### 8.6 Database Diagram
 
 The database relationship diagram is provided in:
 
-`docs/database-diagram.png`
-
-The diagram shows the `Students`, `Equipment`, and `Borrowings` tables, including their primary keys, foreign keys, and relationships.
-
-## 7. SQLite and Entity Framework Core Configuration
-
-The system uses SQLite as the persistent database and Entity Framework Core as the Object-Relational Mapper (ORM). Entity Framework Core handles the connection between the application and the SQLite database while keeping the database implementation inside the Infrastructure layer.
-
-### 1. Entity Framework Core Packages
-
-The Infrastructure project uses the following Entity Framework Core packages:
-
-* `Microsoft.EntityFrameworkCore` – provides the main EF Core functionality.
-* `Microsoft.EntityFrameworkCore.Design` – provides tools needed for migrations and database development.
-* `Microsoft.EntityFrameworkCore.Sqlite` – allows EF Core to use SQLite as the database provider.
-
-All three packages use version `10.0.12`.
-
-### 2. SQLite Database Connection
-
-The application uses the following SQLite connection:
-
 ```text
-Data Source=equipmentborrow.db
+docs/database-diagram.png
 ```
 
-### 3. DbContext
+The diagram should show the database tables, primary keys, foreign keys, and relationships.
 
-The `EquipmentBorrowingDbContext` is located in:
+Update the file path if the diagram is stored elsewhere in the final project.
+
+---
+
+## 9. PostgreSQL and Entity Framework Core Configuration
+
+The system uses PostgreSQL for persistent data storage and Entity Framework Core for database access.
+
+The Npgsql Entity Framework Core provider allows EF Core to communicate with PostgreSQL.
+
+### 9.1 Required Packages
+
+The Infrastructure project should include the packages required for EF Core and PostgreSQL.
+
+Common packages include:
+
+- `Microsoft.EntityFrameworkCore` – provides the main EF Core functionality.
+- `Microsoft.EntityFrameworkCore.Design` – provides design-time support for migrations.
+- `Npgsql.EntityFrameworkCore.PostgreSQL` – provides PostgreSQL database support for EF Core.
+
+The package versions must be compatible with the target .NET and EF Core versions used by the solution.
+
+### 9.2 PostgreSQL Database Connection
+
+The application needs a PostgreSQL connection string to connect to the database.
+
+A typical connection string has the following format:
 
 ```text
-EquipmentBorrowing.Infrastructure.Data
+Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=YOUR_PASSWORD
 ```
 
-It defines the database sets for the three main entities:
+Replace the database name, username, and password with the values configured on the local PostgreSQL server.
 
-* `Students`
-* `Equipment`
-* `Borrowings`
+**Security note:** Do not commit real database passwords or other sensitive credentials to the Git repository. Use environment variables or an appropriate local configuration file excluded from source control.
 
-The `DbContext` also applies the entity configurations from the Infrastructure assembly.
+### 9.3 DbContext
+
+The `EquipmentBorrowingDbContext` is responsible for managing the application's database access through Entity Framework Core.
+
+It defines the database sets for the main entities:
+
+- `Students`
+- `Equipment`
+- `Borrowings`
+
+Example:
+
+```csharp
+public DbSet<Student> Students { get; set; }
+public DbSet<Equipment> Equipment { get; set; }
+public DbSet<Borrowing> Borrowings { get; set; }
+```
+
+The DbContext also applies entity configurations from the Infrastructure assembly.
+
+Example:
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -416,123 +571,432 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-This keeps the database configuration separate from the domain classes.
+This keeps database-specific configuration separate from the domain classes.
 
-### 4. Entity Configurations
+### 9.4 Entity Configurations
 
-Each entity has its own Entity Framework Core configuration.
+Entity configurations define how domain entities are mapped to database tables and columns.
 
 #### StudentConfiguration
 
-The `Students` table is configured with:
-
-* `Id` as the primary key.
-* `Name` as a required field with a maximum length of 100 characters.
-* `IsAllowedToBorrow` as a required field.
+The student configuration defines the primary key, required fields, field lengths, and other applicable constraints for student records.
 
 #### EquipmentConfiguration
 
-The `Equipment` table is configured with:
-
-* `EquipmentId` as the primary key.
-* `Name` as a required field with a maximum length of 100 characters.
-* `Description` as a required field with a maximum length of 500 characters.
-* `IsAvailable` as a required field.
+The equipment configuration defines the primary key, required fields, field lengths, availability information, and other applicable constraints for equipment records.
 
 #### BorrowingConfiguration
 
-The `Borrowings` table is configured with:
+The borrowing configuration defines:
 
-* `BorrowingId` as the primary key.
-* `StudentId` as a foreign key to `Students`.
-* `EquipmentId` as a foreign key to `Equipment`.
-* `DateBorrowed` as a required field.
-* `ExpectedReturnDate` as a required field.
-* `Status` stored as a string.
-* Indexes on `StudentId` and `EquipmentId`.
+- The borrowing primary key.
+- The student foreign key.
+- The equipment foreign key.
+- Required borrowing dates.
+- Borrowing status storage.
+- Relationship behavior.
+- Relevant indexes and constraints.
 
-The relationships ensure that each borrowing record is connected to an existing student and equipment record.
+The exact configuration must match the application's current entity models and database requirements.
 
-### 5. Database Configuration
+### 9.5 Database Provider Registration
 
-The SQLite database is registered through the `AddDatabase()` extension method. This allows the application to configure the `DbContext` through dependency injection.
+The PostgreSQL provider is registered through the application's dependency injection configuration.
+
+A typical EF Core registration looks like this:
 
 ```csharp
 services.AddDbContext<EquipmentBorrowingDbContext>(options =>
-    options.UseSqlite("Data Source=equipmentborrow.db"));
+    options.UseNpgsql(connectionString));
 ```
 
-This keeps the database connection and EF Core configuration outside the Views and ViewModels.
+The actual implementation should obtain the connection string from the application's configuration rather than hardcoding credentials in the source code.
 
 ---
 
-## 8. Migrations and Database Initialization
+## 10. Database Migrations and Initialization
 
-Entity Framework Core migrations are used to create and update the SQLite database schema. This allows the database structure to be reproduced consistently from the application's entity configurations.
+Entity Framework Core migrations are used to create and update the PostgreSQL database schema.
 
-### 1. Initial Migration
+Migrations allow the database structure to be reproduced from the project's entity configurations.
 
-The project contains an initial EF Core migration:
+### 10.1 Creating a Migration
 
-```text
-20261002130944_InitialCreate
+After changing an entity or its database configuration, create a migration using the EF Core tools.
+
+A typical command is:
+
+```bash
+dotnet ef migrations add MigrationName
 ```
 
-The migration creates the following tables:
+If the solution uses separate Infrastructure and Desktop projects, specify the correct project and startup project:
 
-* `Students`
-* `Equipment`
-* `Borrowings`
+```bash
+dotnet ef migrations add MigrationName \
+  --project EquipmentBorrowing.Infrastructure \
+  --startup-project EquipmentBorrowing.Desktop
+```
 
-It also creates the primary keys, foreign keys, indexes, and other configured columns required by the database design.
+Adjust the project paths and names to match the actual solution.
 
-### 2. Applying the Migration
+### 10.2 Applying Migrations
 
-The application applies pending migrations during database initialization through the `DatabaseInitializer`.
+To apply pending migrations to the configured PostgreSQL database:
+
+```bash
+dotnet ef database update
+```
+
+If separate projects are used:
+
+```bash
+dotnet ef database update \
+  --project EquipmentBorrowing.Infrastructure \
+  --startup-project EquipmentBorrowing.Desktop
+```
+
+The application may also apply pending migrations during startup through its database initialization process, if that behavior is implemented.
+
+Example:
 
 ```csharp
 await db.Database.MigrateAsync();
 ```
 
-This ensures that the SQLite database has the schema defined by the current EF Core migrations.
+### 10.3 Database Initialization
 
-### 3. Database Initialization
+The database initializer is responsible for preparing the database when the application starts, if initialization is configured in the project.
 
-The `DatabaseInitializer` is located in the Infrastructure project.
+Its responsibilities may include:
 
-It first applies any pending migrations. It then checks whether student records already exist before adding the initial seed data.
+1. Applying pending migrations.
+2. Checking whether initial records already exist.
+3. Adding seed data when necessary.
+4. Avoiding duplicate seed data during subsequent application launches.
 
-```csharp
-if (await db.Students.AnyAsync())
+Seed data should be inserted only when the database needs it.
+
+### 10.4 Seed Data
+
+The initial database may contain sample records used to demonstrate the system's functions.
+
+Examples include:
+
+- Registered student records.
+- Equipment records.
+- Available equipment items.
+- Other records needed to demonstrate borrowing and return operations.
+
+Document the actual seed data included in the implementation.
+
+### 10.5 Persistence
+
+PostgreSQL stores the system's records independently of the desktop application's running process.
+
+The system should preserve:
+
+- Student records.
+- Equipment records.
+- Borrowing records.
+- Updated borrowing statuses.
+- Borrowing history.
+
+For example, a successfully borrowed item should remain unavailable after the application is closed and opened again, provided the database state has not been changed by another operation.
+
+---
+
+## 11. Installation and Setup Instructions
+
+Follow these steps to prepare the application on a local development machine.
+
+### 11.1 Obtain the Source Code
+
+Clone the project repository:
+
+```bash
+git clone REPOSITORY_URL
+```
+
+Alternatively, extract the submitted project archive.
+
+Open the solution file in the preferred .NET IDE.
+
+### 11.2 Restore Dependencies
+
+Open a terminal in the solution directory and run:
+
+```bash
+dotnet restore
+```
+
+This restores the NuGet packages required by the projects.
+
+### 11.3 Configure PostgreSQL
+
+1. Install and start PostgreSQL.
+2. Create the database used by the application.
+3. Configure the connection string.
+4. Make sure the configured PostgreSQL user has the required database permissions.
+5. Confirm that the application can connect to the database.
+
+Example database name:
+
+```text
+equipment_borrowing
+```
+
+### 11.4 Configure the Connection String
+
+Set the PostgreSQL connection string using the configuration method supported by the application.
+
+For example, a local development configuration may contain:
+
+```json
 {
-    return;
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=YOUR_PASSWORD"
+  }
 }
 ```
 
-This prevents the application from recreating the seed data every time it starts.
+Use the actual configuration key expected by the application. Do not commit real passwords.
 
-### 4. Seed Data
+### 11.5 Apply Database Migrations
 
-The initial database contains:
+Run the migration command appropriate for the solution:
 
-* Multiple student records.
-* Multiple equipment records.
-* Equipment records that are initially available.
-
-The seed data is used to demonstrate the borrowing and validation workflows of the application.
-
-### 5. Persistence
-
-The database is stored in the SQLite file:
-
-```text
-equipmentborrow.db
+```bash
+dotnet ef database update
 ```
 
-Because the data is stored in the SQLite database instead of memory, changes made during the application are preserved after the application is closed and opened again.
+If the application applies migrations automatically during startup, follow the project's initialization process instead.
 
-For example:
+### 11.6 Build the Solution
 
-* Borrowed equipment remains unavailable after restarting the application.
-* Active borrowing records remain stored in the database.
-* Returned equipment becomes available again, and the borrowing record remains recorded as returned.
+Run:
+
+```bash
+dotnet build
+```
+
+Resolve any build errors before running the application.
+
+---
+
+## 12. Running the Application
+
+After restoring dependencies, configuring PostgreSQL, and preparing the database, run the desktop application.
+
+From the solution directory:
+
+```bash
+dotnet run --project EquipmentBorrowing.Desktop
+```
+
+If the project file is located in a different directory, provide its correct relative path.
+
+When the application starts, the custodian should be able to access the implemented system functions through the Avalonia desktop interface.
+
+---
+
+## 13. Database Context Lifetime
+
+The `EquipmentBorrowingDbContext` manages communication between the application and PostgreSQL.
+
+A DbContext should be used for a limited operation or unit of work and then disposed.
+
+For desktop applications, a suitable approach is to create a short-lived DbContext for each application operation or service operation, rather than keeping one DbContext alive for the entire application session.
+
+### Why a Short-Lived DbContext Is Appropriate
+
+- It avoids keeping tracked entities alive longer than necessary.
+- It reduces the risk of working with stale tracked data.
+- It helps prevent unintended changes from unrelated operations from being saved together.
+- It makes the boundaries of database operations easier to understand.
+- It allows each operation to manage its own database work.
+
+The actual lifetime should match the dependency injection configuration and service design used by the project.
+
+A DbContext should not be used concurrently by multiple operations.
+
+---
+
+## 14. Transaction Handling
+
+Database transactions help ensure that related database changes are completed consistently.
+
+This is particularly important when an operation modifies multiple records.
+
+### 14.1 Single-Item Borrowing
+
+A successful borrowing operation may require changes to both:
+
+- The borrowing record.
+- The equipment availability state.
+
+These changes should be saved consistently so that the database does not contain a borrowing record without the corresponding equipment state update.
+
+### 14.2 Multiple-Item Checkout
+
+The multi-item checkout operation is especially important because it involves multiple equipment items.
+
+The operation should:
+
+1. Receive the selected student and equipment items.
+2. Validate the student and borrowing eligibility.
+3. Validate the borrowing limit.
+4. Confirm that every selected equipment item exists and is available.
+5. Create the required borrowing records.
+6. Update the availability state of the selected equipment.
+7. Commit the transaction only after all required changes succeed.
+
+If a required item cannot be checked out or a database operation fails, the transaction should be rolled back so that the database does not retain only part of the checkout operation.
+
+### 14.3 Transaction Benefits
+
+Transactions help provide:
+
+- Consistency between borrowing records and equipment availability.
+- Atomic behavior for multi-item checkout.
+- Protection against partially completed operations.
+- A clear boundary for committing or rolling back database changes.
+
+### 14.4 Error Handling
+
+The application should handle expected validation failures and database errors appropriately.
+
+Examples include:
+
+- Student does not exist.
+- Student is not eligible to borrow.
+- Student has reached the borrowing limit.
+- Equipment does not exist.
+- Equipment is no longer available.
+- Borrowing record is already returned.
+- Database operation fails.
+
+The ViewModel should display useful feedback to the custodian without exposing sensitive database details.
+
+**Implementation note:** The transaction behavior described here should be checked against the actual service and repository code. Include only the transaction mechanisms and rollback behavior that the application implements.
+
+---
+
+## 15. Testing and Verification
+
+Testing is used to verify that the system's operations follow the required business rules and produce the expected results.
+
+### 15.1 Automated Tests
+
+The `EquipmentBorrowing.Tests` project contains automated tests for the implemented system behavior.
+
+Relevant test areas include:
+
+- Student registration and validation.
+- Equipment registration and validation.
+- Equipment availability.
+- Borrowing eligibility.
+- Borrowing limits.
+- Individual borrowing.
+- Multi-item checkout.
+- Returning equipment.
+- Student borrowing history.
+- Equipment borrowing history.
+- Search, filtering, and sorting.
+
+The final test documentation should identify the actual test cases and their results.
+
+### 15.2 Database Verification
+
+Database verification should confirm that application operations correctly affect PostgreSQL.
+
+Examples include:
+
+- A newly registered student appears in the Students table.
+- Newly registered equipment appears in the Equipment table.
+- A successful borrowing creates the expected borrowing record.
+- Borrowed equipment is no longer available.
+- A successful return updates the borrowing status.
+- Returned equipment becomes available again.
+- Borrowing history remains stored.
+- Multi-item checkout either completes fully or rolls back when a required operation fails.
+- Data remains available after restarting the application.
+
+### 15.3 Integration and Persistence Evidence
+
+The project submission should include evidence showing that the application, services, and PostgreSQL database work together.
+
+Useful evidence includes:
+
+- Successful application startup.
+- Database tables created through migrations.
+- Database records after registration.
+- Database records after borrowing.
+- Database records after returning equipment.
+- Multi-item checkout success.
+- Multi-item checkout failure and rollback, where implemented.
+- Borrowing history displayed by the application.
+- Data persistence after restarting the application.
+
+Refer to the separate integration and verification evidence submitted with the project.
+
+---
+
+## 16. Documentation and Project Deliverables
+
+The README explains the system, architecture, database setup, and running instructions.
+
+The remaining use-case and verification documents should be maintained as separate submission documents.
+
+The project documentation should include:
+
+1. **Use-Case Diagram** – shows the primary actor and the system's required use cases.
+2. **Use-Case Catalog** – lists the use-case IDs, names, actors, and brief descriptions.
+3. **Use-Case Specifications** – provides the detailed specifications for all fourteen required use cases.
+4. **Use-Case-to-Acceptance Evidence Matrix** – connects each required use case to its acceptance criteria and corresponding verification evidence.
+5. **Integration and Verification Evidence** – contains screenshots or other evidence showing the application's behavior and database results.
+
+The source code, documentation, and evidence should correspond to the same final version of the application.
+
+---
+
+## 17. Reflection
+
+### 1. Why should the Application layer depend on repository interfaces instead of directly depending on a database implementation?
+
+The Application layer should depend on repository interfaces because this separates business logic from the specific database technology. This allows the Infrastructure implementation to change without requiring changes to the application's use cases.
+
+### 2. Which parts of the solution should remain independent of PostgreSQL?
+
+The Domain models, Application services, and repository interfaces should remain independent of PostgreSQL. The Infrastructure project contains the database-specific implementation, including the DbContext, entity configurations, migrations, and EF Core repository implementations.
+
+### 3. Why should Avalonia Views not directly execute database queries?
+
+Avalonia Views should be responsible for displaying information and collecting user input. Direct database access from the Views would couple the user interface to the storage implementation and could allow business rules to be bypassed.
+
+### 4. Why should business rules not exist only in the ViewModel?
+
+The ViewModel is responsible for presentation state and user interactions. Business rules belong in the Application or Domain layers so they can be reused, tested independently, and enforced regardless of which interface calls the application.
+
+### 5. What is the responsibility of a ViewModel?
+
+A ViewModel holds presentation state, exposes properties and commands, collects user input, and delegates application operations to the Application layer.
+
+### 6. Why is transaction handling important for multi-item checkout?
+
+Multi-item checkout involves several related database changes. A transaction ensures that all required changes can be committed together or rolled back if the operation fails, preventing partially completed checkout operations.
+
+### 7. Why is a short-lived DbContext appropriate for a desktop application?
+
+A short-lived DbContext limits entity tracking to a specific operation, reduces stale data and unintended state changes, and provides a clear boundary for database work.
+
+---
+
+## 18. Conclusion
+
+The Campus Equipment Borrowing System uses a layered architecture to separate the user interface, application operations, domain concepts, and database implementation.
+
+Avalonia UI provides the desktop interface, the MVVM pattern organizes presentation logic, the Application layer coordinates use cases, and Entity Framework Core with PostgreSQL provides persistent data storage.
+
+The system is designed to support the custodian's equipment management and borrowing responsibilities while maintaining consistent borrowing records, equipment availability, and historical information.
+
