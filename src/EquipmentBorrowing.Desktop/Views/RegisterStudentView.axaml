@@ -6,40 +6,50 @@
     x:DataType="viewmodels:RegisterStudentViewModel">
 
     <ScrollViewer>
-        <StackPanel Margin="30" Spacing="15">
+        <StackPanel Spacing="16">
 
-            <TextBlock
-                Text="Register Student"
-                FontSize="26"
-                FontWeight="Bold"/>
+            <!-- Title -->
+            <StackPanel>
+                <TextBlock Classes="title" Text="Register Student"/>
+                <TextBlock Classes="subheading" Text="Add a new student record to the system with borrowing eligibility enabled by default."/>
+            </StackPanel>
 
-            <TextBlock Text="Institutional Number"/>
-            <TextBox
-                Text="{Binding InstitutionalNumber}"
-                Watermark="Enter institutional number"/>
+            <Border Classes="formContainer">
+                <StackPanel Spacing="12">
 
-            <TextBlock Text="Full Name"/>
-            <TextBox
-                Text="{Binding StudentName}"
-                Watermark="Enter student's full name"/>
+                    <TextBlock Classes="formLabel" Text="Institutional Number *"/>
+                    <TextBox
+                        Text="{Binding InstitutionalNumber}"
+                        PlaceholderText="e.g. 2024-0010"/>
 
-            <TextBlock Text="Contact Information (Optional)"/>
-            <TextBox
-                Text="{Binding ContactInformation}"
-                Watermark="Enter contact number or email"/>
+                    <TextBlock Classes="formLabel" Text="Full Name *"/>
+                    <TextBox
+                        Text="{Binding StudentName}"
+                        PlaceholderText="e.g. Juan Dela Cruz"/>
 
-            <Button
-                Content="Register Student"
-                Command="{Binding RegisterStudentCommand}"
-                IsEnabled="{Binding !IsLoading}"/>
+                    <TextBlock Classes="formLabel" Text="Contact Information (Optional)"/>
+                    <TextBox
+                        Text="{Binding ContactInformation}"
+                        PlaceholderText="e.g. 0912-345-6789 or email@campus.edu"/>
 
-            <TextBlock
-                Text="{Binding FeedbackMessage}"
-                TextWrapping="Wrap"/>
+                    <Button
+                        Content="Register Student"
+                        Command="{Binding RegisterStudentCommand}"
+                        IsEnabled="{Binding !IsLoading}"
+                        HorizontalAlignment="Left"
+                        Margin="0,8,0,0"/>
 
-            <TextBlock
-                Text="Registering student..."
-                IsVisible="{Binding IsLoading}"/>
+                    <TextBlock
+                        Classes="feedback"
+                        Text="{Binding FeedbackMessage}"
+                        IsVisible="{Binding FeedbackMessage.Length}"/>
+
+                    <TextBlock
+                        Text="Registering student..."
+                        IsVisible="{Binding IsLoading}"/>
+
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

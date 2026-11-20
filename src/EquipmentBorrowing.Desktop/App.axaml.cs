@@ -66,8 +66,9 @@ public partial class App : Avalonia.Application
                 var db = serviceProvider.GetRequiredService<EquipmentBorrowingDbContext>();
                 await DatabaseInitializer.InitializeAsync(db);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"[DatabaseInitializer Warning]: {ex.Message}");
                 // Database may be offline or unreachable; views handle error and retry states per UC-01/UC-02/BR-18
             }
 

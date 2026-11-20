@@ -6,61 +6,74 @@
     x:DataType="viewmodels:UpdateEquipmentInformationViewModel">
 
     <ScrollViewer>
-        <StackPanel Margin="30" Spacing="15">
+        <StackPanel Spacing="16">
 
-            <TextBlock
-                Text="Update Equipment Information"
-                FontSize="26"
-                FontWeight="Bold"/>
+            <!-- Title -->
+            <StackPanel>
+                <TextBlock Classes="title" Text="Update Equipment Information"/>
+                <TextBlock Classes="subheading" Text="Edit identifier, name, or description. Availability and borrowing history remain preserved."/>
+            </StackPanel>
 
-            <TextBlock Text="Select Equipment"/>
+            <Border Classes="formContainer">
+                <StackPanel Spacing="12">
 
-            <ComboBox
-                ItemsSource="{Binding EquipmentList}"
-                SelectedItem="{Binding SelectedEquipment}"
-                PlaceholderText="Select equipment">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding EquipmentIdentifier}"/>
-                            <TextBlock
-                                Text="{Binding Name}"
-                                FontSize="12"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+                    <TextBlock Classes="formLabel" Text="Select Equipment"/>
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding EquipmentList}"
+                        SelectedItem="{Binding SelectedEquipment}"
+                        PlaceholderText="Select equipment to edit">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Binding EquipmentIdentifier}" FontWeight="Bold"/>
+                                    <TextBlock Text="-" Foreground="#6c757d"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-            <TextBlock Text="Equipment Identifier"/>
-            <TextBox
-                Text="{Binding EquipmentIdentifier}"
-                Watermark="Enter equipment identifier"/>
+                    <TextBlock Classes="formLabel" Text="Equipment Identifier *"/>
+                    <TextBox
+                        Text="{Binding EquipmentIdentifier}"
+                        PlaceholderText="Equipment identifier"/>
 
-            <TextBlock Text="Equipment Name"/>
-            <TextBox
-                Text="{Binding EquipmentName}"
-                Watermark="Enter equipment name"/>
+                    <TextBlock Classes="formLabel" Text="Equipment Name *"/>
+                    <TextBox
+                        Text="{Binding EquipmentName}"
+                        PlaceholderText="Equipment name"/>
 
-            <TextBlock Text="Description (Optional)"/>
-            <TextBox
-                Text="{Binding Description}"
-                Watermark="Enter equipment description"
-                AcceptsReturn="True"
-                Height="100"
-                TextWrapping="Wrap"/>
+                    <TextBlock Classes="formLabel" Text="Description (Optional)"/>
+                    <TextBox
+                        Text="{Binding Description}"
+                        PlaceholderText="Clear field to remove description"
+                        AcceptsReturn="True"
+                        Height="90"
+                        TextWrapping="Wrap"/>
 
-            <Button
-                Content="Update Equipment"
-                Command="{Binding UpdateEquipmentCommand}"
-                IsEnabled="{Binding !IsLoading}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,8,0,0">
+                        <Button
+                            Content="Save Changes"
+                            Command="{Binding UpdateEquipmentCommand}"
+                            IsEnabled="{Binding !IsLoading}"/>
 
-            <TextBlock
-                Text="{Binding FeedbackMessage}"
-                TextWrapping="Wrap"/>
+                        <Button
+                            Content="Refresh List"
+                            Command="{Binding LoadEquipmentCommand}"/>
+                    </StackPanel>
 
-            <TextBlock
-                Text="Loading equipment..."
-                IsVisible="{Binding IsLoading}"/>
+                    <TextBlock
+                        Classes="feedback"
+                        Text="{Binding FeedbackMessage}"
+                        IsVisible="{Binding FeedbackMessage.Length}"/>
+
+                    <TextBlock
+                        Text="Loading equipment data..."
+                        IsVisible="{Binding IsLoading}"/>
+
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

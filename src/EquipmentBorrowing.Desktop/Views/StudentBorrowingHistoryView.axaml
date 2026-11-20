@@ -6,114 +6,125 @@
     x:Class="EquipmentBorrowing.Desktop.Views.StudentBorrowingHistoryView"
     x:DataType="viewmodels:StudentBorrowingHistoryViewModel">
 
-    <Grid Margin="30" RowDefinitions="Auto,Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        <TextBlock
-            Text="Student Borrowing History"
-            FontSize="24"
-            FontWeight="Bold"
-            Margin="0,0,0,20"/>
+        <!-- Title -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Classes="title" Text="Student Borrowing History"/>
+            <TextBlock Classes="subheading" Text="View all active loans and past returned borrowing records for a selected student."/>
+        </StackPanel>
 
-        <StackPanel Grid.Row="1" Spacing="10">
+        <!-- Selection Panel -->
+        <Border Grid.Row="1" Classes="panelCard">
+            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Classes="formLabel" Text="Select Student" Margin="0,0,0,4"/>
+                    <ComboBox
+                        ItemsSource="{Binding StudentList}"
+                        SelectedItem="{Binding SelectedStudent}"
+                        MinWidth="280">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="domain:Student">
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
 
-            <TextBlock Text="Select Student" FontWeight="Bold"/>
+                <Button
+                    Content="View History"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,8"
+                    Command="{Binding LoadHistoryCommand}"/>
 
-            <ComboBox
-                ItemsSource="{Binding StudentList}"
-                SelectedItem="{Binding SelectedStudent}"
-                Width="300"
-                HorizontalAlignment="Left">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="domain:Student">
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+                <TextBlock
+                    Text="{Binding BorrowingHistory.Count, StringFormat='Total Records: {0}'}"
+                    FontWeight="Bold"
+                    VerticalAlignment="Bottom"
+                    Margin="16,0,0,12"/>
+            </StackPanel>
+        </Border>
 
-            <Button
-                Content="View History"
-                Command="{Binding LoadHistoryCommand}"
-                HorizontalAlignment="Left"/>
-
+        <!-- Feedback & Status -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,10">
             <TextBlock
+                Classes="feedback"
                 Text="{Binding FeedbackMessage}"
-                TextWrapping="Wrap"/>
-
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
-            <TextBlock
-                Text="{Binding BorrowingHistory.Count,
-                    StringFormat='Total Records: {0}'}"
-                FontWeight="Bold"/>
-        </StackPanel>
-
-        <Grid Grid.Row="3">
+                IsVisible="{Binding FeedbackMessage.Length}"/>
 
             <TextBlock
                 Text="Loading borrowing history..."
-                IsVisible="{Binding IsLoading}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+                IsVisible="{Binding IsLoading}"/>
 
-            <Button
-                Content="Retry"
-                Command="{Binding LoadHistoryCommand}"
-                IsVisible="{Binding IsError}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsError}">
+                <TextBlock Text="Failed to load borrowing history." VerticalAlignment="Center"/>
+                <Button Content="Retry" Command="{Binding LoadHistoryCommand}"/>
+            </StackPanel>
 
             <TextBlock
-                Text="No borrowing history available."
+                Text="No borrowing history available for this student."
                 IsVisible="{Binding IsEmpty}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+                Margin="0,10"/>
+        </StackPanel>
 
-            <ScrollViewer>
-                <ItemsControl ItemsSource="{Binding BorrowingHistory}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="domain:Borrowing">
-                            <Border
-                                BorderBrush="Gray"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="15"
-                                Margin="0,5">
-
-                                <StackPanel Spacing="6">
+        <!-- Records List -->
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding BorrowingHistory}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="domain:Borrowing">
+                        <Border Classes="card">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Background="#E9ECEF" CornerRadius="4" Padding="6,2">
+                                            <TextBlock
+                                                Text="{Binding Equipment.EquipmentIdentifier}"
+                                                FontSize="11"
+                                                FontWeight="Bold"
+                                                Foreground="#495057"/>
+                                        </Border>
+                                        <Border Background="#E2E3E5" CornerRadius="4" Padding="6,2">
+                                            <TextBlock
+                                                Text="{Binding Status}"
+                                                FontSize="11"
+                                                FontWeight="Bold"
+                                                Foreground="#383D41"/>
+                                        </Border>
+                                    </StackPanel>
 
                                     <TextBlock
                                         Text="{Binding Equipment.Name}"
-                                        FontSize="18"
+                                        FontSize="17"
                                         FontWeight="Bold"/>
 
                                     <TextBlock
-                                        Text="{Binding Equipment.Description}"/>
+                                        Text="{Binding Equipment.Description}"
+                                        FontSize="13"
+                                        Foreground="#6c757d"/>
 
-                                    <TextBlock
-                                        Text="{Binding DateBorrowed,
-                                            StringFormat='Date Borrowed: {0:MMM dd, yyyy}'}"/>
-
-                                    <TextBlock
-                                        Text="{Binding ExpectedReturnDate,
-                                            StringFormat='Expected Return: {0:MMM dd, yyyy}'}"/>
-
-                                    <TextBlock
-                                        Text="{Binding ActualReturnDate,
-                                            StringFormat='Actual Return: {0:MMM dd, yyyy}'}"/>
-
-                                    <TextBlock
-                                        Text="{Binding Status,
-                                            StringFormat='Status: {0}'}"
-                                        FontWeight="Bold"/>
-
+                                    <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
+                                        <TextBlock
+                                            Text="{Binding DateBorrowed, StringFormat='Borrowed: {0:MMM dd, yyyy}'}"
+                                            FontSize="12"
+                                            Foreground="#6c757d"/>
+                                        <TextBlock
+                                            Text="{Binding ExpectedReturnDate, StringFormat='Expected Return: {0:MMM dd, yyyy}'}"
+                                            FontSize="12"
+                                            Foreground="#6c757d"/>
+                                        <TextBlock
+                                            Text="{Binding ActualReturnDate, StringFormat='Actual Return: {0:MMM dd, yyyy}'}"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#0F5132"
+                                            IsVisible="{Binding ActualReturnDate, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                    </StackPanel>
                                 </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
-        </Grid>
     </Grid>
 </UserControl>

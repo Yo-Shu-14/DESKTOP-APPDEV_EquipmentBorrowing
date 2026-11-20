@@ -3,62 +3,110 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="EquipmentBorrowing.Desktop.App">
 
-
     <Application.Styles>
         <FluentTheme />
+
+        <!-- Base Button -->
         <Style Selector="Button">
             <Setter Property="Padding" Value="14,8"/>
             <Setter Property="Margin" Value="0,4"/>
-            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontSize" Value="13"/>
         </Style>
 
+        <!-- Sidebar Navigation Buttons -->
+        <Style Selector="Button.navBtn">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="12,9"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <!-- Sidebar Section Category -->
+        <Style Selector="TextBlock.sidebarCategory">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#6c757d"/>
+            <Setter Property="Margin" Value="4,14,0,4"/>
+        </Style>
+
+        <!-- Headings -->
         <Style Selector="TextBlock.title">
-            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontSize" Value="24"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
 
         <Style Selector="TextBlock.subheading">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Foreground" Value="Gray"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#6c757d"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
         </Style>
 
         <Style Selector="TextBlock.formLabel">
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0,8,0,2"/>
+            <Setter Property="Margin" Value="0,8,0,3"/>
         </Style>
 
+        <!-- Inputs -->
         <Style Selector="ComboBox">
-            <Setter Property="Margin" Value="0,0,0,6"/>
-            <Setter Property="MinWidth" Value="220"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="MinWidth" Value="240"/>
+            <Setter Property="CornerRadius" Value="4"/>
         </Style>
+
         <Style Selector="DatePicker">
-            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
         </Style>
 
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="10,7"/>
+        </Style>
+
+        <!-- Feedback & Status Messages -->
         <Style Selector="TextBlock.feedback">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontStyle" Value="Italic"/>
-            <Setter Property="Margin" Value="0,6,0,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,6,0,6"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
-         <Style Selector="Border.card">
-            <Setter Property="BorderBrush" Value="Gray"/>
+        <!-- Cards & Containers -->
+        <Style Selector="Border.card">
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,6"/>
+            <Setter Property="Background" Value="#FAFAFA"/>
+        </Style>
+
+        <Style Selector="Border.panelCard">
+            <Setter Property="BorderBrush" Value="#D0D7DE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Background" Value="#F6F8FA"/>
+        </Style>
+
+        <Style Selector="Border.formContainer">
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="MaxWidth" Value="600"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Background" Value="#FAFAFA"/>
         </Style>
 
         <Style Selector="TextBlock.sidebarTitle">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="FontWeight" Value="Bold"/>
-    <Setter Property="Margin" Value="0,0,0,8"/>
-</Style>
-
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
     </Application.Styles>
-
-
 </Application>

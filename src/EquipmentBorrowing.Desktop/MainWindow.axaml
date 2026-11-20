@@ -4,57 +4,61 @@
     xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
     x:Class="EquipmentBorrowing.Desktop.MainWindow"
     x:DataType="viewmodels:MainWindowViewModel"
-    Width="900"
-    Height="600"
+    Width="1100"
+    Height="700"
     WindowState="Maximized"
-    Title="Equipment Borrowing System">
+    Title="Campus Equipment Borrowing System">
 
+    <Grid ColumnDefinitions="260,*">
 
-    <Grid ColumnDefinitions = "200,*">
-    
-    <StackPanel Grid.Column="0" Margin="20" Spacing="15">
-    <TextBlock Classes="sidebarTitle" Text="EB SYSTEM"/>
-    <Button Content="Equipment" Command="{Binding ShowEquipmentCommand}"/>
-    <Button Content="Active Borrowings" Command="{Binding ShowActiveBorrowingsCommand}"/>
-    <Button
-        Content="Student History"
-        Command="{Binding ShowStudentHistoryCommand}"/>
+        <!-- Sidebar Navigation -->
+        <Border Grid.Column="0"
+                Background="#F4F6F8"
+                BorderBrush="#E5E8EB"
+                BorderThickness="0,0,1,0">
 
-    <Button
-        Content="Equipment History"
-        Command="{Binding ShowEquipmentHistoryCommand}"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="16,20" Spacing="2">
 
-    <Button
-        Content="Search Borrowings"
-        Command="{Binding ShowSearchBorrowingsCommand}"/>
+                    <!-- System Brand -->
+                    <TextBlock Classes="sidebarTitle" Text="EQUIPMENT SYSTEM"/>
+                    <TextBlock Text="Custodian Management"
+                               FontSize="12"
+                               Foreground="#6c757d"
+                               Margin="0,0,0,14"/>
 
-    <Button
-        Content="Register Student"
-        Command="{Binding ShowRegisterStudentCommand}"/>
+                    <!-- Category: Catalog & Loans -->
+                    <TextBlock Classes="sidebarCategory" Text="CATALOG &amp; BORROWING"/>
+                    <Button Classes="navBtn" Content="Equipment Catalog" Command="{Binding ShowEquipmentCommand}"/>
+                    <Button Classes="navBtn" Content="Active Borrowings" Command="{Binding ShowActiveBorrowingsCommand}"/>
 
-    <Button
-        Content="Update Student Information"
-        Command="{Binding ShowUpdateStudentInformationCommand}"/>
+                    <!-- Category: Records & Search -->
+                    <TextBlock Classes="sidebarCategory" Text="HISTORIES &amp; SEARCH"/>
+                    <Button Classes="navBtn" Content="Search &amp; Filter Borrowings" Command="{Binding ShowSearchBorrowingsCommand}"/>
+                    <Button Classes="navBtn" Content="Student History" Command="{Binding ShowStudentHistoryCommand}"/>
+                    <Button Classes="navBtn" Content="Equipment History" Command="{Binding ShowEquipmentHistoryCommand}"/>
 
-    <Button
-        Content="Change Student Eligibility"
-        Command="{Binding ShowChangeStudentEligibilityCommand}"/>
-    <Button
-        Content="Register Equipment"
-        Command="{Binding ShowRegisterEquipmentCommand}"/>
-    <Button
-        Content="Update Equipment"
-        Command="{Binding ShowUpdateEquipmentCommand}"/>
+                    <!-- Category: Student Management -->
+                    <TextBlock Classes="sidebarCategory" Text="STUDENT MANAGEMENT"/>
+                    <Button Classes="navBtn" Content="Register Student" Command="{Binding ShowRegisterStudentCommand}"/>
+                    <Button Classes="navBtn" Content="Update Student Info" Command="{Binding ShowUpdateStudentInformationCommand}"/>
+                    <Button Classes="navBtn" Content="Change Eligibility" Command="{Binding ShowChangeStudentEligibilityCommand}"/>
 
-   </StackPanel>
+                    <!-- Category: Equipment Management -->
+                    <TextBlock Classes="sidebarCategory" Text="EQUIPMENT MANAGEMENT"/>
+                    <Button Classes="navBtn" Content="Register Equipment" Command="{Binding ShowRegisterEquipmentCommand}"/>
+                    <Button Classes="navBtn" Content="Update Equipment Info" Command="{Binding ShowUpdateEquipmentCommand}"/>
 
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
 
-        <Border
-            Grid.Column="1"
-            Margin="10">
+        <!-- Main Content Area -->
+        <Border Grid.Column="1"
+                Background="#FFFFFF"
+                Padding="24">
 
-            <ContentControl
-                Content="{Binding CurrentView}"/>
+            <ContentControl Content="{Binding CurrentView}"/>
 
         </Border>
 

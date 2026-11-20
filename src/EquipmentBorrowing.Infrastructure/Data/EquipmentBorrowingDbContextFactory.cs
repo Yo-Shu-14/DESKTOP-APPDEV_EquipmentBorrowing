@@ -15,7 +15,7 @@ public class EquipmentBorrowingDbContextFactory
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            connectionString = "Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=postgres";
+            connectionString = "Host=localhost;Port=1403;Database=equipment_borrowing;Username=postgres;Password=databaseADMIN";
         }
 
         var optionsBuilder =

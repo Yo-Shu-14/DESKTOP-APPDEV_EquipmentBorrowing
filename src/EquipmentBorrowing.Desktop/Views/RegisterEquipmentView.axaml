@@ -6,43 +6,53 @@
     x:DataType="viewmodels:RegisterEquipmentViewModel">
 
     <ScrollViewer>
-        <StackPanel Margin="30" Spacing="15">
+        <StackPanel Spacing="16">
 
-            <TextBlock
-                Text="Register Equipment"
-                FontSize="26"
-                FontWeight="Bold"/>
+            <!-- Title -->
+            <StackPanel>
+                <TextBlock Classes="title" Text="Register Equipment"/>
+                <TextBlock Classes="subheading" Text="Register a new equipment item into the catalog with initial Available status."/>
+            </StackPanel>
 
-            <TextBlock Text="Equipment Identifier"/>
-            <TextBox
-                Text="{Binding EquipmentIdentifier}"
-                Watermark="Enter equipment identifier"/>
+            <Border Classes="formContainer">
+                <StackPanel Spacing="12">
 
-            <TextBlock Text="Equipment Name"/>
-            <TextBox
-                Text="{Binding EquipmentName}"
-                Watermark="Enter equipment name"/>
+                    <TextBlock Classes="formLabel" Text="Equipment Identifier *"/>
+                    <TextBox
+                        Text="{Binding EquipmentIdentifier}"
+                        PlaceholderText="e.g. EQ-010 or LAPTOP-05"/>
 
-            <TextBlock Text="Description (Optional)"/>
-            <TextBox
-                Text="{Binding Description}"
-                Watermark="Enter equipment description"
-                AcceptsReturn="True"
-                Height="100"
-                TextWrapping="Wrap"/>
+                    <TextBlock Classes="formLabel" Text="Equipment Name *"/>
+                    <TextBox
+                        Text="{Binding EquipmentName}"
+                        PlaceholderText="e.g. Dell Latitude 5420"/>
 
-            <Button
-                Content="Register Equipment"
-                Command="{Binding RegisterEquipmentCommand}"
-                IsEnabled="{Binding !IsLoading}"/>
+                    <TextBlock Classes="formLabel" Text="Description (Optional)"/>
+                    <TextBox
+                        Text="{Binding Description}"
+                        PlaceholderText="Brief description of the item"
+                        AcceptsReturn="True"
+                        Height="90"
+                        TextWrapping="Wrap"/>
 
-            <TextBlock
-                Text="{Binding FeedbackMessage}"
-                TextWrapping="Wrap"/>
+                    <Button
+                        Content="Register Equipment"
+                        Command="{Binding RegisterEquipmentCommand}"
+                        IsEnabled="{Binding !IsLoading}"
+                        HorizontalAlignment="Left"
+                        Margin="0,8,0,0"/>
 
-            <TextBlock
-                Text="Registering equipment..."
-                IsVisible="{Binding IsLoading}"/>
+                    <TextBlock
+                        Classes="feedback"
+                        Text="{Binding FeedbackMessage}"
+                        IsVisible="{Binding FeedbackMessage.Length}"/>
+
+                    <TextBlock
+                        Text="Registering equipment..."
+                        IsVisible="{Binding IsLoading}"/>
+
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

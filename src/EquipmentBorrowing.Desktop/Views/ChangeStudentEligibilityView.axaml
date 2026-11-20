@@ -5,53 +5,64 @@
     x:Class="EquipmentBorrowing.Desktop.Views.ChangeStudentEligibilityView"
     x:DataType="viewmodels:ChangeStudentEligibilityViewModel">
 
-    <StackPanel Margin="30" Spacing="15">
+    <ScrollViewer>
+        <StackPanel Spacing="16">
 
-        <TextBlock
-            Text="Change Student Borrowing Eligibility"
-            FontSize="24"
-            FontWeight="Bold"/>
+            <!-- Title -->
+            <StackPanel>
+                <TextBlock Classes="title" Text="Change Student Borrowing Eligibility"/>
+                <TextBlock Classes="subheading" Text="Permit or restrict a student from borrowing equipment. Existing loans and history remain unaffected."/>
+            </StackPanel>
 
-        <TextBlock Text="Select Student"/>
+            <Border Classes="formContainer">
+                <StackPanel Spacing="12">
 
-        <ComboBox
-            ItemsSource="{Binding Students}"
-            SelectedItem="{Binding SelectedStudent}"
-            PlaceholderText="Select a student">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+                    <TextBlock Classes="formLabel" Text="Select Student"/>
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding Students}"
+                        SelectedItem="{Binding SelectedStudent}"
+                        PlaceholderText="Select student to change eligibility">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-        <TextBlock
-            Text="{Binding SelectedStudent.IsAllowedToBorrow,
-                           StringFormat='Current Eligibility: {0}'}"/>
+                    <Border Background="#E9ECEF" CornerRadius="6" Padding="12" Margin="0,4">
+                        <TextBlock
+                            Text="{Binding SelectedStudent.IsAllowedToBorrow, StringFormat='Current Status: Allowed to Borrow = {0}'}"
+                            FontWeight="SemiBold"
+                            FontSize="13"/>
+                    </Border>
 
-        <StackPanel Orientation="Horizontal" Spacing="10">
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                        <Button
+                            Content="Permit Borrowing"
+                            Command="{Binding PermitStudentCommand}"/>
 
-            <Button
-                Content="Permit Borrowing"
-                Command="{Binding PermitStudentCommand}"/>
+                        <Button
+                            Content="Restrict Borrowing"
+                            Command="{Binding RestrictStudentCommand}"/>
 
-            <Button
-                Content="Restrict Borrowing"
-                Command="{Binding RestrictStudentCommand}"/>
+                        <Button
+                            Content="Refresh List"
+                            Command="{Binding LoadStudentsCommand}"/>
+                    </StackPanel>
+
+                    <TextBlock
+                        Classes="feedback"
+                        Text="{Binding FeedbackMessage}"
+                        IsVisible="{Binding FeedbackMessage.Length}"/>
+
+                    <TextBlock
+                        Text="Loading students..."
+                        IsVisible="{Binding IsLoading}"/>
+
+                </StackPanel>
+            </Border>
 
         </StackPanel>
-
-        <Button
-            Content="Refresh Student List"
-            Command="{Binding LoadStudentsCommand}"/>
-
-        <TextBlock
-            Text="{Binding FeedbackMessage}"
-            TextWrapping="Wrap"/>
-
-        <TextBlock
-            Text="Loading students..."
-            IsVisible="{Binding IsLoading}"/>
-
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

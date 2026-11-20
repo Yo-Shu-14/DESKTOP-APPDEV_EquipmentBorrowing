@@ -7,156 +7,179 @@
     x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
     x:DataType="viewmodels:EquipmentViewModel">
 
-    <Grid Margin="30"
-          RowDefinitions="Auto,Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        <TextBlock
-            Grid.Row="0"
-            Classes="title"
-            Text="Equipment Catalog"/>
-
-        
-        <TextBlock
-            Grid.Row="1"
-            Classes="subheading"
-            Text="All registered equipment"/>
-
-        <StackPanel
-            Grid.Row="2"
-            Spacing="5"
-            Margin="0,10,0,10">
-
-            <TextBlock Classes="formLabel"
-                       Text="Borrowing Student"/>
-
-            <ComboBox
-                ItemsSource="{Binding StudentList}"
-                SelectedItem="{Binding SelectedStudent}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="domain:Student">
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-            <TextBlock Classes="formLabel"
-                       Text="Expected Return Date"/>
-
-            <DatePicker
-                SelectedDate="{Binding ExpectedReturnDate}"/>
-
-            <TextBlock
-                Classes="feedback"
-                Text="{Binding FeedbackMessage}"/>
-            <TextBlock
-                Text="{Binding SelectedEquipmentList.Count,
-                    StringFormat='Selected items: {0}'}"
-                FontWeight="Bold"/>
-
-            <ItemsControl ItemsSource="{Binding SelectedEquipmentList}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="domain:Equipment">
-                        <StackPanel
-                            Orientation="Horizontal"
-                            Spacing="10">
-
-                            <TextBlock
-                                Text="{Binding Name}"
-                                VerticalAlignment="Center"/>
-
-                            <Button
-                                Content="Remove"
-                                Command="{Binding $parent[UserControl].DataContext.RemoveFromCheckoutCommand}"
-                                CommandParameter="{Binding}"/>
-
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <!-- Title & Subheading -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Classes="title" Text="Equipment Catalog"/>
+            <TextBlock Classes="subheading" Text="View equipment availability and issue single or multi-item borrowings."/>
         </StackPanel>
 
-        <Grid Grid.Row="3"
-              RowDefinitions="Auto,*">
+        <!-- Borrowing & Multi-item Checkout Panel -->
+        <Border Grid.Row="1" Classes="panelCard">
+            <Grid ColumnDefinitions="*,*">
 
-            <StackPanel Grid.Row="0"
-                        Spacing="5">
+                <!-- Left: Student & Expected Return Date -->
+                <StackPanel Grid.Column="0" Margin="0,0,16,0" Spacing="4">
+                    <TextBlock Classes="formLabel" Text="Borrowing Student"/>
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding StudentList}"
+                        SelectedItem="{Binding SelectedStudent}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="domain:Student">
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                <TextBlock
-                    Text="Loading equipment..."
-                    IsVisible="{Binding IsLoading}"/>
+                    <TextBlock Classes="formLabel" Text="Expected Return Date"/>
+                    <DatePicker
+                        HorizontalAlignment="Stretch"
+                        SelectedDate="{Binding ExpectedReturnDate}"/>
 
-                <TextBlock
-                    Text="No equipment registered yet."
-                    IsVisible="{Binding IsEmpty}"/>
+                    <!-- Catalog Filter Controls -->
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,10,0,0">
+                        <Button
+                            Content="Show All"
+                            Command="{Binding LoadEquipmentCommand}"/>
+                        <Button
+                            Content="Available Only"
+                            Command="{Binding LoadAvailableEquipmentCommand}"/>
+                    </StackPanel>
+                </StackPanel>
 
-                <Button
-                    Content="Retry Loading"
-                    Command="{Binding LoadEquipmentCommand}"
-                    IsVisible="{Binding IsEmpty}"/>
+                <!-- Right: Multi-Item Checkout Basket -->
+                <StackPanel Grid.Column="1" Margin="16,0,0,0" Spacing="4">
+                    <TextBlock Classes="formLabel"
+                               Text="{Binding SelectedEquipmentList.Count, StringFormat='Multi-Item Checkout Basket ({0} items)'}"/>
 
-                <Button
-                    Content="Retry Loading"
-                    Command="{Binding LoadEquipmentCommand}"
-                    IsVisible="{Binding IsError}"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" MinHeight="75" MaxHeight="110" Padding="6" Background="#FFFFFF">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <TextBlock
+                                    Text="No items added yet. Click 'Add to Checkout' on available items."
+                                    FontSize="12"
+                                    Foreground="#888888"
+                                    Margin="4"
+                                    IsVisible="{Binding !SelectedEquipmentList.Count}"/>
 
-                <Button
-                    Content="Checkout Selected Items"
-                    Command="{Binding CheckoutCommand}"
-                    HorizontalAlignment="Left"/>  
-             
-                <Button 
-                    Content="Show Available Equipment"
-                    Command="{Binding LoadAvailableEquipmentCommand}"/> 
+                                <ItemsControl ItemsSource="{Binding SelectedEquipmentList}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="domain:Equipment">
+                                            <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    Text="{Binding Name}"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="13"/>
+                                                <Button
+                                                    Grid.Column="1"
+                                                    Content="✕"
+                                                    Padding="6,2"
+                                                    Margin="4,0,0,0"
+                                                    Command="{Binding $parent[UserControl].DataContext.RemoveFromCheckoutCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <Button
+                        Content="Submit Multi-Item Checkout"
+                        Command="{Binding CheckoutCommand}"
+                        HorizontalAlignment="Left"
+                        Margin="0,8,0,0"/>
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <!-- Feedback & Status Notifications -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,10">
+            <TextBlock
+                Classes="feedback"
+                FontWeight="SemiBold"
+                Text="{Binding FeedbackMessage}"
+                IsVisible="{Binding FeedbackMessage.Length}"/>
+
+            <TextBlock
+                Text="Loading equipment catalog..."
+                IsVisible="{Binding IsLoading}"/>
+
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsError}">
+                <TextBlock Text="Failed to connect to database." VerticalAlignment="Center"/>
+                <Button Content="Retry Loading" Command="{Binding LoadEquipmentCommand}"/>
             </StackPanel>
 
-            <ScrollViewer
-                Grid.Row="1"
-                VerticalScrollBarVisibility="Auto"
-                HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsEmpty}">
+                <TextBlock Text="No equipment registered yet." VerticalAlignment="Center"/>
+                <Button Content="Refresh" Command="{Binding LoadEquipmentCommand}"/>
+            </StackPanel>
+        </StackPanel>
 
-                <ItemsControl ItemsSource="{Binding EquipmentList}">
+        <!-- Equipment Cards List -->
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding EquipmentList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="domain:Equipment">
+                        <Border Classes="card">
+                            <Grid ColumnDefinitions="*,Auto">
 
-            
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="domain:Equipment">
+                                <!-- Details -->
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Background="#E9ECEF" CornerRadius="4" Padding="6,2">
+                                            <TextBlock
+                                                Text="{Binding EquipmentIdentifier}"
+                                                FontSize="11"
+                                                FontWeight="Bold"
+                                                Foreground="#495057"/>
+                                        </Border>
 
-                            <Border Classes="card">
-                                <StackPanel>
-
-                                    <TextBlock
-                                        Text="{Binding EquipmentId}"
-                                        FontSize="12"/>
+                                        <TextBlock
+                                            Text="{Binding IsAvailable, StringFormat='Available: {0}'}"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            VerticalAlignment="Center"/>
+                                    </StackPanel>
 
                                     <TextBlock
                                         Text="{Binding Name}"
-                                        FontSize="18"
+                                        FontSize="17"
                                         FontWeight="Bold"/>
 
                                     <TextBlock
-                                        Text="{Binding Description}"/>
+                                        Text="{Binding Description}"
+                                        FontSize="13"
+                                        Foreground="#6c757d"
+                                        TextWrapping="Wrap"/>
+                                </StackPanel>
 
-                                    <TextBlock
-                                        Text="{Binding IsAvailable,
-                                            StringFormat='Available: {0}'}"/>
-
+                                <!-- Action Buttons -->
+                                <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center" Margin="16,0,0,0">
                                     <Button
-                                        Content="Borrow"
+                                        Content="Borrow Single"
+                                        IsEnabled="{Binding IsAvailable}"
                                         Command="{Binding $parent[UserControl].DataContext.BorrowCommand}"
                                         CommandParameter="{Binding}"/>
+
                                     <Button
-                                        Content="Add to Checkout"
+                                        Content="+ Add to Checkout"
+                                        IsEnabled="{Binding IsAvailable}"
                                         Command="{Binding $parent[UserControl].DataContext.AddToCheckoutCommand}"
                                         CommandParameter="{Binding}"/>
-
                                 </StackPanel>
-                            </Border>
 
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                      
-                </ItemsControl>
-                
-            </ScrollViewer>
-        </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
     </Grid>
 </UserControl>
