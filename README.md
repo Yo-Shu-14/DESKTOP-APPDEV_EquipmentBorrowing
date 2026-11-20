@@ -595,7 +595,7 @@ The borrowing configuration defines:
 - Required borrowing dates.
 - Borrowing status storage.
 - Relationship behavior.
-- Relevant indexes and constraints.
+- Relevant indexes and constraints, including a partial unique index on `EquipmentId` where `Status = 'Active'` to enforce that an equipment item cannot have more than one active borrowing simultaneously (BR-10, BR-16).
 
 The exact configuration must match the application's current entity models and database requirements.
 
@@ -664,7 +664,17 @@ Example:
 await db.Database.MigrateAsync();
 ```
 
-### 10.3 Database Initialization
+### 10.3 Solution Migrations
+
+The project includes the following migrations:
+
+1. `20261112084307_InitialPostgreSQL` - Initial PostgreSQL schema for students, equipment, and borrowings.
+2. `20261112111647_AddActualReturnDate` - Adds nullable actual return date column.
+3. `20261113022707_AddStudentRegistrationFields` - Adds institutional student number (unique) and contact information.
+4. `20261113034359_AddEquipmentRegistrationFields` - Adds unique equipment identifier.
+5. `20261120094403_AddSingleActiveBorrowingConstraint` - Adds unique filtered index preventing multiple active borrowings for the same equipment item (BR-10, BR-16).
+
+### 10.4 Database Initialization
 
 The database initializer is responsible for preparing the database when the application starts, if initialization is configured in the project.
 
@@ -748,19 +758,26 @@ equipment_borrowing
 
 ### 11.4 Configure the Connection String
 
-Set the PostgreSQL connection string using the configuration method supported by the application.
+Set the PostgreSQL connection string using the environment variable expected by the application:
 
-For example, a local development configuration may contain:
+**Environment Variable:** `EQUIPMENT_BORROWING_CONNECTION`
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=YOUR_PASSWORD"
-  }
-}
+In PowerShell (Windows):
+```powershell
+$env:EQUIPMENT_BORROWING_CONNECTION = "Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=YOUR_PASSWORD"
 ```
 
-Use the actual configuration key expected by the application. Do not commit real passwords.
+In Bash (macOS / Linux):
+```bash
+export EQUIPMENT_BORROWING_CONNECTION="Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=YOUR_PASSWORD"
+```
+
+If the environment variable is not explicitly set, the application defaults to the standard local PostgreSQL development connection string:
+```text
+Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=postgres
+```
+
+**Security note:** Do not commit real passwords to the Git repository.
 
 ### 11.5 Apply Database Migrations
 
