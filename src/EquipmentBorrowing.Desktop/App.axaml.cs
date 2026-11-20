@@ -33,7 +33,7 @@ public partial class App : Avalonia.Application
             services.AddTransient<BorrowEquipmentService>();
             services.AddTransient<ReturnEquipmentService>();
             services.AddTransient<CheckAvailableEquipmentService>();
-            services.AddSingleton<EquipmentViewModel>();
+            services.AddTransient<EquipmentViewModel>();
             services.AddTransient<ActiveBorrowingsViewModel>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<ViewEquipmentCatalogService>();
@@ -61,15 +61,18 @@ public partial class App : Avalonia.Application
 
             desktop.MainWindow = new MainWindow(mainWindowViewModel);
 
-            var db = serviceProvider.GetRequiredService<EquipmentBorrowingDbContext>();
-
-            await DatabaseInitializer.InitializeAsync(db);
+            try
+            {
+                var db = serviceProvider.GetRequiredService<EquipmentBorrowingDbContext>();
+                await DatabaseInitializer.InitializeAsync(db);
+            }
+            catch
+            {
+                // Database may be offline or unreachable; views handle error and retry states per UC-01/UC-02/BR-18
+            }
 
             var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
             await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
-
-            var activeBorrowingsViewModel = serviceProvider.GetRequiredService<ActiveBorrowingsViewModel>();
-            await activeBorrowingsViewModel.LoadBorrowingsCommand.ExecuteAsync(null);
 
         }
 

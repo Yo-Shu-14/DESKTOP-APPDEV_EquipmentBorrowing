@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Primitives;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EquipmentBorrowing.Application.Interfaces;
@@ -173,9 +173,9 @@ public partial class EquipmentViewModel : ObservableObject
             return;
         }
 
-        if (ExpectedReturnDate.Value.Date < DateTimeOffset.Now.Date)
+        if (ExpectedReturnDate.Value.Date <= DateTimeOffset.Now.Date)
         {
-            FeedbackMessage = "Expected return date cannot be in the past.";
+            FeedbackMessage = "Expected return date must be in the future.";
             return;
         }
 
@@ -195,7 +195,7 @@ public partial class EquipmentViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            FeedbackMessage = ex.ToString();
+            FeedbackMessage = ex.Message;
         }
 
 

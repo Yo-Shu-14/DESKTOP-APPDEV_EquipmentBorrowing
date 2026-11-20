@@ -49,7 +49,9 @@ namespace EquipmentBorrowing.Infrastructure.Migrations
 
                     b.HasKey("BorrowingId");
 
-                    b.HasIndex("EquipmentId");
+                    b.HasIndex("EquipmentId")
+                        .IsUnique()
+                        .HasFilter("\"Status\" = 'Active'");
 
                     b.HasIndex("StudentId");
 

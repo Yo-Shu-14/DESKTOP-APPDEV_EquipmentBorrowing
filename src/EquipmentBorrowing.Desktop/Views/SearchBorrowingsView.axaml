@@ -17,7 +17,7 @@
         <StackPanel Grid.Row="1" Spacing="12">
 
             <TextBox
-                Watermark="Search student, equipment, or borrowing ID..."
+                Watermark="Search student name, student number, or equipment name..."
                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Grid ColumnDefinitions="*,*,*,Auto" ColumnSpacing="10">

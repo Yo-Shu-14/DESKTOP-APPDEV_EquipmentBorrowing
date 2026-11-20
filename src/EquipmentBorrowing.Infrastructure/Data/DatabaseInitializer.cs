@@ -1,4 +1,4 @@
-﻿using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBorrowing.Infrastructure.Data;
@@ -18,36 +18,34 @@ public static class DatabaseInitializer
         var student1 = new Student(
             1,
             "jang kaloy",
-            true);
+            true,
+            "2024-0001");
 
         var student2 = new Student(
             2,
             "emji jid",
-            false);
+            false,
+            "2024-0002");
 
         var equipment1 = new Equipment(
-            Guid.NewGuid(),
+            "EQ-001",
             "Laptop",
-            "Lab Laptop",
-            true);
+            "Lab Laptop");
 
         var equipment2 = new Equipment(
-            Guid.NewGuid(),
+            "EQ-002",
             "Projector",
-            "Epson Projector",
-            true);
+            "Epson Projector");
 
         var equipment3 = new Equipment(
-            Guid.NewGuid(),
+            "EQ-003",
             "Camera",
-            "Digital Camera",
-            true);
+            "Digital Camera");
 
         var equipment4 = new Equipment(
-            Guid.NewGuid(),
+            "EQ-004",
             "Microphone",
-            "Wireless Microphone",
-            true);
+            "Wireless Microphone");
 
         db.Students.AddRange(
             student1,

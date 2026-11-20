@@ -1,4 +1,4 @@
-﻿
+
 using EquipmentBorrowing.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -15,8 +15,7 @@ public class EquipmentBorrowingDbContextFactory
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            throw new InvalidOperationException(
-                "PostgreSQL connection string is not configured.");
+            connectionString = "Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=postgres";
         }
 
         var optionsBuilder =

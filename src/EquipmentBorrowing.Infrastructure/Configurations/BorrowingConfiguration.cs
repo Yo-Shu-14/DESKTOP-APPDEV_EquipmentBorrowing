@@ -1,4 +1,4 @@
-﻿using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,6 +37,8 @@ public class BorrowingConfiguration : IEntityTypeConfiguration<Borrowing>
 
         // Indexes
         builder.HasIndex(b => b.StudentId);
-        builder.HasIndex(b => b.EquipmentId);
+        builder.HasIndex(b => b.EquipmentId)
+            .IsUnique()
+            .HasFilter("\"Status\" = 'Active'");
     }
 }

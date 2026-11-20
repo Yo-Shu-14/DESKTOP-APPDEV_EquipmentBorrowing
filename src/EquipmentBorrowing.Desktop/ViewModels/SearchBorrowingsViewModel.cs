@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Domain;
@@ -22,10 +22,10 @@ public partial class SearchBorrowingsViewModel : ObservableObject
     private string selectedStatus = "All";
 
     [ObservableProperty]
-    private string selectedSortField = "Date Borrowed";
+    private string selectedSortField = "Checkout Date";
 
     [ObservableProperty]
-    private string selectedSortDirection = "Newest First";
+    private string selectedSortDirection = "Descending";
 
     [ObservableProperty]
     private bool isLoading;
@@ -47,10 +47,10 @@ public partial class SearchBorrowingsViewModel : ObservableObject
     new() { "All", "Active", "Returned" };
 
     public List<string> SortFieldOptions { get; } =
-        new() { "Date Borrowed", "Student Name", "Equipment Name" };
+        new() { "Checkout Date", "Expected Return Date" };
 
     public List<string> SortDirectionOptions { get; } =
-        new() { "Newest First", "Oldest First", "A-Z", "Z-A" };
+        new() { "Descending", "Ascending" };
 
     [RelayCommand]
     private async Task LoadBorrowingsAsync()
@@ -89,9 +89,9 @@ public partial class SearchBorrowingsViewModel : ObservableObject
             string search = SearchText.Trim().ToLower();
 
             filtered = filtered.Where(b =>
-                b.Student.Name.ToLower().Contains(search) ||
-                b.Equipment.Name.ToLower().Contains(search) ||
-                b.BorrowingId.ToString().ToLower().Contains(search));
+                (b.Student != null && b.Student.Name.ToLower().Contains(search)) ||
+                (b.Student != null && b.Student.InstitutionalNumber.ToLower().Contains(search)) ||
+                (b.Equipment != null && b.Equipment.Name.ToLower().Contains(search)));
         }
 
         if (SelectedStatus == "Active")
@@ -103,19 +103,17 @@ public partial class SearchBorrowingsViewModel : ObservableObject
             filtered = filtered.Where(b => b.Status == BorrowingStatus.Returned);
         }
 
+        bool ascending = SelectedSortDirection == "Ascending";
+
         filtered = SelectedSortField switch
         {
-            "Student Name" => SelectedSortDirection == "A-Z"
-                ? filtered.OrderBy(b => b.Student.Name)
-                : filtered.OrderByDescending(b => b.Student.Name),
+            "Expected Return Date" => ascending
+                ? filtered.OrderBy(b => b.ExpectedReturnDate).ThenBy(b => b.BorrowingId)
+                : filtered.OrderByDescending(b => b.ExpectedReturnDate).ThenBy(b => b.BorrowingId),
 
-            "Equipment Name" => SelectedSortDirection == "A-Z"
-                ? filtered.OrderBy(b => b.Equipment.Name)
-                : filtered.OrderByDescending(b => b.Equipment.Name),
-
-            _ => SelectedSortDirection == "Newest First"
-                ? filtered.OrderByDescending(b => b.DateBorrowed)
-                : filtered.OrderBy(b => b.DateBorrowed)
+            _ => ascending
+                ? filtered.OrderBy(b => b.DateBorrowed).ThenBy(b => b.BorrowingId)
+                : filtered.OrderByDescending(b => b.DateBorrowed).ThenBy(b => b.BorrowingId)
         };
 
         Borrowings.Clear();
@@ -157,8 +155,8 @@ public partial class SearchBorrowingsViewModel : ObservableObject
     {
         SearchText = string.Empty;
         SelectedStatus = "All";
-        SelectedSortField = "Date Borrowed";
-        SelectedSortDirection = "Newest First";
+        SelectedSortField = "Checkout Date";
+        SelectedSortDirection = "Descending";
 
         ApplyFilters();
     }

@@ -1,4 +1,4 @@
-﻿using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,8 +36,7 @@ public static class DatabaseConfiguration
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            throw new InvalidOperationException(
-                "PostgreSQL connection string is not configured.");
+            connectionString = "Host=localhost;Port=5432;Database=equipment_borrowing;Username=postgres;Password=postgres";
         }
 
         services.AddDbContext<EquipmentBorrowingDbContext>(options =>

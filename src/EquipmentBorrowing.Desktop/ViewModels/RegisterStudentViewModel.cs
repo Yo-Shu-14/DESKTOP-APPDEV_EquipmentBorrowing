@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EquipmentBorrowing.Application.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -56,7 +56,7 @@ public partial class RegisterStudentViewModel : ObservableObject
         catch (Exception ex)
         {
             IsError = true;
-            FeedbackMessage = ex.ToString();
+            FeedbackMessage = ex.Message;
         }
         finally
         {
