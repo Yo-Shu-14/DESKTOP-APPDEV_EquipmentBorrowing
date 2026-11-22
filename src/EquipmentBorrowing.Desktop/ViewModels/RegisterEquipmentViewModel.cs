@@ -1,14 +1,12 @@
-﻿using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using EquipmentBorrowing.Desktop.ApiClient;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class RegisterEquipmentViewModel : ObservableObject
 {
-    private readonly RegisterEquipmentService _registerEquipmentService;
+    private readonly EquipmentBorrowingApiClient _api;
 
     [ObservableProperty]
     private string equipmentIdentifier = string.Empty;
@@ -28,10 +26,9 @@ public partial class RegisterEquipmentViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public RegisterEquipmentViewModel(
-        RegisterEquipmentService registerEquipmentService)
+    public RegisterEquipmentViewModel(EquipmentBorrowingApiClient api)
     {
-        _registerEquipmentService = registerEquipmentService;
+        _api = api;
     }
 
     [RelayCommand]
@@ -43,16 +40,26 @@ public partial class RegisterEquipmentViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            await _registerEquipmentService.RegisterEquipmentAsync(
+            await _api.CreateEquipmentAsync(new CreateEquipmentRequest(
                 EquipmentIdentifier,
                 EquipmentName,
-                Description);
+                string.IsNullOrWhiteSpace(Description) ? null : Description));
 
             FeedbackMessage = "Equipment registered successfully.";
 
             EquipmentIdentifier = string.Empty;
             EquipmentName = string.Empty;
             Description = string.Empty;
+        }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
         }
         catch (Exception ex)
         {

@@ -2,13 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Desktop.ApiClient;
 using EquipmentBorrowing.Desktop.ViewModels;
-using EquipmentBorrowing.Domain;
-using EquipmentBorrowing.Infrastructure.Data;
-using EquipmentBorrowing.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EquipmentBorrowing.Desktop;
@@ -39,21 +34,7 @@ public partial class App : Avalonia.Application
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
 
-            // Services & Repositories for remaining unmigrated views
-            services.AddDatabase();
-            services.AddScoped<IStudentRepository, EfStudentRepository>();
-            services.AddScoped<IEquipmentRepository, EfEquipmentRepository>();
-            services.AddScoped<IBorrowingRepository, EfBorrowingRepository>();
-            services.AddTransient<ViewStudentBorrowingHistoryService>();
-            services.AddTransient<ViewEquipmentBorrowingHistoryService>();
-            services.AddTransient<SearchBorrowingsService>();
-            services.AddTransient<RegisterStudentService>();
-            services.AddTransient<UpdateStudentInformationService>();
-            services.AddTransient<ChangeStudentEligibilityService>();
-            services.AddTransient<RegisterEquipmentService>();
-            services.AddTransient<UpdateEquipmentInformationService>();
-
-            // ViewModels
+            // ─── ViewModels ────────────────────────────────────────────────────────
             services.AddSingleton<EquipmentViewModel>();
             services.AddTransient<ActiveBorrowingsViewModel>();
             services.AddTransient<MainWindowViewModel>();

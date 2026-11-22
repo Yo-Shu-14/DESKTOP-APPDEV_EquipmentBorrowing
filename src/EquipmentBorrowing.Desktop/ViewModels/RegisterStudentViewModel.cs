@@ -1,13 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using EquipmentBorrowing.Desktop.ApiClient;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class RegisterStudentViewModel : ObservableObject
 {
-    private readonly RegisterStudentService _registerStudentService;
+    private readonly EquipmentBorrowingApiClient _api;
 
     [ObservableProperty]
     private string institutionalNumber = string.Empty;
@@ -27,10 +26,9 @@ public partial class RegisterStudentViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public RegisterStudentViewModel(
-        RegisterStudentService registerStudentService)
+    public RegisterStudentViewModel(EquipmentBorrowingApiClient api)
     {
-        _registerStudentService = registerStudentService;
+        _api = api;
     }
 
     [RelayCommand]
@@ -42,16 +40,26 @@ public partial class RegisterStudentViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            await _registerStudentService.RegisterStudentAsync(
+            await _api.CreateStudentAsync(new CreateStudentRequest(
                 InstitutionalNumber,
                 StudentName,
-                ContactInformation);
+                string.IsNullOrWhiteSpace(ContactInformation) ? null : ContactInformation));
 
             FeedbackMessage = "Student registered successfully.";
 
             InstitutionalNumber = string.Empty;
             StudentName = string.Empty;
             ContactInformation = string.Empty;
+        }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
         }
         catch (Exception ex)
         {

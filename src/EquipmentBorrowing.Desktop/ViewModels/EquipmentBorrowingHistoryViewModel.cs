@@ -1,24 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class EquipmentBorrowingHistoryViewModel : ObservableObject
 {
-    private readonly ViewEquipmentBorrowingHistoryService _historyService;
-    private readonly IEquipmentRepository _equipmentRepository;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    public ObservableCollection<Equipment> EquipmentList { get; } = new();
+    public ObservableCollection<EquipmentDto> EquipmentList { get; } = new();
 
-    public ObservableCollection<Borrowing> BorrowingHistory { get; } = new();
+    public ObservableCollection<BorrowingDto> BorrowingHistory { get; } = new();
 
     [ObservableProperty]
-    private Equipment? selectedEquipment;
+    private EquipmentDto? selectedEquipment;
 
     [ObservableProperty]
     private bool isLoading;
@@ -32,12 +28,9 @@ public partial class EquipmentBorrowingHistoryViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public EquipmentBorrowingHistoryViewModel(
-        ViewEquipmentBorrowingHistoryService historyService,
-        IEquipmentRepository equipmentRepository)
+    public EquipmentBorrowingHistoryViewModel(EquipmentBorrowingApiClient api)
     {
-        _historyService = historyService;
-        _equipmentRepository = equipmentRepository;
+        _api = api;
     }
 
     [RelayCommand]
@@ -52,7 +45,7 @@ public partial class EquipmentBorrowingHistoryViewModel : ObservableObject
 
             if (EquipmentList.Count == 0)
             {
-                var equipment = await _equipmentRepository.GetAllAsync();
+                var equipment = await _api.GetEquipmentAsync();
 
                 foreach (var item in equipment)
                 {
@@ -73,8 +66,8 @@ public partial class EquipmentBorrowingHistoryViewModel : ObservableObject
                 return;
             }
 
-            var history = await _historyService.GetEquipmentHistoryAsync(
-                SelectedEquipment.EquipmentId);
+            var history = await _api.GetEquipmentBorrowingsAsync(
+                SelectedEquipment.Id);
 
             BorrowingHistory.Clear();
 
@@ -89,6 +82,18 @@ public partial class EquipmentBorrowingHistoryViewModel : ObservableObject
             {
                 FeedbackMessage = "No borrowing history found for this equipment.";
             }
+        }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = $"Server error: {ex.Message}";
         }
         catch (Exception)
         {

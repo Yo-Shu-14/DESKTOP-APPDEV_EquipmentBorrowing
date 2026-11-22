@@ -1,22 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class ChangeStudentEligibilityViewModel : ObservableObject
 {
-    private readonly IStudentRepository _studentRepository;
-    private readonly ChangeStudentEligibilityService _eligibilityService;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    public ObservableCollection<Student> Students { get; } = new();
+    public ObservableCollection<StudentDto> Students { get; } = new();
 
     [ObservableProperty]
-    private Student? selectedStudent;
+    private StudentDto? selectedStudent;
 
     [ObservableProperty]
     private bool isLoading;
@@ -27,12 +23,9 @@ public partial class ChangeStudentEligibilityViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public ChangeStudentEligibilityViewModel(
-        IStudentRepository studentRepository,
-        ChangeStudentEligibilityService eligibilityService)
+    public ChangeStudentEligibilityViewModel(EquipmentBorrowingApiClient api)
     {
-        _studentRepository = studentRepository;
-        _eligibilityService = eligibilityService;
+        _api = api;
     }
 
     [RelayCommand]
@@ -44,18 +37,27 @@ public partial class ChangeStudentEligibilityViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            var students = await _studentRepository.GetAllAsync();
+            var students = await _api.GetStudentsAsync();
 
             Students.Clear();
 
             foreach (var student in students)
                 Students.Add(student);
         }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
         catch
         {
             IsError = true;
-            FeedbackMessage =
-                "Unable to load students. Check the database connection.";
+            FeedbackMessage = "Unable to load students. Please try again.";
         }
         finally
         {
@@ -92,17 +94,13 @@ public partial class ChangeStudentEligibilityViewModel : ObservableObject
 
             int studentId = SelectedStudent.Id;
 
-            var updatedStudent =
-                await _eligibilityService.ChangeEligibilityAsync(
-                    studentId,
-                    isAllowed);
+            var updatedStudent = await _api.ChangeEligibilityAsync(studentId, isAllowed);
 
             await LoadStudentsAsync();
 
             if (!IsError)
             {
-                SelectedStudent = Students.FirstOrDefault(
-                    s => s.Id == updatedStudent.Id);
+                SelectedStudent = Students.FirstOrDefault(s => s.Id == updatedStudent.Id);
 
                 IsError = false;
                 FeedbackMessage = isAllowed
@@ -110,16 +108,20 @@ public partial class ChangeStudentEligibilityViewModel : ObservableObject
                     : "Student is now restricted from borrowing.";
             }
         }
-        catch (InvalidOperationException ex)
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
+        catch (Exception ex)
         {
             IsError = true;
             FeedbackMessage = ex.Message;
-        }
-        catch
-        {
-            IsError = true;
-            FeedbackMessage =
-                "The change could not be confirmed. Refresh the student list before retrying.";
         }
         finally
         {

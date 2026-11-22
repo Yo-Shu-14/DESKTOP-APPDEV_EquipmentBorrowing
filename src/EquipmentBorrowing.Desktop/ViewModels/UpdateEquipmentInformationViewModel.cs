@@ -1,23 +1,18 @@
-﻿using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class UpdateEquipmentInformationViewModel : ObservableObject
 {
-    private readonly IEquipmentRepository _equipmentRepository;
-    private readonly UpdateEquipmentInformationService _updateEquipmentInformationService;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    public ObservableCollection<Equipment> EquipmentList { get; } = new();
+    public ObservableCollection<EquipmentDto> EquipmentList { get; } = new();
 
     [ObservableProperty]
-    private Equipment? selectedEquipment;
+    private EquipmentDto? selectedEquipment;
 
     [ObservableProperty]
     private string equipmentIdentifier = string.Empty;
@@ -37,12 +32,9 @@ public partial class UpdateEquipmentInformationViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public UpdateEquipmentInformationViewModel(
-        IEquipmentRepository equipmentRepository,
-        UpdateEquipmentInformationService updateEquipmentInformationService)
+    public UpdateEquipmentInformationViewModel(EquipmentBorrowingApiClient api)
     {
-        _equipmentRepository = equipmentRepository;
-        _updateEquipmentInformationService = updateEquipmentInformationService;
+        _api = api;
     }
 
     [RelayCommand]
@@ -54,17 +46,27 @@ public partial class UpdateEquipmentInformationViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            var equipment = await _equipmentRepository.GetAllAsync();
+            var equipment = await _api.GetEquipmentAsync();
 
             EquipmentList.Clear();
 
             foreach (var item in equipment)
                 EquipmentList.Add(item);
         }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
         catch
         {
             IsError = true;
-            FeedbackMessage = "Unable to load equipment. Check the database connection.";
+            FeedbackMessage = "Unable to load equipment. Please try again.";
         }
         finally
         {
@@ -72,12 +74,12 @@ public partial class UpdateEquipmentInformationViewModel : ObservableObject
         }
     }
 
-    partial void OnSelectedEquipmentChanged(Equipment? value)
+    partial void OnSelectedEquipmentChanged(EquipmentDto? value)
     {
         if (value is null)
             return;
 
-        EquipmentIdentifier = value.EquipmentIdentifier;
+        EquipmentIdentifier = value.EquipmentCode;
         EquipmentName = value.Name;
         Description = value.Description;
         FeedbackMessage = string.Empty;
@@ -100,40 +102,40 @@ public partial class UpdateEquipmentInformationViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            Guid equipmentId = SelectedEquipment.EquipmentId;
+            Guid equipmentId = SelectedEquipment.Id;
 
-            await _updateEquipmentInformationService.UpdateEquipmentInformationAsync(
+            var updated = await _api.UpdateEquipmentAsync(
                 equipmentId,
-                EquipmentIdentifier,
-                EquipmentName,
-                Description);
+                new UpdateEquipmentRequest(
+                    EquipmentIdentifier,
+                    EquipmentName,
+                    Description));
 
             await LoadEquipmentAsync();
 
             if (!IsError)
             {
                 SelectedEquipment = EquipmentList.FirstOrDefault(
-                    e => e.EquipmentId == equipmentId);
+                    e => e.Id == equipmentId);
 
                 IsError = false;
                 FeedbackMessage = "Equipment information updated successfully.";
             }
         }
-        catch (ArgumentException ex)
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
+        catch (Exception ex)
         {
             IsError = true;
             FeedbackMessage = ex.Message;
-        }
-        catch (InvalidOperationException ex)
-        {
-            IsError = true;
-            FeedbackMessage = ex.Message;
-        }
-        catch
-        {
-            IsError = true;
-            FeedbackMessage =
-                "The update could not be confirmed. Refresh the equipment list before retrying.";
         }
         finally
         {

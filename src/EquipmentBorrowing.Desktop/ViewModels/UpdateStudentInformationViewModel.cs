@@ -1,22 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class UpdateStudentInformationViewModel : ObservableObject
 {
-    private readonly IStudentRepository _studentRepository;
-    private readonly UpdateStudentInformationService _updateStudentInformationService;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    public ObservableCollection<Student> Students { get; } = new();
+    public ObservableCollection<StudentDto> Students { get; } = new();
 
     [ObservableProperty]
-    private Student? selectedStudent;
+    private StudentDto? selectedStudent;
 
     [ObservableProperty]
     private string institutionalNumber = string.Empty;
@@ -36,12 +32,9 @@ public partial class UpdateStudentInformationViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public UpdateStudentInformationViewModel(
-        IStudentRepository studentRepository,
-        UpdateStudentInformationService updateStudentInformationService)
+    public UpdateStudentInformationViewModel(EquipmentBorrowingApiClient api)
     {
-        _studentRepository = studentRepository;
-        _updateStudentInformationService = updateStudentInformationService;
+        _api = api;
     }
 
     [RelayCommand]
@@ -53,17 +46,27 @@ public partial class UpdateStudentInformationViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            var students = await _studentRepository.GetAllAsync();
+            var students = await _api.GetStudentsAsync();
 
             Students.Clear();
 
             foreach (var student in students)
                 Students.Add(student);
         }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
         catch
         {
             IsError = true;
-            FeedbackMessage = "Unable to load students. Check the database connection.";
+            FeedbackMessage = "Unable to load students. Please try again.";
         }
         finally
         {
@@ -71,14 +74,14 @@ public partial class UpdateStudentInformationViewModel : ObservableObject
         }
     }
 
-    partial void OnSelectedStudentChanged(Student? value)
+    partial void OnSelectedStudentChanged(StudentDto? value)
     {
         if (value is null)
             return;
 
-        InstitutionalNumber = value.InstitutionalNumber;
-        StudentName = value.Name;
-        ContactInformation = value.ContactInformation;
+        InstitutionalNumber = value.StudentNumber;
+        StudentName = value.FullName;
+        ContactInformation = value.Contact;
         FeedbackMessage = string.Empty;
         IsError = false;
     }
@@ -99,39 +102,38 @@ public partial class UpdateStudentInformationViewModel : ObservableObject
             IsError = false;
             FeedbackMessage = string.Empty;
 
-            var updatedStudent =
-                await _updateStudentInformationService.UpdateStudentAsync(
-                    SelectedStudent.Id,
+            int studentId = SelectedStudent.Id;
+
+            var updated = await _api.UpdateStudentAsync(
+                studentId,
+                new UpdateStudentRequest(
                     InstitutionalNumber,
                     StudentName,
-                    ContactInformation);
+                    ContactInformation));
 
             await LoadStudentsAsync();
 
             if (!IsError)
             {
-                SelectedStudent = Students.FirstOrDefault(
-                    s => s.Id == updatedStudent.Id);
-
+                SelectedStudent = Students.FirstOrDefault(s => s.Id == updated.Id);
                 IsError = false;
                 FeedbackMessage = "Student information updated successfully.";
             }
         }
-        catch (ArgumentException ex)
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
+        catch (Exception ex)
         {
             IsError = true;
             FeedbackMessage = ex.Message;
-        }
-        catch (InvalidOperationException ex)
-        {
-            IsError = true;
-            FeedbackMessage = ex.Message;
-        }
-        catch
-        {
-            IsError = true;
-            FeedbackMessage =
-                "The update could not be confirmed. Refresh the student list before retrying.";
         }
         finally
         {

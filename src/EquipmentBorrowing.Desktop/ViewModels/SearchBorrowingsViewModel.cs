@@ -1,19 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class SearchBorrowingsViewModel : ObservableObject
 {
-    private readonly SearchBorrowingsService _searchService;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    private List<Borrowing> _allBorrowings = new();
-
-    public ObservableCollection<Borrowing> Borrowings { get; } = new();
+    public ObservableCollection<BorrowingDto> Borrowings { get; } = new();
 
     [ObservableProperty]
     private string searchText = string.Empty;
@@ -39,18 +35,16 @@ public partial class SearchBorrowingsViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public SearchBorrowingsViewModel(SearchBorrowingsService searchService)
+    public List<string> StatusOptions { get; } = new() { "All", "Active", "Returned" };
+
+    public List<string> SortFieldOptions { get; } = new() { "Checkout Date", "Expected Return Date" };
+
+    public List<string> SortDirectionOptions { get; } = new() { "Descending", "Ascending" };
+
+    public SearchBorrowingsViewModel(EquipmentBorrowingApiClient api)
     {
-        _searchService = searchService;
+        _api = api;
     }
-    public List<string> StatusOptions { get; } =
-    new() { "All", "Active", "Returned" };
-
-    public List<string> SortFieldOptions { get; } =
-        new() { "Checkout Date", "Expected Return Date" };
-
-    public List<string> SortDirectionOptions { get; } =
-        new() { "Descending", "Ascending" };
 
     [RelayCommand]
     private async Task LoadBorrowingsAsync()
@@ -62,11 +56,41 @@ public partial class SearchBorrowingsViewModel : ObservableObject
             IsEmpty = false;
             FeedbackMessage = string.Empty;
 
-            var results = await _searchService.GetAllBorrowingsAsync();
+            string? apiStatus = SelectedStatus == "All" ? null : SelectedStatus;
+            string apiSort = SelectedSortField == "Expected Return Date" ? "expectedReturnDate" : "borrowedDate";
+            string apiDirection = SelectedSortDirection == "Ascending" ? "asc" : "desc";
+            string? apiSearch = string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim();
 
-            _allBorrowings = results.ToList();
+            var results = await _api.GetBorrowingsAsync(
+                search: apiSearch,
+                status: apiStatus,
+                sort: apiSort,
+                direction: apiDirection);
 
-            ApplyFilters();
+            Borrowings.Clear();
+
+            foreach (var borrowing in results)
+            {
+                Borrowings.Add(borrowing);
+            }
+
+            IsEmpty = Borrowings.Count == 0;
+
+            FeedbackMessage = IsEmpty
+                ? "No borrowing records found."
+                : $"{Borrowings.Count} borrowing record(s) found.";
+        }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = $"Server error: {ex.Message}";
         }
         catch (Exception)
         {
@@ -80,84 +104,34 @@ public partial class SearchBorrowingsViewModel : ObservableObject
         }
     }
 
-    private void ApplyFilters()
-    {
-        IEnumerable<Borrowing> filtered = _allBorrowings;
-
-        if (!string.IsNullOrWhiteSpace(SearchText))
-        {
-            string search = SearchText.Trim().ToLower();
-
-            filtered = filtered.Where(b =>
-                (b.Student != null && b.Student.Name.ToLower().Contains(search)) ||
-                (b.Student != null && b.Student.InstitutionalNumber.ToLower().Contains(search)) ||
-                (b.Equipment != null && b.Equipment.Name.ToLower().Contains(search)));
-        }
-
-        if (SelectedStatus == "Active")
-        {
-            filtered = filtered.Where(b => b.Status == BorrowingStatus.Active);
-        }
-        else if (SelectedStatus == "Returned")
-        {
-            filtered = filtered.Where(b => b.Status == BorrowingStatus.Returned);
-        }
-
-        bool ascending = SelectedSortDirection == "Ascending";
-
-        filtered = SelectedSortField switch
-        {
-            "Expected Return Date" => ascending
-                ? filtered.OrderBy(b => b.ExpectedReturnDate).ThenBy(b => b.BorrowingId)
-                : filtered.OrderByDescending(b => b.ExpectedReturnDate).ThenBy(b => b.BorrowingId),
-
-            _ => ascending
-                ? filtered.OrderBy(b => b.DateBorrowed).ThenBy(b => b.BorrowingId)
-                : filtered.OrderByDescending(b => b.DateBorrowed).ThenBy(b => b.BorrowingId)
-        };
-
-        Borrowings.Clear();
-
-        foreach (var borrowing in filtered)
-        {
-            Borrowings.Add(borrowing);
-        }
-
-        IsEmpty = Borrowings.Count == 0;
-
-        FeedbackMessage = IsEmpty
-            ? "No borrowing records found."
-            : $"{Borrowings.Count} borrowing record(s) found.";
-    }
-
     partial void OnSearchTextChanged(string value)
     {
-        ApplyFilters();
+        _ = LoadBorrowingsAsync();
     }
 
     partial void OnSelectedStatusChanged(string value)
     {
-        ApplyFilters();
+        _ = LoadBorrowingsAsync();
     }
 
     partial void OnSelectedSortFieldChanged(string value)
     {
-        ApplyFilters();
+        _ = LoadBorrowingsAsync();
     }
 
     partial void OnSelectedSortDirectionChanged(string value)
     {
-        ApplyFilters();
+        _ = LoadBorrowingsAsync();
     }
 
     [RelayCommand]
-    private void ResetFilters()
+    private async Task ResetFiltersAsync()
     {
         SearchText = string.Empty;
         SelectedStatus = "All";
         SelectedSortField = "Checkout Date";
         SelectedSortDirection = "Descending";
 
-        ApplyFilters();
+        await LoadBorrowingsAsync();
     }
 }

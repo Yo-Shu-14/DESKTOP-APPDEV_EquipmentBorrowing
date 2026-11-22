@@ -2,7 +2,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
-    xmlns:domain="using:EquipmentBorrowing.Domain"
+    xmlns:api="using:EquipmentBorrowing.Desktop.ApiClient"
     x:Class="EquipmentBorrowing.Desktop.Views.SearchBorrowingsView"
     x:DataType="viewmodels:SearchBorrowingsViewModel">
 
@@ -10,51 +10,56 @@
 
         <!-- Title -->
         <StackPanel Grid.Row="0">
-            <TextBlock Classes="title" Text="Search &amp; Filter Borrowings"/>
-            <TextBlock Classes="subheading" Text="Search by student name, student number, or equipment name; filter by status; and sort."/>
+            <TextBlock Classes="title" Text="Search and Filter Borrowings"/>
+            <TextBlock Classes="subheading" Text="Query, filter, and sort active or historical loan records across all students and equipment."/>
         </StackPanel>
 
         <!-- Search & Filter Controls -->
         <Border Grid.Row="1" Classes="panelCard">
-            <StackPanel Spacing="10">
-                <!-- Search text box -->
+            <StackPanel Spacing="12">
+                <!-- Search Input -->
                 <TextBox
-                    PlaceholderText="Search student name, student number, or equipment name..."
-                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                    Text="{Binding SearchText, Mode=TwoWay}"
+                    PlaceholderText="Search by student name, institutional number, equipment name, or equipment identifier..."/>
 
-                <!-- Filter Controls Row -->
-                <Grid ColumnDefinitions="*,*,*,Auto,Auto" ColumnSpacing="10">
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Classes="formLabel" Text="Status" Margin="0,0,0,2"/>
+                <!-- Dropdowns & Actions Row -->
+                <Grid ColumnDefinitions="*,*,*,Auto,Auto">
+                    <!-- Status Filter -->
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <TextBlock Classes="formLabel" Text="Status" Margin="0,0,0,4"/>
                         <ComboBox
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding StatusOptions}"
                             SelectedItem="{Binding SelectedStatus}"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Classes="formLabel" Text="Sort By" Margin="0,0,0,2"/>
+                    <!-- Sort Field -->
+                    <StackPanel Grid.Column="1" Margin="8,0,8,0">
+                        <TextBlock Classes="formLabel" Text="Sort By" Margin="0,0,0,4"/>
                         <ComboBox
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding SortFieldOptions}"
                             SelectedItem="{Binding SelectedSortField}"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Classes="formLabel" Text="Direction" Margin="0,0,0,2"/>
+                    <!-- Sort Direction -->
+                    <StackPanel Grid.Column="2" Margin="8,0,8,0">
+                        <TextBlock Classes="formLabel" Text="Direction" Margin="0,0,0,4"/>
                         <ComboBox
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding SortDirectionOptions}"
                             SelectedItem="{Binding SelectedSortDirection}"/>
                     </StackPanel>
 
+                    <!-- Reset Button -->
                     <Button
                         Grid.Column="3"
                         Content="Reset Filters"
                         VerticalAlignment="Bottom"
-                        Margin="0,0,0,2"
+                        Margin="8,0,8,2"
                         Command="{Binding ResetFiltersCommand}"/>
 
+                    <!-- Refresh Button -->
                     <Button
                         Grid.Column="4"
                         Content="Refresh"
@@ -96,14 +101,14 @@
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Borrowings}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="domain:Borrowing">
+                    <DataTemplate x:DataType="api:BorrowingDto">
                         <Border Classes="card">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel Grid.Column="0" Spacing="4">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <Border Background="#E9ECEF" CornerRadius="4" Padding="6,2">
                                             <TextBlock
-                                                Text="{Binding Equipment.EquipmentIdentifier}"
+                                                Text="{Binding EquipmentCode}"
                                                 FontSize="11"
                                                 FontWeight="Bold"
                                                 Foreground="#495057"/>
@@ -118,30 +123,30 @@
                                     </StackPanel>
 
                                     <TextBlock
-                                        Text="{Binding Equipment.Name}"
+                                        Text="{Binding EquipmentName}"
                                         FontSize="17"
                                         FontWeight="Bold"/>
 
                                     <TextBlock
-                                        Text="{Binding Student.Name, StringFormat='Borrower: {0}'}"
+                                        Text="{Binding StudentName, StringFormat='Borrower: {0}'}"
                                         FontWeight="SemiBold"
                                         FontSize="13"/>
 
                                     <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
                                         <TextBlock
-                                            Text="{Binding DateBorrowed, StringFormat='Borrowed: {0:MMM dd, yyyy}'}"
+                                            Text="{Binding BorrowedDate, StringFormat='Borrowed: {0}'}"
                                             FontSize="12"
                                             Foreground="#6c757d"/>
                                         <TextBlock
-                                            Text="{Binding ExpectedReturnDate, StringFormat='Expected Return: {0:MMM dd, yyyy}'}"
+                                            Text="{Binding ExpectedReturnDate, StringFormat='Expected Return: {0}'}"
                                             FontSize="12"
                                             Foreground="#6c757d"/>
                                         <TextBlock
-                                            Text="{Binding ActualReturnDate, StringFormat='Actual Return: {0:MMM dd, yyyy}'}"
+                                            Text="{Binding ReturnedDate, StringFormat='Actual Return: {0}'}"
                                             FontSize="12"
                                             FontWeight="SemiBold"
                                             Foreground="#0F5132"
-                                            IsVisible="{Binding ActualReturnDate, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                            IsVisible="{Binding ReturnedDate, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

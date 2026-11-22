@@ -1,25 +1,20 @@
-﻿using Avalonia.Controls.Primitives;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class StudentBorrowingHistoryViewModel : ObservableObject
 {
-    private readonly ViewStudentBorrowingHistoryService _historyService;
-    private readonly IStudentRepository _studentRepository;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    public ObservableCollection<Student> StudentList { get; } = new();
+    public ObservableCollection<StudentDto> StudentList { get; } = new();
 
-    public ObservableCollection<Borrowing> BorrowingHistory { get; } = new();
+    public ObservableCollection<BorrowingDto> BorrowingHistory { get; } = new();
 
     [ObservableProperty]
-    private Student? selectedStudent;
+    private StudentDto? selectedStudent;
 
     [ObservableProperty]
     private bool isLoading;
@@ -33,12 +28,9 @@ public partial class StudentBorrowingHistoryViewModel : ObservableObject
     [ObservableProperty]
     private string feedbackMessage = string.Empty;
 
-    public StudentBorrowingHistoryViewModel(
-        ViewStudentBorrowingHistoryService historyService,
-        IStudentRepository studentRepository)
+    public StudentBorrowingHistoryViewModel(EquipmentBorrowingApiClient api)
     {
-        _historyService = historyService;
-        _studentRepository = studentRepository;
+        _api = api;
     }
 
     [RelayCommand]
@@ -53,7 +45,7 @@ public partial class StudentBorrowingHistoryViewModel : ObservableObject
 
             if (StudentList.Count == 0)
             {
-                var students = await _studentRepository.GetAllAsync();
+                var students = await _api.GetStudentsAsync();
 
                 foreach (var student in students)
                 {
@@ -74,8 +66,7 @@ public partial class StudentBorrowingHistoryViewModel : ObservableObject
                 return;
             }
 
-            var history = await _historyService.GetStudentHistoryAsync(
-                SelectedStudent.Id);
+            var history = await _api.GetStudentBorrowingsAsync(SelectedStudent.Id);
 
             BorrowingHistory.Clear();
 
@@ -90,6 +81,18 @@ public partial class StudentBorrowingHistoryViewModel : ObservableObject
             {
                 FeedbackMessage = "No borrowing history found for this student.";
             }
+        }
+        catch (ApiConnectionException)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = $"Server error: {ex.Message}";
         }
         catch (Exception)
         {
