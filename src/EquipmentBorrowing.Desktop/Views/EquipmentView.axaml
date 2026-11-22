@@ -1,9 +1,8 @@
-
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewmodels="using:EquipmentBorrowing.Desktop.ViewModels"
-    xmlns:domain="using:EquipmentBorrowing.Domain"
+    xmlns:api="using:EquipmentBorrowing.Desktop.ApiClient"
     x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView"
     x:DataType="viewmodels:EquipmentViewModel">
 
@@ -27,8 +26,8 @@
                         ItemsSource="{Binding StudentList}"
                         SelectedItem="{Binding SelectedStudent}">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="domain:Student">
-                                <TextBlock Text="{Binding Name}"/>
+                            <DataTemplate x:DataType="api:StudentDto">
+                                <TextBlock Text="{Binding FullName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -66,7 +65,7 @@
 
                                 <ItemsControl ItemsSource="{Binding SelectedEquipmentList}">
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="domain:Equipment">
+                                        <DataTemplate x:DataType="api:EquipmentDto">
                                             <Grid ColumnDefinitions="*,Auto" Margin="0,2">
                                                 <TextBlock
                                                     Grid.Column="0"
@@ -75,7 +74,7 @@
                                                     FontSize="13"/>
                                                 <Button
                                                     Grid.Column="1"
-                                                    Content="✕"
+                                                    Content="âœ•"
                                                     Padding="6,2"
                                                     Margin="4,0,0,0"
                                                     Command="{Binding $parent[UserControl].DataContext.RemoveFromCheckoutCommand}"
@@ -111,7 +110,7 @@
                 IsVisible="{Binding IsLoading}"/>
 
             <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsError}">
-                <TextBlock Text="Failed to connect to database." VerticalAlignment="Center"/>
+                <TextBlock Text="Failed to connect to API server." VerticalAlignment="Center"/>
                 <Button Content="Retry Loading" Command="{Binding LoadEquipmentCommand}"/>
             </StackPanel>
 
@@ -125,7 +124,7 @@
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding EquipmentList}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="domain:Equipment">
+                    <DataTemplate x:DataType="api:EquipmentDto">
                         <Border Classes="card">
                             <Grid ColumnDefinitions="*,Auto">
 
@@ -134,7 +133,7 @@
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <Border Background="#E9ECEF" CornerRadius="4" Padding="6,2">
                                             <TextBlock
-                                                Text="{Binding EquipmentIdentifier}"
+                                                Text="{Binding EquipmentCode}"
                                                 FontSize="11"
                                                 FontWeight="Bold"
                                                 Foreground="#495057"/>

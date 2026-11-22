@@ -1,28 +1,20 @@
-using Avalonia.Controls.Primitives;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EquipmentBorrowing.Application.Interfaces;
-using EquipmentBorrowing.Application.Services;
-using EquipmentBorrowing.Domain;
+using EquipmentBorrowing.Desktop.ApiClient;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EquipmentBorrowing.Desktop.ViewModels;
 
 public partial class EquipmentViewModel : ObservableObject
 {
-    private readonly ViewEquipmentCatalogService _viewEquipmentCatalogService;
-    private readonly CheckAvailableEquipmentService _checkAvailableEquipmentService;
-    private readonly BorrowEquipmentService _borrowEquipmentService;
-    private readonly IStudentRepository _studentRepository;
+    private readonly EquipmentBorrowingApiClient _api;
 
-    public ObservableCollection<Equipment> EquipmentList { get; } = new();
-    public ObservableCollection<Student> StudentList { get; } = new();
-
-    public ObservableCollection<Equipment> SelectedEquipmentList { get; } = new();
+    public ObservableCollection<EquipmentDto> EquipmentList { get; } = new();
+    public ObservableCollection<StudentDto> StudentList { get; } = new();
+    public ObservableCollection<EquipmentDto> SelectedEquipmentList { get; } = new();
 
     [ObservableProperty]
-    private Student? selectedStudent;
+    private StudentDto? selectedStudent;
 
     [ObservableProperty]
     private bool isLoading;
@@ -33,28 +25,16 @@ public partial class EquipmentViewModel : ObservableObject
     [ObservableProperty]
     private bool isError;
 
-
-    //
-    public Equipment? SelectedEquipment { get; set; }
+    public EquipmentDto? SelectedEquipment { get; set; }
     public DateTimeOffset? ExpectedReturnDate { get; set; } = DateTimeOffset.Now.AddDays(7);
 
     [ObservableProperty]
     public string feedbackMessage = string.Empty;
 
-
-    public EquipmentViewModel(
-    ViewEquipmentCatalogService viewEquipmentCatalogService,
-    CheckAvailableEquipmentService checkAvailableEquipmentService,
-    BorrowEquipmentService borrowEquipmentService,
-    IStudentRepository studentRepository)
+    public EquipmentViewModel(EquipmentBorrowingApiClient api)
     {
-        _viewEquipmentCatalogService = viewEquipmentCatalogService;
-        _checkAvailableEquipmentService = checkAvailableEquipmentService;
-        _borrowEquipmentService = borrowEquipmentService;
-        _studentRepository = studentRepository;
+        _api = api;
     }
-
-
 
     [RelayCommand]
     private async Task LoadEquipmentAsync()
@@ -62,23 +42,19 @@ public partial class EquipmentViewModel : ObservableObject
         try
         {
             IsError = false;
-
             IsLoading = true;
             IsEmpty = false;
             FeedbackMessage = string.Empty;
 
-            var equipment = await _viewEquipmentCatalogService
-                .ViewEquipmentCatalogAsync();
+            var equipment = await _api.GetEquipmentAsync();
 
             EquipmentList.Clear();
-
             foreach (var item in equipment)
             {
                 EquipmentList.Add(item);
             }
 
             IsEmpty = EquipmentList.Count == 0;
-
             if (IsEmpty)
             {
                 FeedbackMessage = "No equipment registered yet.";
@@ -86,21 +62,31 @@ public partial class EquipmentViewModel : ObservableObject
 
             if (StudentList.Count == 0)
             {
-                var students = await _studentRepository.GetAllAsync();
-
+                var students = await _api.GetStudentsAsync();
                 foreach (var student in students)
                 {
                     StudentList.Add(student);
                 }
-
                 SelectedStudent = StudentList.FirstOrDefault();
             }
         }
-        catch (Exception)
+        catch (ApiConnectionException)
         {
             IsError = true;
             IsEmpty = false;
-            FeedbackMessage = "Unable to load equipment. Please check your connection and try again.";
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = ex.Message;
         }
         finally
         {
@@ -118,28 +104,31 @@ public partial class EquipmentViewModel : ObservableObject
             IsEmpty = false;
             FeedbackMessage = string.Empty;
 
-            var equipment = await _checkAvailableEquipmentService
-                .CheckAvailableEquipmentAsync();
+            var equipment = await _api.GetEquipmentAsync(availableOnly: true);
 
             EquipmentList.Clear();
-
             foreach (var item in equipment)
             {
                 EquipmentList.Add(item);
             }
 
             IsEmpty = EquipmentList.Count == 0;
-
             if (IsEmpty)
             {
                 FeedbackMessage = "No available equipment found.";
             }
         }
-        catch (Exception)
+        catch (ApiConnectionException)
         {
             IsError = true;
             IsEmpty = false;
-            FeedbackMessage = "Unable to find available equipment. Please try again.";
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (Exception ex)
+        {
+            IsError = true;
+            IsEmpty = false;
+            FeedbackMessage = ex.Message;
         }
         finally
         {
@@ -147,15 +136,14 @@ public partial class EquipmentViewModel : ObservableObject
         }
     }
 
-    // borrow com
     [RelayCommand]
-    private async Task BorrowAsync(Equipment equipment)
+    private async Task BorrowAsync(EquipmentDto equipment)
     {
         SelectedEquipment = equipment;
 
         if (StudentList.Count == 0)
         {
-            var students = await _studentRepository.GetAllAsync();
+            var students = await _api.GetStudentsAsync();
             foreach (var s in students)
                 StudentList.Add(s);
             SelectedStudent = StudentList.FirstOrDefault();
@@ -181,29 +169,30 @@ public partial class EquipmentViewModel : ObservableObject
 
         try
         {
-            await _borrowEquipmentService.BorrowEquipmentAsync(
+            await _api.CreateBorrowingAsync(new CreateBorrowingRequest(
                 SelectedStudent.Id,
-                SelectedEquipment.EquipmentId,
-                3,
-                DateTime.SpecifyKind(
-                    ExpectedReturnDate.Value.Date,
-                    DateTimeKind.Local)
-            );
+                SelectedEquipment.Id,
+                ExpectedReturnDate.Value.Date.ToString("yyyy-MM-dd")));
+
             await LoadEquipmentAsync();
             FeedbackMessage = "Equipment borrowed successfully.";
-
+        }
+        catch (ApiConnectionException)
+        {
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            FeedbackMessage = $"Server error: {ex.Message}";
         }
         catch (Exception ex)
         {
             FeedbackMessage = ex.Message;
         }
-
-
-
     }
 
     [RelayCommand]
-    private void AddToCheckout(Equipment equipment)
+    private void AddToCheckout(EquipmentDto equipment)
     {
         if (!equipment.IsAvailable)
         {
@@ -211,24 +200,20 @@ public partial class EquipmentViewModel : ObservableObject
             return;
         }
 
-        if (SelectedEquipmentList.Any(
-            e => e.EquipmentId == equipment.EquipmentId))
+        if (SelectedEquipmentList.Any(e => e.Id == equipment.Id))
         {
             FeedbackMessage = "Equipment is already in your checkout list.";
             return;
         }
 
         SelectedEquipmentList.Add(equipment);
-
         FeedbackMessage = $"{equipment.Name} added to checkout.";
     }
 
     [RelayCommand]
-    private void RemoveFromCheckout(Equipment equipment)
+    private void RemoveFromCheckout(EquipmentDto equipment)
     {
-        var selectedItem = SelectedEquipmentList.FirstOrDefault(
-            e => e.EquipmentId == equipment.EquipmentId);
-
+        var selectedItem = SelectedEquipmentList.FirstOrDefault(e => e.Id == equipment.Id);
         if (selectedItem != null)
         {
             SelectedEquipmentList.Remove(selectedItem);
@@ -266,19 +251,15 @@ public partial class EquipmentViewModel : ObservableObject
         try
         {
             var equipmentIds = SelectedEquipmentList
-                .Select(e => e.EquipmentId)
+                .Select(e => e.Id)
                 .ToList();
 
-            await _borrowEquipmentService.BorrowMultipleEquipmentAsync(
+            await _api.CheckoutMultipleAsync(new CheckoutRequest(
                 SelectedStudent.Id,
                 equipmentIds,
-                3,
-                DateTime.SpecifyKind(
-                    ExpectedReturnDate.Value.Date,
-                    DateTimeKind.Local));
+                ExpectedReturnDate.Value.Date.ToString("yyyy-MM-dd")));
 
             SelectedEquipmentList.Clear();
-
             await LoadEquipmentAsync();
 
             if (!IsError)
@@ -286,11 +267,17 @@ public partial class EquipmentViewModel : ObservableObject
                 FeedbackMessage = "All selected equipment borrowed successfully.";
             }
         }
+        catch (ApiConnectionException)
+        {
+            FeedbackMessage = "Cannot reach the API server. Please ensure the API is running.";
+        }
+        catch (ApiServerException ex)
+        {
+            FeedbackMessage = $"Server error: {ex.Message}";
+        }
         catch (Exception ex)
         {
             FeedbackMessage = ex.Message;
         }
     }
-
 }
-
