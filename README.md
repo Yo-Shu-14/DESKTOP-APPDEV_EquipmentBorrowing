@@ -1017,3 +1017,68 @@ Avalonia UI provides the desktop interface, the MVVM pattern organizes presentat
 
 The system is designed to support the custodian's equipment management and borrowing responsibilities while maintaining consistent borrowing records, equipment availability, and historical information.
 
+
+---
+
+## 19. Lab 5 — REST API & Desktop Migration (ITSD81)
+
+### Architecture Overview
+
+```text
+EquipmentBorrowing.Desktop  (Avalonia UI — HTTP client only, zero direct DB dependencies)
+        |
+        | HTTP (JSON REST via typed EquipmentBorrowingApiClient)
+        v
+EquipmentBorrowing.Api  (ASP.NET Core Web API — port 5000)
+        |
+        +---------> EquipmentBorrowing.Application (Services & Repository Interfaces)
+        |                       |
+        |                       v
+        +---------> EquipmentBorrowing.Infrastructure (EF Core + PostgreSQL)
+                                |
+                                v
+                         EquipmentBorrowing.Domain (Core entities & business rules)
+```
+
+### Running the Solution
+
+#### 1. Start the API
+```powershell
+dotnet run --project src/EquipmentBorrowing.Api
+```
+- Listens on `http://localhost:5000`
+- Connects to PostgreSQL database `equipment_borrowing_db`
+- Machine-readable OpenAPI spec available at `http://localhost:5000/openapi/v1.json`
+
+#### 2. Start the Desktop App
+```powershell
+dotnet run --project src/EquipmentBorrowing.Desktop
+```
+- Connects to the API at `http://localhost:5000/` (override with `EQUIPMENT_BORROWING_API_URL` environment variable if needed)
+- Communicates exclusively over HTTP via `EquipmentBorrowingApiClient`
+
+#### 3. Run Unit Tests
+```powershell
+dotnet run --project tests/EquipmentBorrowing.Test
+```
+
+### API Endpoints Reference (API-01 to API-16)
+
+| Endpoint | Method | Route | Description |
+|---|---|---|---|
+| API-01 | GET | /api/v1/equipment | List equipment catalog (supports ?available=true) |
+| API-02 | GET | /api/v1/students | List registered students (supports ?search=...) |
+| API-03 | POST | /api/v1/students | Register a new student |
+| API-04 | GET | /api/v1/students/{id} | Get student details by ID |
+| API-05 | PUT | /api/v1/students/{id} | Update student descriptive information |
+| API-06 | PATCH | /api/v1/students/{id}/eligibility | Change student borrowing eligibility |
+| API-07 | POST | /api/v1/equipment | Register a new equipment item |
+| API-08 | GET | /api/v1/equipment/{id} | Get equipment details by ID |
+| API-09 | PUT | /api/v1/equipment/{id} | Update equipment descriptive information |
+| API-10 | POST | /api/v1/borrowings | Create a single equipment borrowing record |
+| API-11 | GET | /api/v1/borrowings/{id} | Get borrowing record by ID |
+| API-12 | POST | /api/v1/borrowings/{id}/return | Record equipment return |
+| API-13 | GET | /api/v1/borrowings | Search, filter, and sort loans (status, search, sort, direction) |
+| API-14 | GET | /api/v1/students/{id}/borrowings | Retrieve borrowing history for a specific student |
+| API-15 | GET | /api/v1/equipment/{id}/borrowings | Retrieve loan history for a specific equipment item |
+| API-16 | POST | /api/v1/checkout-requests | Multi-item checkout (minimum 2 items) |
