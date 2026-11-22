@@ -20,7 +20,7 @@ public class BorrowEquipmentService
         _borrowingRepository = borrowingRepository;
     }
 
-    public async Task BorrowEquipmentAsync(int studentId, Guid equipmentId, int maximumActiveBorrowings, DateTime expectedReturnDate)
+    public async Task<Borrowing> BorrowEquipmentAsync(int studentId, Guid equipmentId, int maximumActiveBorrowings, DateTime expectedReturnDate)
     {
         if (expectedReturnDate.Date <= DateTime.Today)
         {
@@ -77,9 +77,11 @@ public class BorrowEquipmentService
         await _borrowingRepository.AddBorrowingWithEquipmentUpdateAsync(
             borrowing,
             equipment);
+
+        return borrowing;
     }
 
-    public async Task BorrowMultipleEquipmentAsync(
+    public async Task<IReadOnlyList<Borrowing>> BorrowMultipleEquipmentAsync(
         int studentId,
         IReadOnlyList<Guid> equipmentIds,
         int maximumActiveBorrowings,
@@ -166,6 +168,8 @@ public class BorrowEquipmentService
         await _borrowingRepository.AddBorrowingsWithEquipmentUpdatesAsync(
             borrowings,
             equipmentList);
+
+        return borrowings;
     }
 
 }

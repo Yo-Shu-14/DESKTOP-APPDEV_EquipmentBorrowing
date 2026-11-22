@@ -14,7 +14,7 @@ public class ReturnEquipmentService
         _borrowingRepository = borrowingRepository;
     }
 
-    public async Task ReturnEquipmentAsync(Guid borrowingId)
+    public async Task<Borrowing> ReturnEquipmentAsync(Guid borrowingId)
     {
         var borrowing = await _borrowingRepository.GetByIdAsync(borrowingId);
 
@@ -35,5 +35,7 @@ public class ReturnEquipmentService
         await _borrowingRepository.ReturnBorrowingWithEquipmentUpdateAsync(
             borrowing,
             borrowing.Equipment);
+
+        return borrowing;
     }
 }
