@@ -1,5 +1,8 @@
+
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using EquipmentBorrowing.Application.Interfaces;
 using EquipmentBorrowing.Application.Services;
 using EquipmentBorrowing.Desktop.ViewModels;
@@ -19,6 +22,9 @@ public partial class App : Avalonia.Application
 
     public override async void OnFrameworkInitializationCompleted()
     {
+        // Force application to use Light Theme
+        RequestedThemeVariant = ThemeVariant.Light;
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var services = new ServiceCollection();
@@ -29,7 +35,7 @@ public partial class App : Avalonia.Application
             services.AddScoped<IEquipmentRepository, EfEquipmentRepository>();
             services.AddScoped<IBorrowingRepository, EfBorrowingRepository>();
 
-            //services
+            // Services
             services.AddTransient<BorrowEquipmentService>();
             services.AddTransient<ReturnEquipmentService>();
             services.AddTransient<CheckAvailableEquipmentService>();
@@ -54,10 +60,10 @@ public partial class App : Avalonia.Application
             services.AddTransient<UpdateEquipmentInformationService>();
             services.AddTransient<UpdateEquipmentInformationViewModel>();
 
-
             var serviceProvider = services.BuildServiceProvider();
 
-            var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+            var mainWindowViewModel =
+                serviceProvider.GetRequiredService<MainWindowViewModel>();
 
             desktop.MainWindow = new MainWindow(mainWindowViewModel);
 
@@ -68,13 +74,14 @@ public partial class App : Avalonia.Application
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[DatabaseInitializer Warning]: {ex.Message}");
-                // Database may be offline or unreachable; views handle error and retry states per UC-01/UC-02/BR-18
+                Console.WriteLine(
+                    $"[DatabaseInitializer Warning]: {ex.Message}");
             }
 
-            var equipmentViewModel = serviceProvider.GetRequiredService<EquipmentViewModel>();
-            await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
+            var equipmentViewModel =
+                serviceProvider.GetRequiredService<EquipmentViewModel>();
 
+            await equipmentViewModel.LoadEquipmentCommand.ExecuteAsync(null);
         }
 
         base.OnFrameworkInitializationCompleted();
