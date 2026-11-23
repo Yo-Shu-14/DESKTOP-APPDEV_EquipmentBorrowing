@@ -53,3 +53,6 @@ public class Student
         IsAllowedToBorrow = isAllowed;
     }
 }
+
+//MJ Jade G. Piquero - 2024300423
+//John Carlo Magno - 2024301174
