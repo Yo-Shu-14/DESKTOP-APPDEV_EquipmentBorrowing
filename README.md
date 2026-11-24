@@ -68,10 +68,10 @@ The `EquipmentBorrowing.Domain` project contains the core concepts and business 
 
 It contains the main domain entities and related types, including:
 
-- `Student` – represents a student who may borrow campus equipment.
-- `Equipment` – represents an equipment item that can be borrowed.
-- `Borrowing` – represents a borrowing transaction between a student and an equipment item.
-- `BorrowingStatus` – represents the current status of a borrowing record, such as Active or Returned.
+- `Student` â€“ represents a student who may borrow campus equipment.
+- `Equipment` â€“ represents an equipment item that can be borrowed.
+- `Borrowing` â€“ represents a borrowing transaction between a student and an equipment item.
+- `BorrowingStatus` â€“ represents the current status of a borrowing record, such as Active or Returned.
 
 The Domain project does not depend on the user interface, database provider, or Infrastructure project.
 
@@ -108,10 +108,10 @@ The `EquipmentBorrowing.Infrastructure` project contains the technical implement
 
 It contains:
 
-- `EquipmentBorrowingDbContext` – the Entity Framework Core DbContext used to access PostgreSQL.
-- `EfStudentRepository` – the EF Core implementation of `IStudentRepository`.
-- `EfEquipmentRepository` – the EF Core implementation of `IEquipmentRepository`.
-- `EfBorrowingRepository` – the EF Core implementation of `IBorrowingRepository`.
+- `EquipmentBorrowingDbContext` â€“ the Entity Framework Core DbContext used to access PostgreSQL.
+- `EfStudentRepository` â€“ the EF Core implementation of `IStudentRepository`.
+- `EfEquipmentRepository` â€“ the EF Core implementation of `IEquipmentRepository`.
+- `EfBorrowingRepository` â€“ the EF Core implementation of `IBorrowingRepository`.
 - Entity configurations for `Student`, `Equipment`, and `Borrowing`.
 - Database initialization and EF Core migration support.
 
@@ -519,9 +519,9 @@ The Infrastructure project should include the packages required for EF Core and 
 
 Common packages include:
 
-- `Microsoft.EntityFrameworkCore` – provides the main EF Core functionality.
-- `Microsoft.EntityFrameworkCore.Design` – provides design-time support for migrations.
-- `Npgsql.EntityFrameworkCore.PostgreSQL` – provides PostgreSQL database support for EF Core.
+- `Microsoft.EntityFrameworkCore` â€“ provides the main EF Core functionality.
+- `Microsoft.EntityFrameworkCore.Design` â€“ provides design-time support for migrations.
+- `Npgsql.EntityFrameworkCore.PostgreSQL` â€“ provides PostgreSQL database support for EF Core.
 
 The package versions must be compatible with the target .NET and EF Core versions used by the solution.
 
@@ -967,11 +967,11 @@ The remaining use-case and verification documents should be maintained as separa
 
 The project documentation should include:
 
-1. **Use-Case Diagram** – shows the primary actor and the system's required use cases.
-2. **Use-Case Catalog** – lists the use-case IDs, names, actors, and brief descriptions.
-3. **Use-Case Specifications** – provides the detailed specifications for all fourteen required use cases.
-4. **Use-Case-to-Acceptance Evidence Matrix** – connects each required use case to its acceptance criteria and corresponding verification evidence.
-5. **Integration and Verification Evidence** – contains screenshots or other evidence showing the application's behavior and database results.
+1. **Use-Case Diagram** â€“ shows the primary actor and the system's required use cases.
+2. **Use-Case Catalog** â€“ lists the use-case IDs, names, actors, and brief descriptions.
+3. **Use-Case Specifications** â€“ provides the detailed specifications for all fourteen required use cases.
+4. **Use-Case-to-Acceptance Evidence Matrix** â€“ connects each required use case to its acceptance criteria and corresponding verification evidence.
+5. **Integration and Verification Evidence** â€“ contains screenshots or other evidence showing the application's behavior and database results.
 
 The source code, documentation, and evidence should correspond to the same final version of the application.
 
@@ -1020,16 +1020,16 @@ The system is designed to support the custodian's equipment management and borro
 
 ---
 
-## 19. Lab 5 � REST API & Desktop Migration (ITSD81)
+## 19. Lab 5 — REST API & Desktop Migration (ITSD81)
 
 ### Architecture Overview
 
 ```text
-EquipmentBorrowing.Desktop  (Avalonia UI � HTTP client only, zero direct DB dependencies)
+EquipmentBorrowing.Desktop  (Avalonia UI — HTTP client only, zero direct DB dependencies)
         |
         | HTTP (JSON REST via typed EquipmentBorrowingApiClient)
         v
-EquipmentBorrowing.Api  (ASP.NET Core Web API � port 5000)
+EquipmentBorrowing.Api  (ASP.NET Core Web API — port 5000)
         |
         +---------> EquipmentBorrowing.Application (Services & Repository Interfaces)
         |                       |
@@ -1038,6 +1038,35 @@ EquipmentBorrowing.Api  (ASP.NET Core Web API � port 5000)
                                 |
                                 v
                          EquipmentBorrowing.Domain (Core entities & business rules)
+```
+
+### Local Setup and Configuration
+
+#### 1. PostgreSQL Database Configuration
+The API and EF Core migrations connect to PostgreSQL. The default configuration in `src/EquipmentBorrowing.Api/appsettings.json` is:
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=equipment_borrowing_db;Username=postgres;Password=postgres"
+  }
+}
+```
+> [!NOTE]
+> To keep production or personal credentials out of the repository, you can override the connection string without editing files by setting an environment variable:
+> ```powershell
+> $env:ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=equipment_borrowing_db;Username=myuser;Password=mypassword"
+> ```
+
+#### 2. Apply Database Migrations
+To ensure the PostgreSQL database schema is up-to-date with reproducible EF Core migrations:
+```powershell
+dotnet ef database update --project src/EquipmentBorrowing.Infrastructure --startup-project src/EquipmentBorrowing.Api
+```
+
+#### 3. Seed / Reset Test Dataset
+To populate or reset the controlled dataset (Students S1–S4, Equipment E1–E7, initial borrowings) for acceptance tests T01–T08:
+```powershell
+psql -U postgres -d equipment_borrowing_db -f docs/seed-test-data.sql
 ```
 
 ### Running the Solution
@@ -1054,31 +1083,32 @@ dotnet run --project src/EquipmentBorrowing.Api
 ```powershell
 dotnet run --project src/EquipmentBorrowing.Desktop
 ```
-- Connects to the API at `http://localhost:5000/` (override with `EQUIPMENT_BORROWING_API_URL` environment variable if needed)
-- Communicates exclusively over HTTP via `EquipmentBorrowingApiClient`
+- Connects to the API at `http://localhost:5000/` (override with `$env:EQUIPMENT_BORROWING_API_URL="http://localhost:5000"` if needed)
+- Communicates exclusively over HTTP via typed `EquipmentBorrowingApiClient`
+- Has zero direct references to EF Core, Npgsql, `EquipmentBorrowing.Application`, or `EquipmentBorrowing.Infrastructure`
 
 #### 3. Run Unit Tests
 ```powershell
-dotnet run --project tests/EquipmentBorrowing.Test
+dotnet test
 ```
 
 ### API Endpoints Reference (API-01 to API-16)
 
 | Endpoint | Method | Route | Description |
 |---|---|---|---|
-| API-01 | GET | /api/v1/equipment | List equipment catalog (supports ?available=true) |
-| API-02 | GET | /api/v1/students | List registered students (supports ?search=...) |
-| API-03 | POST | /api/v1/students | Register a new student |
-| API-04 | GET | /api/v1/students/{id} | Get student details by ID |
-| API-05 | PUT | /api/v1/students/{id} | Update student descriptive information |
-| API-06 | PATCH | /api/v1/students/{id}/eligibility | Change student borrowing eligibility |
-| API-07 | POST | /api/v1/equipment | Register a new equipment item |
-| API-08 | GET | /api/v1/equipment/{id} | Get equipment details by ID |
-| API-09 | PUT | /api/v1/equipment/{id} | Update equipment descriptive information |
-| API-10 | POST | /api/v1/borrowings | Create a single equipment borrowing record |
-| API-11 | GET | /api/v1/borrowings/{id} | Get borrowing record by ID |
-| API-12 | POST | /api/v1/borrowings/{id}/return | Record equipment return |
-| API-13 | GET | /api/v1/borrowings | Search, filter, and sort loans (status, search, sort, direction) |
-| API-14 | GET | /api/v1/students/{id}/borrowings | Retrieve borrowing history for a specific student |
-| API-15 | GET | /api/v1/equipment/{id}/borrowings | Retrieve loan history for a specific equipment item |
-| API-16 | POST | /api/v1/checkout-requests | Multi-item checkout (minimum 2 items) |
+| **API-01** | GET | `/api/v1/equipment` | List equipment catalog (supports `?available=true`) |
+| **API-02** | GET | `/api/v1/students` | List registered students (supports `?search=...`) |
+| **API-03** | GET | `/api/v1/students/{id}` | Get student details by ID |
+| **API-04** | POST | `/api/v1/students` | Register a new student |
+| **API-05** | PUT | `/api/v1/students/{id}` | Update student descriptive information |
+| **API-06** | PATCH | `/api/v1/students/{id}/eligibility` | Change student borrowing eligibility (same value is no-op) |
+| **API-07** | GET | `/api/v1/equipment/{id}` | Get equipment details by ID |
+| **API-08** | POST | `/api/v1/equipment` | Register a new equipment item |
+| **API-09** | PUT | `/api/v1/equipment/{id}` | Update equipment descriptive information |
+| **API-10** | POST | `/api/v1/borrowings` | Create a single equipment borrowing record |
+| **API-11** | POST | `/api/v1/checkout-requests` | Multi-item checkout (minimum 2 items, atomic transaction) |
+| **API-12** | POST | `/api/v1/borrowings/{id}/return` | Record equipment return |
+| **API-13** | GET | `/api/v1/borrowings/{id}` | Get borrowing record by ID |
+| **API-14** | GET | `/api/v1/borrowings` | Search, filter, and sort loans (`status`, `search`, `sort`, `direction`) |
+| **API-15** | GET | `/api/v1/students/{id}/borrowings` | Retrieve borrowing history for a specific student |
+| **API-16** | GET | `/api/v1/equipment/{id}/borrowings` | Retrieve loan history for a specific equipment item |
