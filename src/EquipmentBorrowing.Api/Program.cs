@@ -50,6 +50,27 @@ builder.Services.AddScoped<SearchBorrowingsService>();
 
 var app = builder.Build();
 
+// ─── Safe Global Error Handler (T08: No Stack Traces or Secrets Leaked) ───────
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception)
+    {
+        if (!context.Response.HasStarted)
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+            var error = new EquipmentBorrowing.Api.Dtos.ErrorResponse(
+                "INTERNAL_SERVER_ERROR",
+                "An unexpected error occurred while processing your request.");
+            await context.Response.WriteAsJsonAsync(error);
+        }
+    }
+});
+
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.MapOpenApi();
 app.UseRouting();
