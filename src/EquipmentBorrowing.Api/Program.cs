@@ -77,3 +77,6 @@ app.UseRouting();
 app.MapControllers();
 
 app.Run();
+
+// Exposes the top-level application type to the integration-test host.
+public partial class Program;
