@@ -3,13 +3,8 @@
 -- Resets and populates the disposable database for testing T01 to T08.
 -- ============================================================================
 
--- Clean existing data
-DELETE FROM "Borrowings";
-DELETE FROM "Equipment";
-DELETE FROM "Students";
-
--- Reset identity sequence for Students if applicable
-ALTER SEQUENCE IF EXISTS "Students_Id_seq" RESTART WITH 1;
+-- Clean existing data, including rows left by prior scenarios.
+TRUNCATE TABLE "Borrowings", "Equipment", "Students" RESTART IDENTITY CASCADE;
 
 -- ─── 1. Students (S1–S4) ─────────────────────────────────────────────────────
 -- S1: ST-100, Ada Cruz, eligible

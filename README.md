@@ -1112,3 +1112,14 @@ dotnet test
 | **API-14** | GET | `/api/v1/borrowings` | Search, filter, and sort loans (`status`, `search`, `sort`, `direction`) |
 | **API-15** | GET | `/api/v1/students/{id}/borrowings` | Retrieve borrowing history for a specific student |
 | **API-16** | GET | `/api/v1/equipment/{id}/borrowings` | Retrieve loan history for a specific equipment item |
+
+## 20. Lab 6 — Automated Verification and Regression Testing
+
+Lab 6 test setup, fixture requirements, execution records, traceability, and manual acceptance templates are maintained in:
+
+- `docs/LAB6_TEST_SETUP.md`
+- `docs/LAB6_EXECUTION_RECORD.md`
+- `docs/LAB6_TRACEABILITY_MATRIX.md`
+- `docs/LAB6_MANUAL_ACCEPTANCE.md`
+
+The automated suite requires the local environment variable `LAB6_TEST_CONNECTION` to point to a disposable PostgreSQL test database. It resets that database with the controlled fixture before each scenario and skips PostgreSQL-backed cases when the variable is absent.

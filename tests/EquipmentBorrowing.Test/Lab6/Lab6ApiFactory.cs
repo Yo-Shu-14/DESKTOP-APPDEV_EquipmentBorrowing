@@ -15,6 +15,7 @@ public sealed class Lab6ApiFactory : WebApplicationFactory<Program>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
+        builder.UseSetting("EQUIPMENT_BORROWING_CONNECTION", _connectionString);
         builder.UseSetting("ConnectionStrings:DefaultConnection", _connectionString);
     }
 }

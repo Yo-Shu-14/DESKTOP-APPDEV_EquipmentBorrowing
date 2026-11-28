@@ -38,3 +38,14 @@ Until `LAB6_TEST_CONNECTION` is set, PostgreSQL-backed Lab 6 scenarios must be r
 ## Evidence convention
 
 For each `TC6-*` case, record the actual test method, expected and observed result, execution status, defect/correction/retest information, and the relevant HTTP, database, UI, or source evidence in the Lab 6 execution record.
+
+## Lab 6 automated suite
+
+The test project includes the HTTP/PostgreSQL scenarios under `tests/EquipmentBorrowing.Test/Lab6`. Build and run them with:
+
+```powershell
+dotnet build tests/EquipmentBorrowing.Test/EquipmentBorrowing.Test.csproj -m:1
+& tests/EquipmentBorrowing.Test/bin/Debug/net10.0/EquipmentBorrowing.Test.exe -noLogo -noColor -result-trx TestResults/lab6.trx
+```
+
+The suite skips PostgreSQL-backed cases when `LAB6_TEST_CONNECTION` is absent. A skip is a real environment limitation, not a passing result.

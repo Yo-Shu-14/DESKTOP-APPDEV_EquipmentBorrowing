@@ -19,9 +19,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EquipmentBorrowing.Api\EquipmentBorrowing.Api.csproj" />
+    <ProjectReference Include="..\..\src\EquipmentBorrowing.Desktop\EquipmentBorrowing.Desktop.csproj" />
     <ProjectReference Include="..\..\src\EquipmentBorrowing.Application\EquipmentBorrowing.Application.csproj" />
     <ProjectReference Include="..\..\src\EquipmentBorrowing.Domain\EquipmentBorrowing.Domain.csproj" />
     <ProjectReference Include="..\..\src\EquipmentBorrowing.Infrastructure\EquipmentBorrowing.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="..\..\docs\seed-test-data.sql" CopyToOutputDirectory="PreserveNewest" Link="Lab6\seed-test-data.sql" />
   </ItemGroup>
 
 </Project>

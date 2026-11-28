@@ -18,7 +18,7 @@ builder.Services.AddOpenApi("v1");
 
 // ─── Database ─────────────────────────────────────────────────────────────────
 var connectionString =
-    Environment.GetEnvironmentVariable("EQUIPMENT_BORROWING_CONNECTION")
+    builder.Configuration["EQUIPMENT_BORROWING_CONNECTION"]
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrWhiteSpace(connectionString))
